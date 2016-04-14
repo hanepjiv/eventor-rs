@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/12
-// @date 2016/03/27
+// @date 2016/04/05
 
 // The MIT License (MIT)
 //
@@ -181,6 +181,7 @@ impl EventListenerRemoving {
     }
     /* ====================================================================== */
     /// contains
+    #[allow(dead_code)]
     #[inline(always)]
     pub fn contains(&self, x: &(u32, ::libc::uintptr_t)) -> bool {
         let &EventListenerRemoving(ref inner) = self;

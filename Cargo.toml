@@ -1,10 +1,10 @@
 [package]
 name = "eventor"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["hanepjiv <hanepjiv@gmail.com>"]
 
 [dependencies]
-libc             = "^0.2.9"
+libc             = "^0.2.10"
 log              = "^0.3.6"
 # ------------------------------------------------------------------------------
 #hash_combine     = { path = "../../hash_combine-rs/0.1.0" }
