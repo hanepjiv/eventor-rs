@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/03
-// @date 2016/03/30
+// @date 2016/04/29
 
 // The MIT License (MIT)
 //
@@ -158,9 +158,7 @@ impl TEventor for Eventor {
             Some(e)     => {
                 match self.listener_map.write().expect("Eventor::dispatch").
                     get_mut(&(e.peek_type().peek_hash())) {
-                        None        => {
-                            debug!("Eventor::dispatch: no listener")
-                        },
+                        None        => debug!("Eventor::dispatch: no listener"),
                         Some(list)  => {
                             for (_, ref mut listener) in list.iter_mut() {
                                 listener.write().expect("Eventor::dispatch").

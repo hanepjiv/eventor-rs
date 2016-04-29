@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/12
-// @date 2016/04/05
+// @date 2016/04/29
 
 // The MIT License (MIT)
 //
@@ -34,6 +34,8 @@ use ::std::fmt::{ Debug, };
 use ::std::collections::{ BTreeMap, };
 use ::std::sync::{ RwLock, };
 /* -------------------------------------------------------------------------- */
+use ::libc::uintptr_t;
+/* -------------------------------------------------------------------------- */
 use super::event::{ Event, };
 use super::eventor::{ EventorElicit, };
 /* ////////////////////////////////////////////////////////////////////////// */
@@ -58,13 +60,12 @@ pub trait TEventListener: Debug + EventListenerEnableElicitFromSelf {
     fn on_event(&mut self, event: &Event, eventor: &EventorElicit) -> bool;
     /* ====================================================================== */
     /// peek_id
-    fn peek_id(&self) -> ::libc::uintptr_t;
+    fn peek_id(&self) -> uintptr_t;
 }
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// type EventListenerList
-pub type EventListenerList
-    = BTreeMap< ::libc::uintptr_t, EventListenerElicit >;
+pub type EventListenerList = BTreeMap< uintptr_t, EventListenerElicit >;
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// struct EventListenerMap
@@ -80,7 +81,7 @@ impl EventListenerMap {
     /// insert
     pub fn insert(&mut self,
                   event_hash: u32,
-                  id: ::libc::uintptr_t, listener: EventListenerElicit)
+                  id: uintptr_t, listener: EventListenerElicit)
                   -> Option< EventListenerElicit > {
         let &mut EventListenerMap(ref mut inner) = self;
         if inner.contains_key(&event_hash) {
@@ -97,7 +98,7 @@ impl EventListenerMap {
     }
     /* ====================================================================== */
     /// remove
-    pub fn remove(&mut self, event_hash: u32, id: ::libc::uintptr_t)
+    pub fn remove(&mut self, event_hash: u32, id: uintptr_t)
                   -> Option< EventListenerElicit > {
         let &mut EventListenerMap(ref mut inner) = self;
         if inner.contains_key(&event_hash) {
@@ -131,9 +132,7 @@ impl EventListenerWaiting {
     /* ====================================================================== */
     /// insert
     #[inline(always)]
-    pub fn insert(&self,
-                  event_hash: u32, listener: EventListenerElicit)
-                  -> () {
+    pub fn insert(&self, event_hash: u32, listener: EventListenerElicit) {
         let &EventListenerWaiting(ref inner) = self;
         inner.write().expect("EventLitenerWaiting.insert").
             push((event_hash, listener))
@@ -164,7 +163,7 @@ impl EventListenerWaiting {
 /* ========================================================================== */
 /// struct EventListenerRemoving
 #[derive( Debug, )]
-pub struct EventListenerRemoving(RwLock< Vec< (u32, ::libc::uintptr_t) > >);
+pub struct EventListenerRemoving(RwLock< Vec< (u32, uintptr_t) > >);
 /* ========================================================================== */
 impl EventListenerRemoving {
     /* ====================================================================== */
@@ -174,7 +173,7 @@ impl EventListenerRemoving {
     /* ====================================================================== */
     /// insert
     #[inline(always)]
-    pub fn insert(&self, event_hash: u32, id: ::libc::uintptr_t) -> () {
+    pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
         let &EventListenerRemoving(ref inner) = self;
         inner.write().expect("EventLitenerRemoving.insert").
             push((event_hash, id))
@@ -183,7 +182,7 @@ impl EventListenerRemoving {
     /// contains
     #[allow(dead_code)]
     #[inline(always)]
-    pub fn contains(&self, x: &(u32, ::libc::uintptr_t)) -> bool {
+    pub fn contains(&self, x: &(u32, uintptr_t)) -> bool {
         let &EventListenerRemoving(ref inner) = self;
         inner.read().expect("EventLitenerRemoving.contains").
             contains(x)
