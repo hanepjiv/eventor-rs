@@ -1,5 +1,8 @@
 language: rust
-cache: cargo
+sudo: false
+cache:
+  - apt
+  - cargo
 rust:
   - stable
   - beta
