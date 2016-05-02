@@ -74,12 +74,10 @@ pub struct EventTypeMap(BTreeMap<u32, EventTypeRef>);
 impl EventTypeMap {
     /* ====================================================================== */
     /// new
-    #[inline(always)]
     pub fn new() -> Self { EventTypeMap(BTreeMap::new()) }
     /* ====================================================================== */
     /* ---------------------------------------------------------------------- */
     /// check_type
-    #[inline(always)]
     pub fn check_type(&self, name: &str) -> (u32, Option< EventTypeRef >) {
         let hash = hash_combine(0u32, name.as_ref());
         let &EventTypeMap(ref inner) = self;
@@ -109,7 +107,6 @@ impl EventTypeMap {
     }
     /* ---------------------------------------------------------------------- */
     /// peek_type
-    #[inline(always)]
     pub fn peek_type(&self, name: &str) -> Option< EventTypeRef > {
         let (_, ret) = self.check_type(name);
         ret

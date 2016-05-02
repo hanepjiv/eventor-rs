@@ -75,7 +75,6 @@ pub struct EventListenerMap(BTreeMap< u32, EventListenerList >);
 impl EventListenerMap {
     /* ====================================================================== */
     /// new
-    #[inline(always)]
     pub fn new() -> Self { EventListenerMap(BTreeMap::new()) }
     /* ====================================================================== */
     /// insert
@@ -127,11 +126,9 @@ pub struct EventListenerWaiting(RwLock< Vec< (u32, EventListenerElicit) > >);
 impl EventListenerWaiting {
     /* ====================================================================== */
     /// new
-    #[inline(always)]
     pub fn new() -> Self { EventListenerWaiting(RwLock::new(Vec::new())) }
     /* ====================================================================== */
     /// insert
-    #[inline(always)]
     pub fn insert(&self, event_hash: u32, listener: EventListenerElicit) {
         let &EventListenerWaiting(ref inner) = self;
         inner.write().expect("EventLitenerWaiting.insert").
@@ -139,7 +136,6 @@ impl EventListenerWaiting {
     }
     /* ====================================================================== */
     /// shrink_to_fit
-    #[inline(always)]
     pub fn shrink_to_fit(&self) -> () {
         let &EventListenerWaiting(ref inner) = self;
         inner.write().expect("EventLitenerWaiting.insert").
@@ -168,11 +164,9 @@ pub struct EventListenerRemoving(RwLock< Vec< (u32, uintptr_t) > >);
 impl EventListenerRemoving {
     /* ====================================================================== */
     /// new
-    #[inline(always)]
     pub fn new() -> Self { EventListenerRemoving(RwLock::new(Vec::new())) }
     /* ====================================================================== */
     /// insert
-    #[inline(always)]
     pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
         let &EventListenerRemoving(ref inner) = self;
         inner.write().expect("EventLitenerRemoving.insert").
@@ -181,7 +175,6 @@ impl EventListenerRemoving {
     /* ====================================================================== */
     /// contains
     #[allow(dead_code)]
-    #[inline(always)]
     pub fn contains(&self, x: &(u32, uintptr_t)) -> bool {
         let &EventListenerRemoving(ref inner) = self;
         inner.read().expect("EventLitenerRemoving.contains").
@@ -189,7 +182,6 @@ impl EventListenerRemoving {
     }
     /* ====================================================================== */
     /// shrink_to_fit
-    #[inline(always)]
     pub fn shrink_to_fit(&self) -> () {
         let &EventListenerRemoving(ref inner) = self;
         inner.write().expect("EventLitenerRemoving.shrink_to_fit").

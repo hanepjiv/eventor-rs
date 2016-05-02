@@ -80,11 +80,9 @@ impl < T: Debug + Any > EventData< T > {
 }
 /* ========================================================================== */
 impl < T: Debug + Any > Borrow< Any > for EventData< T > {
-    #[inline(always)]
     fn borrow(&self) -> &Any { &self.data }
 }
 /* ========================================================================== */
 impl < T: Debug + Any > BorrowMut< Any > for EventData< T > {
-    #[inline(always)]
     fn borrow_mut(&mut self) -> &mut Any { &mut self.data }
 }

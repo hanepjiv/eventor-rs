@@ -1,13 +1,11 @@
 [package]
-name = "eventor"
-version = "0.1.2"
-authors = ["hanepjiv <hanepjiv@gmail.com>"]
+name            = "eventor"
+version         = "0.1.3"
+authors         = ["hanepjiv <hanepjiv@gmail.com>"]
 
 [dependencies]
-libc             = "^0.2.10"
-log              = "^0.3.6"
+libc            = "^0.2.10"
+log             = "^0.3.6"
 # ------------------------------------------------------------------------------
-#elicit           = { path = "../../elicit-rs/orig" }
-elicit           = { git = "https://github.com/hanepjiv/elicit-rs.git" }
-#hash_combine     = { path = "../../hash_combine-rs/orig" }
-hash_combine     = { git = "https://github.com/hanepjiv/hash_combine-rs.git" }
+elicit          = { git = "https://github.com/hanepjiv/elicit-rs.git" }
+hash_combine    = { git = "https://github.com/hanepjiv/hash_combine-rs.git" }

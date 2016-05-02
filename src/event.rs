@@ -49,18 +49,15 @@ pub struct Event {
 impl Event {
     /* ====================================================================== */
     /// new
-    #[inline(always)]
     pub fn new(type_: EventTypeRef, data: EventDataElicit) -> Self { Event {
         type_:  type_,
         data:   data,
     } }
     /* ====================================================================== */
     /// peek_type
-    #[inline(always)]
     pub fn peek_type< 'a >(&'a self) -> &'a EventTypeRef { &self.type_ }
     /* ====================================================================== */
     /// with_data
-    #[inline(always)]
     pub fn with_data< R, E, F >(&self, f: F)
                                 -> EventDataElicitResult< R, E, >
         where F: Fn(&Any) -> Result< R, E > {
@@ -70,7 +67,6 @@ impl Event {
     }
     /* ====================================================================== */
     /// with_mut_data
-    #[inline(always)]
         pub fn with_mut_data< R, E, F >(&self, f: F)
                                         -> EventDataElicitResult< R, E, >
         where F: Fn(&mut Any) -> Result< R, E > {
@@ -80,7 +76,6 @@ impl Event {
         }
     /* ====================================================================== */
     /// try_with_data
-    #[inline(always)]
         pub fn try_with_data< R, E, F >(&self, f: F)
                                         -> EventDataElicitResult< R, E, >
         where F: Fn(&Any) -> Result< R, E > {
@@ -90,7 +85,6 @@ impl Event {
         }
     /* ====================================================================== */
     /// try_with_mut_data
-    #[inline(always)]
         pub fn try_with_mut_data< R, E, F >(&self, f: F)
                                             -> EventDataElicitResult< R, E, >
         where F: Fn(&mut Any) -> Result< R, E > {
@@ -108,25 +102,21 @@ pub struct EventQueue(VecDeque< Event >);
 impl EventQueue {
     /* ====================================================================== */
     /// new
-    #[inline(always)]
     pub fn new() -> Self { EventQueue(VecDeque::new()) }
     /* ====================================================================== */
     /// push
-    #[inline(always)]
     pub fn push(&mut self, event: Event) -> () {
         let &mut EventQueue(ref mut deq) = self;
         deq.push_back(event)
     }
     /* ====================================================================== */
     /// pop
-    #[inline(always)]
     pub fn pop(&mut self) -> Option< Event > {
         let &mut EventQueue(ref mut deq) = self;
         deq.pop_front()
     }
     /* ====================================================================== */
     /// shrink_to_fit
-    #[inline(always)]
     pub fn shrink_to_fit(&mut self) -> () {
         let &mut EventQueue(ref mut deq) = self;
         deq.shrink_to_fit()
