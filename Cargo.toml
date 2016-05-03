@@ -2,6 +2,7 @@
 name            = "eventor"
 version         = "0.1.3"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
+license         = "MIT"
 
 [dependencies]
 libc            = "^0.2.10"

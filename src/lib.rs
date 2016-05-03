@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/07
-// @date 2016/04/05
+// @date 2016/05/04
 
 // The MIT License (MIT)
 //
@@ -30,7 +30,7 @@
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* attribute  =============================================================== */
-#![warn(missing_docs)]
+#![deny(missing_docs, dead_code, unused_imports, unused_variables)]
 /* ========================================================================== */
 #[macro_use] extern crate libc;
 #[macro_use] extern crate log;
