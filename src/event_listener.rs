@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/12
-// @date 2016/04/29
+// @date 2016/05/06
 
 // The MIT License (MIT)
 //
@@ -165,12 +165,12 @@ impl EventListenerRemoving {
     /* ====================================================================== */
     /// new
     pub fn new() -> Self { EventListenerRemoving(RwLock::new(Vec::new())) }
-    /* ====================================================================== */
-    /// insert
-    pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
-        let &EventListenerRemoving(ref inner) = self;
-        inner.write().expect("EventLitenerRemoving.insert").
-            push((event_hash, id))
+/* ====================================================================== */
+/// insert
+pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
+let &EventListenerRemoving(ref inner) = self;
+inner.write().expect("EventLitenerRemoving.insert").
+    push((event_hash, id))
     }
     /* ====================================================================== */
     /// contains

@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/07
-// @date 2016/03/27
+// @date 2016/05/06
 
 // The MIT License (MIT)
 //
@@ -32,7 +32,6 @@
 /* ========================================================================== */
 use ::std::fmt::{ Debug, };
 use ::std::any::{ Any, };
-use ::std::borrow::{ Borrow, BorrowMut, };
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 elicit_define!(elicit_t_event_data, TEventData);
@@ -49,17 +48,19 @@ pub use self::elicit_t_event_data::EnableElicitFromSelfField
     as EventDataEnableElicitFromSelfField;
 /* ========================================================================== */
 /// trait TEventData
-pub trait TEventData: Debug + EventDataEnableElicitFromSelf + BorrowMut< Any > {
+pub trait TEventData: Debug +
+    EventDataEnableElicitFromSelf + AsRef< Any > + AsMut< Any > {
 }
 /* -------------------------------------------------------------------------- */
 impl < T > TEventData for T
-    where T: Debug + EventDataEnableElicitFromSelf + BorrowMut< Any > {
+    where T: Debug +
+    EventDataEnableElicitFromSelf + AsRef< Any > + AsMut< Any > {
 }
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// struct EventData
 #[derive( Debug, )]
-    pub struct EventData< T: Debug + Any > {
+pub struct EventData< T: Debug + Any > {
     /// EventDataEnableElicitFromSelfField
     _eefsf:     EventDataEnableElicitFromSelfField,
     /// data
@@ -79,10 +80,10 @@ impl < T: Debug + Any > EventData< T > {
     } }
 }
 /* ========================================================================== */
-impl < T: Debug + Any > Borrow< Any > for EventData< T > {
-    fn borrow(&self) -> &Any { &self.data }
+impl < T: Debug + Any > AsRef< Any > for EventData< T > {
+    fn as_ref(&self) -> &Any { &self.data }
 }
 /* ========================================================================== */
-impl < T: Debug + Any > BorrowMut< Any > for EventData< T > {
-    fn borrow_mut(&mut self) -> &mut Any { &mut self.data }
+impl < T: Debug + Any > AsMut< Any > for EventData< T > {
+    fn as_mut(&mut self) -> &mut Any { &mut self.data }
 }

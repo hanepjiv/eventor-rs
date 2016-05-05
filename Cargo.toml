@@ -1,6 +1,6 @@
 [package]
 name            = "eventor"
-version         = "0.1.3"
+version         = "0.1.4"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
 license         = "MIT"
 

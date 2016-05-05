@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/07
-// @date 2016/03/21
+// @date 2016/05/06
 
 // The MIT License (MIT)
 //
@@ -62,7 +62,7 @@ impl Event {
                                 -> EventDataElicitResult< R, E, >
         where F: Fn(&Any) -> Result< R, E > {
         self.data.with(|data: &TEventData| -> Result< R, E > {
-            f(data.borrow())
+            f(data.as_ref())
         })
     }
     /* ====================================================================== */
@@ -71,7 +71,7 @@ impl Event {
                                         -> EventDataElicitResult< R, E, >
         where F: Fn(&mut Any) -> Result< R, E > {
             self.data.with_mut(|data: &mut TEventData| -> Result< R, E > {
-                f(data.borrow_mut())
+                f(data.as_mut())
             })
         }
     /* ====================================================================== */
@@ -80,7 +80,7 @@ impl Event {
                                         -> EventDataElicitResult< R, E, >
         where F: Fn(&Any) -> Result< R, E > {
             self.data.try_with(|data: &TEventData| -> Result< R, E > {
-                f(data.borrow())
+                f(data.as_ref())
             })
         }
     /* ====================================================================== */
@@ -89,7 +89,7 @@ impl Event {
                                             -> EventDataElicitResult< R, E, >
         where F: Fn(&mut Any) -> Result< R, E > {
             self.data.try_with_mut(|data: &mut TEventData| -> Result< R, E > {
-                f(data.borrow_mut())
+                f(data.as_mut())
             })
         }
 }
