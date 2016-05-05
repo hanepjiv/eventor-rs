@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/07
-// @date 2016/04/04
+// @date 2016/05/05
 
 // The MIT License (MIT)
 //
@@ -51,19 +51,19 @@ pub type EventTypeRef   = Arc<EventType>;
 /* ========================================================================== */
 impl EventType {
     /* ====================================================================== */
+    /// new
+    pub fn new< 'a >(name: &'a str, hash: u32) -> EventTypeRef {
+        Arc::new(EventType {
+            name:       name.to_string(),
+            hash:       hash,
+        })
+    }
+    /* ====================================================================== */
     /// peek_name
     pub fn peek_name< 'a >(&'a self) -> &'a str { self.name.as_ref() }
     /* ====================================================================== */
     /// peek_hash
     pub fn peek_hash(&self) -> u32 { self.hash }
-}
-/* ========================================================================== */
-/// new_event_type
-pub fn new_event_type< 'a >(name: &'a str, hash: u32) -> EventTypeRef {
-    Arc::new(EventType {
-        name:       name.to_string(),
-        hash:       hash,
-    })
 }
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
@@ -91,16 +91,21 @@ impl EventTypeMap {
     pub fn new_type(&mut self, name: &str) -> Option< EventTypeRef > {
         let (hash, ret) = self.check_type(name);
         match ret {
-            Some(_)     => None,
+            x@Some(_)   => x,  // already exists
             None        => {
-                let event_type = new_event_type(name, hash);
+                let event_type = EventType::new(name, hash);
                 let &mut EventTypeMap(ref mut inner) = self;
                 match inner.insert(hash, event_type.clone()) {
-                    Some(_)     => panic!("Eventor::new_type"),
+                    Some(_)     => {
+                        error!("Eventor::new_type: \
+                                Hash value are in conflict. \
+                                Take a different name. \"{}\"", name);
+                        None
+                    },
                     None        => {
                         info!("Eventor::new_type: {:#x} \"{}\"", hash, name);
                         Some(event_type)
-                    }
+                    },
                 }
             }
         }
