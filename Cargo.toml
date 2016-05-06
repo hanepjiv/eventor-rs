@@ -1,3 +1,4 @@
+# -*- mode:toml; coding:utf-8-unix; -*-
 [package]
 name            = "eventor"
 version         = "0.1.4"

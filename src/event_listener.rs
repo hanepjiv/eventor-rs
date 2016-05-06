@@ -1,4 +1,4 @@
-/* -*- mode:rust; coding:utf-8; -*- */
+/* -*- mode:rust; coding:utf-8-unix; -*- */
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/12
