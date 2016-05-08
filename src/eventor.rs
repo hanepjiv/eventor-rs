@@ -100,11 +100,11 @@ impl Eventor {
     pub fn new() -> EventorElicit {
         EventorElicit::new(Eventor {
             _eefsf:             EventorEnableElicitFromSelfField::default(),
-            type_map:           RwLock::new(EventTypeMap::new()),
+            type_map:           RwLock::new(EventTypeMap::default()),
             queue:              RwLock::new(EventQueue::default()),
-            listener_map:       RwLock::new(EventListenerMap::new()),
-            listener_waiting:   EventListenerWaiting::new(),
-            listener_removing:  EventListenerRemoving::new(),
+            listener_map:       RwLock::new(EventListenerMap::default()),
+            listener_waiting:   EventListenerWaiting::default(),
+            listener_removing:  EventListenerRemoving::default(),
         })
     }
 }

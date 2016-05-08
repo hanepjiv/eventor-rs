@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/12
-// @date 2016/05/06
+// @date 2016/05/08
 
 // The MIT License (MIT)
 //
@@ -69,13 +69,10 @@ pub type EventListenerList = BTreeMap< uintptr_t, EventListenerElicit >;
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// struct EventListenerMap
-#[derive( Debug, )]
+#[derive( Debug, Default, )]
 pub struct EventListenerMap(BTreeMap< u32, EventListenerList >);
 /* ========================================================================== */
 impl EventListenerMap {
-    /* ====================================================================== */
-    /// new
-    pub fn new() -> Self { EventListenerMap(BTreeMap::new()) }
     /* ====================================================================== */
     /// insert
     pub fn insert(&mut self,
@@ -87,7 +84,7 @@ impl EventListenerMap {
             inner.get_mut(&event_hash).expect("EventListenerMap::insert").
                 insert(id, listener)
         } else {
-            match inner.insert(event_hash, EventListenerList::new()) {
+            match inner.insert(event_hash, EventListenerList::default()) {
                 None    => inner.get_mut(&event_hash).
                     expect("EventListenerMap::insert").
                     insert(id, listener),
@@ -123,10 +120,12 @@ impl EventListenerMap {
 #[derive( Debug, )]
 pub struct EventListenerWaiting(RwLock< Vec< (u32, EventListenerElicit) > >);
 /* ========================================================================== */
-impl EventListenerWaiting {
+impl Default for EventListenerWaiting {
     /* ====================================================================== */
-    /// new
-    pub fn new() -> Self { EventListenerWaiting(RwLock::new(Vec::new())) }
+    fn default() -> Self { EventListenerWaiting(RwLock::new(Vec::default())) }
+}
+/* ========================================================================== */
+impl EventListenerWaiting {
     /* ====================================================================== */
     /// insert
     pub fn insert(&self, event_hash: u32, listener: EventListenerElicit) {
@@ -161,16 +160,18 @@ impl EventListenerWaiting {
 #[derive( Debug, )]
 pub struct EventListenerRemoving(RwLock< Vec< (u32, uintptr_t) > >);
 /* ========================================================================== */
+impl Default for EventListenerRemoving {
+    /* ====================================================================== */
+    fn default() -> Self { EventListenerRemoving(RwLock::new(Vec::default())) }
+}
+/* ========================================================================== */
 impl EventListenerRemoving {
     /* ====================================================================== */
-    /// new
-    pub fn new() -> Self { EventListenerRemoving(RwLock::new(Vec::new())) }
-/* ====================================================================== */
-/// insert
-pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
-let &EventListenerRemoving(ref inner) = self;
-inner.write().expect("EventLitenerRemoving.insert").
-    push((event_hash, id))
+    /// insert
+    pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
+        let &EventListenerRemoving(ref inner) = self;
+        inner.write().expect("EventLitenerRemoving.insert").
+            push((event_hash, id))
     }
     /* ====================================================================== */
     /// contains

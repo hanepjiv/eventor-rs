@@ -1,7 +1,7 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 [package]
 name            = "eventor"
-version         = "0.1.5"
+version         = "0.1.6"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
 license         = "MIT"
 
