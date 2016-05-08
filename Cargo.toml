@@ -1,13 +1,15 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 [package]
 name            = "eventor"
-version         = "0.1.4"
+version         = "0.1.5"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
 license         = "MIT"
 
 [dependencies]
-libc            = "^0.2.10"
+libc            = "^0.2.11"
 log             = "^0.3.6"
 # ------------------------------------------------------------------------------
-elicit          = { git = "https://github.com/hanepjiv/elicit-rs.git" }
-hash_combine    = { git = "https://github.com/hanepjiv/hash_combine-rs.git" }
+elicit         = { git = "https://github.com/hanepjiv/elicit-rs.git" }
+#elicit          = { path = "../../elicit-rs/orig" }
+hash_combine   = { git = "https://github.com/hanepjiv/hash_combine-rs.git" }
+#hash_combine    = { path = "../../hash_combine-rs/orig" }

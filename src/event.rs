@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/07
-// @date 2016/05/06
+// @date 2016/05/08
 
 // The MIT License (MIT)
 //
@@ -99,10 +99,12 @@ impl Event {
 #[derive( Debug, )]
 pub struct EventQueue(VecDeque< Event >);
 /* ========================================================================== */
-impl EventQueue {
+impl Default for EventQueue {
     /* ====================================================================== */
-    /// new
-    pub fn new() -> Self { EventQueue(VecDeque::new()) }
+    fn default() -> Self { EventQueue(VecDeque::new()) }
+}
+/* ========================================================================== */
+impl EventQueue {
     /* ====================================================================== */
     /// push
     pub fn push(&mut self, event: Event) -> () {

@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/07
-// @date 2016/05/06
+// @date 2016/05/08
 
 // The MIT License (MIT)
 //
@@ -75,7 +75,7 @@ impl < T: Debug + Any > EventData< T > {
     /* ====================================================================== */
     /// new
     pub fn new(data: T) -> Self { EventData {
-        _eefsf: EventDataEnableElicitFromSelfField::new(),
+        _eefsf: EventDataEnableElicitFromSelfField::default(),
         data:   data,
     } }
 }

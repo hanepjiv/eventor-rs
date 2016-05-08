@@ -2,7 +2,7 @@
 
 // @author hanepjiv <hanepjiv@gmail.com>
 // @since 2016/03/03
-// @date 2016/04/29
+// @date 2016/05/08
 
 // The MIT License (MIT)
 //
@@ -99,9 +99,9 @@ impl Eventor {
     /// new
     pub fn new() -> EventorElicit {
         EventorElicit::new(Eventor {
-            _eefsf:             EventorEnableElicitFromSelfField::new(),
+            _eefsf:             EventorEnableElicitFromSelfField::default(),
             type_map:           RwLock::new(EventTypeMap::new()),
-            queue:              RwLock::new(EventQueue::new()),
+            queue:              RwLock::new(EventQueue::default()),
             listener_map:       RwLock::new(EventListenerMap::new()),
             listener_waiting:   EventListenerWaiting::new(),
             listener_removing:  EventListenerRemoving::new(),
