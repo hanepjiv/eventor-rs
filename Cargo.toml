@@ -3,13 +3,15 @@
 name            = "eventor"
 version         = "0.1.6"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
-license         = "MIT"
+license         = "MIT/Apache-2.0"
+readme          = "README.md"
+repository      = "https://github.com/hanepjiv/eventor-rs.git"
 
 [dependencies]
 libc            = "^0.2.11"
 log             = "^0.3.6"
 # ------------------------------------------------------------------------------
-elicit         = { git = "https://github.com/hanepjiv/elicit-rs.git" }
+elicit          = { git = "https://github.com/hanepjiv/elicit-rs.git" }
 #elicit          = { path = "../../elicit-rs/orig" }
-hash_combine   = { git = "https://github.com/hanepjiv/hash_combine-rs.git" }
+hash_combine    = { git = "https://github.com/hanepjiv/hash_combine-rs.git" }
 #hash_combine    = { path = "../../hash_combine-rs/orig" }
