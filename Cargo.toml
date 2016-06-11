@@ -1,14 +1,14 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 [package]
 name            = "eventor"
-version         = "0.1.6"
+version         = "0.1.7"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
 license         = "MIT/Apache-2.0"
 readme          = "README.md"
 repository      = "https://github.com/hanepjiv/eventor-rs.git"
 
 [dependencies]
-libc            = "^0.2.11"
+libc            = "^0.2.12"
 log             = "^0.3.6"
 # ------------------------------------------------------------------------------
 elicit          = { git = "https://github.com/hanepjiv/elicit-rs.git" }
