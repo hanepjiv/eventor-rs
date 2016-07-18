@@ -8,7 +8,7 @@ readme          = "README.md"
 repository      = "https://github.com/hanepjiv/eventor-rs.git"
 
 [dependencies]
-libc            = "^0.2.13"
+libc            = "^0.2.14"
 log             = "^0.3.6"
 # ------------------------------------------------------------------------------
 elicit          = { git = "https://github.com/hanepjiv/elicit-rs.git" }
