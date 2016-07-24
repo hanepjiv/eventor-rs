@@ -1,12 +1,17 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
+# ==============================================================================
 [package]
 name            = "eventor"
-version         = "0.1.7"
+version         = "0.1.8"
 authors         = ["hanepjiv <hanepjiv@gmail.com>"]
 license         = "MIT/Apache-2.0"
+keywords        = ["subsystem", "event"]
+description     = "Event library"
 readme          = "README.md"
+documentation   = "https://github.com/hanepjiv/eventor-rs/wiki"
+homepage        = "https://github.com/hanepjiv/eventor-rs"
 repository      = "https://github.com/hanepjiv/eventor-rs.git"
-
+# ==============================================================================
 [dependencies]
 libc            = "^0.2.14"
 log             = "^0.3.6"
