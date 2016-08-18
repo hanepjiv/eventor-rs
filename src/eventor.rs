@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2016/05/11
+//  @date 2016/08/18
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
@@ -14,24 +14,24 @@ use ::std::sync::{ RwLock, };
 /* ========================================================================== */
 use self::super::event::{ Event, EventQueue, };
 use super::event_type::{ EventTypeRef, EventTypeMap, };
-use super::event_listener::{ EventListenerElicit,
+use super::event_listener::{ EventListenerAelicit,
                              EventListenerMap,
                              EventListenerWaiting, EventListenerRemoving, };
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
-elicit_define!(elicit_t_eventor, TEventor);
+aelicit_define!(aelicit_t_eventor, TEventor);
 /* -------------------------------------------------------------------------- */
-pub use self::elicit_t_eventor::ElicitError     as EventorElicitError;
-pub use self::elicit_t_eventor::ElicitResult    as EventorElicitResult;
-pub use self::elicit_t_eventor::Elicit          as EventorElicit;
-pub use self::elicit_t_eventor::EnableElicitFromSelf
-    as EventorEnableElicitFromSelf;
-pub use self::elicit_t_eventor::EnableElicitFromSelfField
-    as EventorEnableElicitFromSelfField;
+pub use self::aelicit_t_eventor::AelicitError   as EventorAelicitError;
+pub use self::aelicit_t_eventor::AelicitResult  as EventorAelicitResult;
+pub use self::aelicit_t_eventor::Aelicit                as EventorAelicit;
+pub use self::aelicit_t_eventor::EnableAelicitFromSelf
+    as EventorEnableAelicitFromSelf;
+pub use self::aelicit_t_eventor::EnableAelicitFromSelfField
+    as EventorEnableAelicitFromSelfField;
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// TEventor
-pub trait TEventor: ::std::fmt::Debug + EventorEnableElicitFromSelf {
+pub trait TEventor: ::std::fmt::Debug + EventorEnableAelicitFromSelf {
     /* ====================================================================== */
     /// new_type
     fn new_type(&self, &str) -> Option< EventTypeRef >;
@@ -42,7 +42,7 @@ pub trait TEventor: ::std::fmt::Debug + EventorEnableElicitFromSelf {
     /* ---------------------------------------------------------------------- */
     /// insert_listener
     fn insert_listener(&self,
-                       event_hash: u32, listener: &EventListenerElicit) -> ();
+                       event_hash: u32, listener: &EventListenerAelicit) -> ();
     /* ---------------------------------------------------------------------- */
     /// remove_listener
     fn remove_listener(&self,
@@ -60,7 +60,7 @@ pub trait TEventor: ::std::fmt::Debug + EventorEnableElicitFromSelf {
 #[derive( Debug, )]
 pub struct Eventor {
     /* base  ================================================================ */
-    _eefsf:             EventorEnableElicitFromSelfField,
+    _eefsf:             EventorEnableAelicitFromSelfField,
     /* field  =============================================================== */
     /// event type map
     type_map:           RwLock< EventTypeMap >,
@@ -77,9 +77,9 @@ pub struct Eventor {
 impl Eventor {
     /* ====================================================================== */
     /// new
-    pub fn new() -> EventorElicit {
-        EventorElicit::new(Eventor {
-            _eefsf:             EventorEnableElicitFromSelfField::default(),
+    pub fn new() -> EventorAelicit {
+        EventorAelicit::new(Eventor {
+            _eefsf:             EventorEnableAelicitFromSelfField::default(),
             type_map:           RwLock::new(EventTypeMap::default()),
             queue:              RwLock::new(EventQueue::default()),
             listener_map:       RwLock::new(EventListenerMap::default()),
@@ -89,8 +89,8 @@ impl Eventor {
     }
 }
 /* ========================================================================== */
-impl EventorEnableElicitFromSelf for Eventor {
-    enable_elicit_from_self_impl_inner!(TEventor, EventorElicit, _eefsf);
+impl EventorEnableAelicitFromSelf for Eventor {
+    enable_aelicit_from_self_impl_inner!(TEventor, EventorAelicit, _eefsf);
 }
 /* ========================================================================== */
 impl TEventor for Eventor {
@@ -106,7 +106,7 @@ impl TEventor for Eventor {
     /* ====================================================================== */
     /* ---------------------------------------------------------------------- */
     fn insert_listener(&self,
-                       event_hash: u32, listener: &EventListenerElicit) -> () {
+                       event_hash: u32, listener: &EventListenerAelicit) -> () {
         self.listener_waiting.insert(event_hash, listener.clone())
     }
     /* ---------------------------------------------------------------------- */
@@ -143,7 +143,7 @@ impl TEventor for Eventor {
                             for (_, ref mut listener) in list.iter_mut() {
                                 listener.write().expect("Eventor::dispatch").
                                     on_event(&e,
-                                             &self.elicit_from_self()
+                                             &self.aelicit_from_self()
                                              .expect("Eventor::dispatch"));
                             }
                         },

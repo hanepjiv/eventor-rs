@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2016/05/16
+//  @date 2016/08/18
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
@@ -17,35 +17,35 @@ use ::std::sync::{ RwLock, };
 use ::libc::uintptr_t;
 /* -------------------------------------------------------------------------- */
 use super::event::{ Event, };
-use super::eventor::{ EventorElicit, };
+use super::eventor::{ EventorAelicit, };
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
-elicit_define!(elicit_t_event_listener, TEventListener);
+aelicit_define!(aelicit_t_event_listener, TEventListener);
 /* -------------------------------------------------------------------------- */
-pub use self::elicit_t_event_listener::ElicitError
-    as EventListenerElicitError;
-pub use self::elicit_t_event_listener::ElicitResult
-    as EventListenerElicitResult;
-pub use self::elicit_t_event_listener::Elicit
-    as EventListenerElicit;
-pub use self::elicit_t_event_listener::EnableElicitFromSelf
-    as EventListenerEnableElicitFromSelf;
-pub use self::elicit_t_event_listener::EnableElicitFromSelfField
-    as EventListenerEnableElicitFromSelfField;
+pub use self::aelicit_t_event_listener::AelicitError
+    as EventListenerAelicitError;
+pub use self::aelicit_t_event_listener::AelicitResult
+    as EventListenerAelicitResult;
+pub use self::aelicit_t_event_listener::Aelicit
+    as EventListenerAelicit;
+pub use self::aelicit_t_event_listener::EnableAelicitFromSelf
+    as EventListenerEnableAelicitFromSelf;
+pub use self::aelicit_t_event_listener::EnableAelicitFromSelfField
+    as EventListenerEnableAelicitFromSelfField;
 /* ========================================================================== */
 /// trait TEventListener
-pub trait TEventListener: Debug + EventListenerEnableElicitFromSelf {
+pub trait TEventListener: Debug + EventListenerEnableAelicitFromSelf {
     /* ====================================================================== */
     /// peek_id
     fn peek_id(&self) -> uintptr_t;
     /* ====================================================================== */
     /// on_event
-    fn on_event(&mut self, event: &Event, eventor: &EventorElicit) -> bool;
+    fn on_event(&mut self, event: &Event, eventor: &EventorAelicit) -> bool;
 }
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// type EventListenerList
-pub type EventListenerList = BTreeMap< uintptr_t, EventListenerElicit >;
+pub type EventListenerList = BTreeMap< uintptr_t, EventListenerAelicit >;
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// struct EventListenerMap
@@ -56,8 +56,8 @@ impl EventListenerMap {
     /* ====================================================================== */
     /// insert
     pub fn insert(&mut self,
-                  event_hash: u32, id: uintptr_t, listener: EventListenerElicit)
-                  -> Option< EventListenerElicit > {
+                  event_hash: u32, id: uintptr_t, listener: EventListenerAelicit)
+                  -> Option< EventListenerAelicit > {
         let &mut EventListenerMap(ref mut inner) = self;
         if inner.contains_key(&event_hash) {
             inner.get_mut(&event_hash).expect("EventListenerMap::insert").
@@ -74,7 +74,7 @@ impl EventListenerMap {
     /* ====================================================================== */
     /// remove
     pub fn remove(&mut self, event_hash: u32, id: uintptr_t)
-                  -> Option< EventListenerElicit > {
+                  -> Option< EventListenerAelicit > {
         let &mut EventListenerMap(ref mut inner) = self;
         if inner.contains_key(&event_hash) {
             inner.get_mut(&event_hash).expect("EventListenerMap::remove").
@@ -97,7 +97,7 @@ impl EventListenerMap {
 /* ========================================================================== */
 /// struct EventListenerWaiting
 #[derive( Debug, )]
-pub struct EventListenerWaiting(RwLock< Vec< (u32, EventListenerElicit) > >);
+pub struct EventListenerWaiting(RwLock< Vec< (u32, EventListenerAelicit) > >);
 /* ========================================================================== */
 impl Default for EventListenerWaiting {
     /* ====================================================================== */
@@ -107,7 +107,7 @@ impl Default for EventListenerWaiting {
 impl EventListenerWaiting {
     /* ====================================================================== */
     /// insert
-    pub fn insert(&self, event_hash: u32, listener: EventListenerElicit) {
+    pub fn insert(&self, event_hash: u32, listener: EventListenerAelicit) {
         let &EventListenerWaiting(ref inner) = self;
         inner.write().expect("EventLitenerWaiting.insert").
             push((event_hash, listener))

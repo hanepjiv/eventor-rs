@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/05/11
+//  @date 2016/08/18
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
@@ -14,48 +14,48 @@ use ::std::fmt::{ Debug, };
 use ::std::any::{ Any, };
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
-elicit_define!(elicit_t_event_data, TEventData);
+aelicit_define!(aelicit_t_event_data, TEventData);
 /* -------------------------------------------------------------------------- */
-pub use self::elicit_t_event_data::ElicitError
-    as EventDataElicitError;
-pub use self::elicit_t_event_data::ElicitResult
-    as EventDataElicitResult;
-pub use self::elicit_t_event_data::Elicit
-    as EventDataElicit;
-pub use self::elicit_t_event_data::EnableElicitFromSelf
-    as EventDataEnableElicitFromSelf;
-pub use self::elicit_t_event_data::EnableElicitFromSelfField
-    as EventDataEnableElicitFromSelfField;
+pub use self::aelicit_t_event_data::AelicitError
+    as EventDataAelicitError;
+pub use self::aelicit_t_event_data::AelicitResult
+    as EventDataAelicitResult;
+pub use self::aelicit_t_event_data::Aelicit
+    as EventDataAelicit;
+pub use self::aelicit_t_event_data::EnableAelicitFromSelf
+    as EventDataEnableAelicitFromSelf;
+pub use self::aelicit_t_event_data::EnableAelicitFromSelfField
+    as EventDataEnableAelicitFromSelfField;
 /* ========================================================================== */
 /// trait TEventData
 pub trait TEventData: Debug +
-    EventDataEnableElicitFromSelf + AsRef< Any > + AsMut< Any > {
+    EventDataEnableAelicitFromSelf + AsRef< Any > + AsMut< Any > {
 }
 /* -------------------------------------------------------------------------- */
 impl < T > TEventData for T
     where T: Debug +
-    EventDataEnableElicitFromSelf + AsRef< Any > + AsMut< Any > {
+    EventDataEnableAelicitFromSelf + AsRef< Any > + AsMut< Any > {
 }
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 /// struct EventData
 #[derive( Debug, )]
 pub struct EventData< T: Debug + Any > {
-    /// EventDataEnableElicitFromSelfField
-    _eefsf:     EventDataEnableElicitFromSelfField,
+    /// EventDataEnableAelicitFromSelfField
+    _eefsf:     EventDataEnableAelicitFromSelfField,
     /// data
     data:       T,
 }
 /* ========================================================================== */
-impl < T: Debug + Any > EventDataEnableElicitFromSelf for EventData< T > {
-    enable_elicit_from_self_impl_inner!(TEventData, EventDataElicit, _eefsf);
+impl < T: Debug + Any > EventDataEnableAelicitFromSelf for EventData< T > {
+    enable_aelicit_from_self_impl_inner!(TEventData, EventDataAelicit, _eefsf);
 }
 /* ========================================================================== */
 impl < T: Debug + Any > EventData< T > {
     /* ====================================================================== */
     /// new
     pub fn new(data: T) -> Self { EventData {
-        _eefsf: EventDataEnableElicitFromSelfField::default(),
+        _eefsf: EventDataEnableAelicitFromSelfField::default(),
         data:   data,
     } }
 }

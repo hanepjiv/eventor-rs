@@ -6,14 +6,14 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/05/11
+//  @date 2016/08/18
 
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
 use ::std::any::{ Any, };
 use ::std::collections::{ VecDeque, };
 /* -------------------------------------------------------------------------- */
-use super::event_data::{ TEventData, EventDataElicitResult, EventDataElicit, };
+use super::event_data::{ TEventData, EventDataAelicitResult, EventDataAelicit, };
 use super::event_type::{ EventTypeRef, };
 /* ////////////////////////////////////////////////////////////////////////// */
 /* ========================================================================== */
@@ -23,13 +23,13 @@ pub struct Event {
     /// type
     type_:      EventTypeRef,
     /// data
-    data:       EventDataElicit,
+    data:       EventDataAelicit,
 }
 /* ========================================================================== */
 impl Event {
     /* ====================================================================== */
     /// new
-    pub fn new(type_: EventTypeRef, data: EventDataElicit) -> Self { Event {
+    pub fn new(type_: EventTypeRef, data: EventDataAelicit) -> Self { Event {
         type_:  type_,
         data:   data,
     } }
@@ -39,7 +39,7 @@ impl Event {
     /* ====================================================================== */
     /// with_data
     pub fn with_data< R, E, F >(&self, f: F)
-                                -> EventDataElicitResult< R, E, >
+                                -> EventDataAelicitResult< R, E, >
         where F: Fn(&Any) -> Result< R, E > {
         self.data.with(|data: &TEventData| -> Result< R, E > {
             f(data.as_ref())
@@ -48,7 +48,7 @@ impl Event {
     /* ====================================================================== */
     /// with_mut_data
         pub fn with_mut_data< R, E, F >(&self, f: F)
-                                        -> EventDataElicitResult< R, E, >
+                                        -> EventDataAelicitResult< R, E, >
         where F: Fn(&mut Any) -> Result< R, E > {
             self.data.with_mut(|data: &mut TEventData| -> Result< R, E > {
                 f(data.as_mut())
@@ -57,7 +57,7 @@ impl Event {
     /* ====================================================================== */
     /// try_with_data
         pub fn try_with_data< R, E, F >(&self, f: F)
-                                        -> EventDataElicitResult< R, E, >
+                                        -> EventDataAelicitResult< R, E, >
         where F: Fn(&Any) -> Result< R, E > {
             self.data.try_with(|data: &TEventData| -> Result< R, E > {
                 f(data.as_ref())
@@ -66,7 +66,7 @@ impl Event {
     /* ====================================================================== */
     /// try_with_mut_data
         pub fn try_with_mut_data< R, E, F >(&self, f: F)
-                                            -> EventDataElicitResult< R, E, >
+                                            -> EventDataAelicitResult< R, E, >
         where F: Fn(&mut Any) -> Result< R, E > {
             self.data.try_with_mut(|data: &mut TEventData| -> Result< R, E > {
                 f(data.as_mut())
