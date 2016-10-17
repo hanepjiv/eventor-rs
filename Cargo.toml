@@ -1,5 +1,5 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
-# ==============================================================================
+# =============================================================================
 [package]
 name            = "eventor"
 version         = "0.1.10"
@@ -11,11 +11,11 @@ readme          = "README.md"
 documentation   = "https://github.com/hanepjiv/eventor-rs/wiki"
 homepage        = "https://github.com/hanepjiv/eventor-rs"
 repository      = "https://github.com/hanepjiv/eventor-rs.git"
-# ==============================================================================
+# =============================================================================
 [dependencies]
 libc            = "^0.2.16"
 log             = "^0.3.6"
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 elicit          = { git = "https://github.com/hanepjiv/elicit-rs.git" }
 #elicit          = { path = "../../elicit-rs/orig" }
 hash_combine    = { git = "https://github.com/hanepjiv/hash_combine-rs.git" }
