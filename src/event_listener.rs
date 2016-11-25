@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2016/10/13
+//  @date 2016/11/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -129,7 +129,7 @@ impl EventListenerWaiting {
         for &(hash, ref listener) in vec.iter() {
             let id = listener.read().expect("EventListenerWaiting::apply").
                 peek_id();
-            map.insert(hash, id, listener.clone());
+            let _ = map.insert(hash, id, listener.clone());
         }
         vec.clear();
     }
@@ -176,7 +176,7 @@ impl EventListenerRemoving {
         let &EventListenerRemoving(ref inner) = self;
         let mut vec = inner.write().expect("EventLitenerRemoving.apply");
         for &(hash, id) in vec.iter() {
-            map.remove(hash, id);
+            let _ = map.remove(hash, id);
         }
         vec.clear();
     }

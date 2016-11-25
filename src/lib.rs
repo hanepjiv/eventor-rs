@@ -6,11 +6,16 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/10/10
+//  @date 2016/11/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-#![deny(missing_docs, dead_code, unused_imports, unused_variables)]
+#![deny(fat_ptr_transmutes, missing_copy_implementations,
+        missing_debug_implementations, missing_docs, unstable_features,
+        unused_qualifications, unused_results, variant_size_differences)]
+#![warn(unused_extern_crates, warnings)]
+#![allow(box_pointers, trivial_casts, trivial_numeric_casts, unsafe_code,
+         unused_import_braces)]
 // ============================================================================
 #[macro_use] extern crate libc;
 #[macro_use] extern crate log;
