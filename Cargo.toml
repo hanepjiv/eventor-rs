@@ -14,7 +14,6 @@ repository      = "https://github.com/hanepjiv/eventor-rs.git"
 # =============================================================================
 [dependencies]
 libc            = "^0.2.17"
-log             = "^0.3.6"
 # -----------------------------------------------------------------------------
 elicit          = { git = "https://github.com/hanepjiv/elicit-rs.git" }
 #elicit          = { path = "../../elicit-rs/orig" }

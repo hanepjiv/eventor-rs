@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2016/11/26
+//  @date 2016/11/27
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -68,7 +68,7 @@ impl EventListenerMap {
                 None    => inner.get_mut(&event_hash).
                     expect("EventListenerMap::insert").
                     insert(id, listener),
-                Some(_) => panic!("EventListenerMap::insert"),
+                Some(ref mut list) => list.insert(id, listener),
             }
         }
     }

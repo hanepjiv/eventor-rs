@@ -6,13 +6,14 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2016/10/10
+//  @date 2016/12/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use ::std::sync::{ RwLock, };
-// ============================================================================
-use self::super::event::{ Event, EventQueue, };
+// ----------------------------------------------------------------------------
+use super::error::Error;
+use super::event::{ Event, EventQueue, };
 use super::event_type::{ EventTypeRef, EventTypeMap, };
 use super::event_listener::{ EventListenerAelicit,
                              EventListenerMap,
@@ -34,7 +35,7 @@ pub use self::aelicit_t_eventor::EnableAelicitFromSelfField
 pub trait TEventor: ::std::fmt::Debug + EventorEnableAelicitFromSelf {
     // ========================================================================
     /// new_type
-    fn new_type(&self, &str) -> Option< EventTypeRef >;
+    fn new_type(&self, &str) -> Result< EventTypeRef, Error >;
     // ------------------------------------------------------------------------
     /// peek_type
     fn peek_type(&self, &str) -> Option< EventTypeRef >;
@@ -96,7 +97,7 @@ impl EventorEnableAelicitFromSelf for Eventor {
 impl TEventor for Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
-    fn new_type(&self, name: &str) -> Option< EventTypeRef > {
+    fn new_type(&self, name: &str) -> Result< EventTypeRef, Error > {
         self.type_map.write().expect("Eventor::new_type").new_type(name)
     }
     // ------------------------------------------------------------------------
@@ -140,7 +141,9 @@ impl TEventor for Eventor {
                 match self.listener_map.write().expect("Eventor::dispatch").
                     get_mut(&(e.peek_type().peek_hash())) {
                         None        => {
-                            debug!("Eventor::dispatch: no listener");
+                            if cfg!(debug_assertions) {
+                                println!("Eventor::dispatch: no listener");
+                            }
                         },
                         Some(list)  => {
                             for (_, ref mut listener) in list.iter_mut() {

@@ -6,18 +6,20 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/10/10
+//  @date 2016/11/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::sync::{ Arc, };
-use ::std::collections::{ BTreeMap, };
+use ::std::sync::Arc;
+use ::std::collections::BTreeMap;
 // ----------------------------------------------------------------------------
-use ::hash_combine::{ hash_combine, };
+use ::hash_combine::hash_combine;
+// ----------------------------------------------------------------------------
+use super::error::Error;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventType
-#[derive( Debug, )]
+#[derive( Debug, Clone, )]
 pub struct EventType {
     /// name
     name:       String,
@@ -64,23 +66,26 @@ impl EventTypeMap {
     }
     // ------------------------------------------------------------------------
     /// new_type
-    pub fn new_type(&mut self, name: &str) -> Option< EventTypeRef > {
+    pub fn new_type(&mut self, name: &str) -> Result< EventTypeRef, Error > {
         let (hash, ret) = self.check_type(name);
         match ret {
-            x@Some(_)   => x,  // already exists
+            Some(r)     => Ok(r),  // already exists
             None        => {
                 let event_type = EventType::new(name, hash);
                 let &mut EventTypeMap(ref mut inner) = self;
                 match inner.insert(hash, event_type.clone()) {
                     Some(_)     => {
-                        error!("Eventor::new_type: \
-                                Hash value are in conflict. \
-                                Take a different name. \"{}\"", name);
-                        None
+                        Err(Error::EventorError(
+                            format!("Eventor::new_type: \
+                                     Hash value are in conflict. \
+                                     Take a different name. \"{}\"", name)))
                     },
                     None        => {
-                        info!("Eventor::new_type: {:#x} \"{}\"", hash, name);
-                        Some(event_type)
+                        if cfg!(debug_assertions) {
+                            println!("Eventor::new_type: {:#x} \"{}\"",
+                                     hash, name);
+                        }
+                        Ok(event_type)
                     },
                 }
             }
