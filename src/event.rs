@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/10/10
+//  @date 2016/12/30
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -39,39 +39,42 @@ impl Event {
     pub fn peek_type< 'a >(&'a self) -> &'a EventTypeRef { &self.type_ }
     // ========================================================================
     /// with_data
-    pub fn with_data< R, E, F >(&self, f: F)
-                                -> EventDataAelicitResult< R, E, >
-        where F: Fn(&Any) -> Result< R, E > {
-        self.data.with(|data: &TEventData| -> Result< R, E > {
+    pub fn with_data< R, E, F >(&self, f: F) -> EventDataAelicitResult<R>
+        where F: Fn(&Any) -> EventDataAelicitResult<R> {
+        self.data.with(|data: &TEventData| -> EventDataAelicitResult<R> {
             f(data.as_ref())
         })
     }
     // ========================================================================
     /// with_mut_data
-        pub fn with_mut_data< R, E, F >(&self, f: F)
-                                        -> EventDataAelicitResult< R, E, >
-        where F: Fn(&mut Any) -> Result< R, E > {
-            self.data.with_mut(|data: &mut TEventData| -> Result< R, E > {
+    pub fn with_mut_data< R, E, F >(&self, f: F)
+                                    -> EventDataAelicitResult< R >
+        where F: Fn(&mut Any) -> EventDataAelicitResult<R> {
+        self.data.with_mut(
+            |data: &mut TEventData| -> EventDataAelicitResult<R> {
                 f(data.as_mut())
-            })
-        }
+            }
+        )
+    }
     // ========================================================================
     /// try_with_data
-        pub fn try_with_data< R, E, F >(&self, f: F)
-                                        -> EventDataAelicitResult< R, E, >
-        where F: Fn(&Any) -> Result< R, E > {
-            self.data.try_with(|data: &TEventData| -> Result< R, E > {
-                f(data.as_ref())
-            })
-        }
+    pub fn try_with_data< R, E, F >(&self, f: F)
+                                    -> EventDataAelicitResult<R>
+        where F: Fn(&Any) -> EventDataAelicitResult<R> {
+        self.data.try_with(|data: &TEventData| -> EventDataAelicitResult<R> {
+            f(data.as_ref())
+        })
+    }
     // ========================================================================
     /// try_with_mut_data
         pub fn try_with_mut_data< R, E, F >(&self, f: F)
-                                            -> EventDataAelicitResult< R, E, >
-        where F: Fn(&mut Any) -> Result< R, E > {
-            self.data.try_with_mut(|data: &mut TEventData| -> Result< R, E > {
-                f(data.as_mut())
-            })
+                                            -> EventDataAelicitResult<R>
+        where F: Fn(&mut Any) -> EventDataAelicitResult<R> {
+            self.data.try_with_mut(
+                |data: &mut TEventData| -> EventDataAelicitResult<R> {
+                    f(data.as_mut())
+                }
+            )
         }
 }
 // ////////////////////////////////////////////////////////////////////////////

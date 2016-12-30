@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2016/11/27
+//  @date 2016/12/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -125,7 +125,7 @@ impl EventListenerWaiting {
     pub fn apply< Q >(&self, map: &mut Q)
         where Q:        ::std::ops::DerefMut< Target = EventListenerMap > {
         let &EventListenerWaiting(ref inner) = self;
-        let mut vec = inner.write().expect("EventLitenerWaiting.insert");
+        let mut vec = inner.write().expect("EventLitenerWaiting.apply");
         for &(hash, ref listener) in vec.iter() {
             let id = listener.read().expect("EventListenerWaiting::apply").
                 peek_id();
