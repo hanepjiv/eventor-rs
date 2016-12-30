@@ -10,11 +10,11 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::any::{ Any, };
 use ::std::collections::{ VecDeque, };
 // ----------------------------------------------------------------------------
-use super::event_data::{ TEventData, EventDataAelicitResult,
-                         EventDataAelicit, };
+use super::Error;
+use super::event_data::{ TEventData,
+                         EventDataAelicitResult, EventDataAelicit, };
 use super::event_type::{ EventTypeRef, };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -36,41 +36,58 @@ impl Event {
     } }
     // ========================================================================
     /// peek_type
-    pub fn peek_type< 'a >(&'a self) -> &'a EventTypeRef { &self.type_ }
+    pub fn peek_type<'a>(&'a self) -> &'a EventTypeRef { &self.type_ }
     // ========================================================================
     /// with_data
-    pub fn with_data< R, F >(&self, f: F) -> EventDataAelicitResult<R>
-        where F: Fn(&Any) -> EventDataAelicitResult<R> {
-        self.data.with(|data: &TEventData| -> EventDataAelicitResult<R> {
-            f(data.as_ref())
+    pub fn with_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+        where T:        'static,
+              F:        Fn(&T) -> EventDataAelicitResult<R> {
+        self.data.with(|d: &TEventData| -> EventDataAelicitResult<R> {
+            if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
+                f(t)
+            } else {
+                Err(Box::new(Error::DowncastError))
+            }
         })
     }
     // ========================================================================
     /// with_mut_data
-    pub fn with_mut_data< R, F >(&self, f: F) -> EventDataAelicitResult< R >
-        where F: Fn(&mut Any) -> EventDataAelicitResult<R> {
-        self.data.with_mut(
-            |data: &mut TEventData| -> EventDataAelicitResult<R> {
-                f(data.as_mut())
+    pub fn with_mut_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+        where T:        'static,
+              F:        Fn(&mut T) -> EventDataAelicitResult<R> {
+        self.data.with_mut(|d: &mut TEventData| -> EventDataAelicitResult<R> {
+            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                f(t)
+            } else {
+                Err(Box::new(Error::DowncastError))
             }
-        )
+        })
     }
     // ========================================================================
     /// try_with_data
-    pub fn try_with_data< R, F >(&self, f: F) -> EventDataAelicitResult<R>
-        where F: Fn(&Any) -> EventDataAelicitResult<R> {
-        self.data.try_with(|data: &TEventData| -> EventDataAelicitResult<R> {
-            f(data.as_ref())
+    pub fn try_with_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+        where T:        'static,
+              F:        Fn(&T) -> EventDataAelicitResult<R> {
+        self.data.try_with(|d: &TEventData| -> EventDataAelicitResult<R> {
+            if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
+                f(t)
+            } else {
+                Err(Box::new(Error::DowncastError))
+            }
         })
     }
     // ========================================================================
     /// try_with_mut_data
-    pub fn try_with_mut_data< R, F >(&self, f: F)
-                                     -> EventDataAelicitResult<R>
-        where F: Fn(&mut Any) -> EventDataAelicitResult<R> {
+    pub fn try_with_mut_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+        where T:        'static,
+              F:        Fn(&mut T) -> EventDataAelicitResult<R> {
         self.data.try_with_mut(
-            |data: &mut TEventData| -> EventDataAelicitResult<R> {
-                f(data.as_mut())
+            |d: &mut TEventData| -> EventDataAelicitResult<R> {
+                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                    f(t)
+                } else {
+                    Err(Box::new(Error::DowncastError))
+                }
             }
         )
     }
@@ -79,7 +96,7 @@ impl Event {
 // ============================================================================
 /// struct EventQueue
 #[derive( Debug, Default, )]
-pub struct EventQueue(VecDeque< Event >);
+pub struct EventQueue(VecDeque<Event>);
 // ============================================================================
 impl EventQueue {
     // ========================================================================
@@ -90,7 +107,7 @@ impl EventQueue {
     }
     // ========================================================================
     /// pop
-    pub fn pop(&mut self) -> Option< Event > {
+    pub fn pop(&mut self) -> Option<Event> {
         let &mut EventQueue(ref mut deq) = self;
         deq.pop_front()
     }

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/12/04
+//  @date 2016/12/30
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -22,7 +22,7 @@
 #[macro_use] extern crate hash_combine;
 #[macro_use] extern crate elicit;
 // use  =======================================================================
-pub use self::error::Error;
+pub use self::error::{ Result, Error, };
 pub use self::event_type::{ EventType, EventTypeRef, };
 pub use self::event_data::{ EventDataAelicitError,
                             EventDataAelicitResult,
