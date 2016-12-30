@@ -39,7 +39,7 @@ impl Event {
     pub fn peek_type< 'a >(&'a self) -> &'a EventTypeRef { &self.type_ }
     // ========================================================================
     /// with_data
-    pub fn with_data< R, E, F >(&self, f: F) -> EventDataAelicitResult<R>
+    pub fn with_data< R, F >(&self, f: F) -> EventDataAelicitResult<R>
         where F: Fn(&Any) -> EventDataAelicitResult<R> {
         self.data.with(|data: &TEventData| -> EventDataAelicitResult<R> {
             f(data.as_ref())
@@ -47,8 +47,7 @@ impl Event {
     }
     // ========================================================================
     /// with_mut_data
-    pub fn with_mut_data< R, E, F >(&self, f: F)
-                                    -> EventDataAelicitResult< R >
+    pub fn with_mut_data< R, F >(&self, f: F) -> EventDataAelicitResult< R >
         where F: Fn(&mut Any) -> EventDataAelicitResult<R> {
         self.data.with_mut(
             |data: &mut TEventData| -> EventDataAelicitResult<R> {
@@ -58,8 +57,7 @@ impl Event {
     }
     // ========================================================================
     /// try_with_data
-    pub fn try_with_data< R, E, F >(&self, f: F)
-                                    -> EventDataAelicitResult<R>
+    pub fn try_with_data< R, F >(&self, f: F) -> EventDataAelicitResult<R>
         where F: Fn(&Any) -> EventDataAelicitResult<R> {
         self.data.try_with(|data: &TEventData| -> EventDataAelicitResult<R> {
             f(data.as_ref())
@@ -67,15 +65,15 @@ impl Event {
     }
     // ========================================================================
     /// try_with_mut_data
-        pub fn try_with_mut_data< R, E, F >(&self, f: F)
-                                            -> EventDataAelicitResult<R>
+    pub fn try_with_mut_data< R, F >(&self, f: F)
+                                     -> EventDataAelicitResult<R>
         where F: Fn(&mut Any) -> EventDataAelicitResult<R> {
-            self.data.try_with_mut(
-                |data: &mut TEventData| -> EventDataAelicitResult<R> {
-                    f(data.as_mut())
-                }
-            )
-        }
+        self.data.try_with_mut(
+            |data: &mut TEventData| -> EventDataAelicitResult<R> {
+                f(data.as_mut())
+            }
+        )
+    }
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
