@@ -2,6 +2,7 @@
 *~
 \#*\#
 .\#*
+*.backup
 
 # Compiled files
 *.o
