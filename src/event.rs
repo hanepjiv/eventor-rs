@@ -6,15 +6,14 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/12/30
+//  @date 2016/12/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use ::std::collections::{ VecDeque, };
 // ----------------------------------------------------------------------------
 use super::Error;
-use super::event_data::{ TEventData,
-                         EventDataAelicitResult, EventDataAelicit, };
+use super::event_data::{ TEventData, EventDataAelicit, };
 use super::event_type::{ EventTypeRef, };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -39,10 +38,10 @@ impl Event {
     pub fn peek_type<'a>(&'a self) -> &'a EventTypeRef { &self.type_ }
     // ========================================================================
     /// with_data
-    pub fn with_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+    pub fn with_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
         where T:        'static,
-              F:        Fn(&T) -> EventDataAelicitResult<R> {
-        self.data.with(|d: &TEventData| -> EventDataAelicitResult<R> {
+              F:        Fn(&T) -> ::elicit::Result<R> {
+        self.data.with(|d: &TEventData| -> ::elicit::Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
@@ -52,10 +51,10 @@ impl Event {
     }
     // ========================================================================
     /// with_mut_data
-    pub fn with_mut_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+    pub fn with_mut_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
         where T:        'static,
-              F:        Fn(&mut T) -> EventDataAelicitResult<R> {
-        self.data.with_mut(|d: &mut TEventData| -> EventDataAelicitResult<R> {
+              F:        Fn(&mut T) -> ::elicit::Result<R> {
+        self.data.with_mut(|d: &mut TEventData| -> ::elicit::Result<R> {
             if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
                 f(t)
             } else {
@@ -65,10 +64,10 @@ impl Event {
     }
     // ========================================================================
     /// try_with_data
-    pub fn try_with_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+    pub fn try_with_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
         where T:        'static,
-              F:        Fn(&T) -> EventDataAelicitResult<R> {
-        self.data.try_with(|d: &TEventData| -> EventDataAelicitResult<R> {
+              F:        Fn(&T) -> ::elicit::Result<R> {
+        self.data.try_with(|d: &TEventData| -> ::elicit::Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
@@ -78,11 +77,11 @@ impl Event {
     }
     // ========================================================================
     /// try_with_mut_data
-    pub fn try_with_mut_data<T, R, F>(&self, f: F) -> EventDataAelicitResult<R>
+    pub fn try_with_mut_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
         where T:        'static,
-              F:        Fn(&mut T) -> EventDataAelicitResult<R> {
+              F:        Fn(&mut T) -> ::elicit::Result<R> {
         self.data.try_with_mut(
-            |d: &mut TEventData| -> EventDataAelicitResult<R> {
+            |d: &mut TEventData| -> ::elicit::Result<R> {
                 if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
                     f(t)
                 } else {

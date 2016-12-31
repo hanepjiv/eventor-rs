@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/10/10
+//  @date 2016/12/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -16,10 +16,6 @@ use ::std::any::{ Any, };
 // ============================================================================
 aelicit_define!(aelicit_t_event_data, TEventData);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_event_data::AelicitError
-    as EventDataAelicitError;
-pub use self::aelicit_t_event_data::AelicitResult
-    as EventDataAelicitResult;
 pub use self::aelicit_t_event_data::Aelicit
     as EventDataAelicit;
 pub use self::aelicit_t_event_data::EnableAelicitFromSelf

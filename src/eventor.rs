@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2016/12/04
+//  @date 2016/12/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -22,8 +22,6 @@ use super::event_listener::{ EventListenerAelicit,
 // ============================================================================
 aelicit_define!(aelicit_t_eventor, TEventor);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_eventor::AelicitError   as EventorAelicitError;
-pub use self::aelicit_t_eventor::AelicitResult  as EventorAelicitResult;
 pub use self::aelicit_t_eventor::Aelicit        as EventorAelicit;
 pub use self::aelicit_t_eventor::EnableAelicitFromSelf
     as EventorEnableAelicitFromSelf;

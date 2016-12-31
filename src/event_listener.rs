@@ -6,26 +6,22 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2016/12/26
+//  @date 2016/12/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::fmt::{ Debug, };
-use ::std::collections::{ BTreeMap, };
-use ::std::sync::{ RwLock, };
+use ::std::fmt::Debug;
+use ::std::collections::BTreeMap;
+use ::std::sync::RwLock;
 // ----------------------------------------------------------------------------
 use ::libc::uintptr_t;
 // ----------------------------------------------------------------------------
-use super::event::{ Event, };
-use super::eventor::{ EventorAelicit, };
+use super::event::Event;
+use super::eventor::EventorAelicit;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_event_listener, TEventListener);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_event_listener::AelicitError
-    as EventListenerAelicitError;
-pub use self::aelicit_t_event_listener::AelicitResult
-    as EventListenerAelicitResult;
 pub use self::aelicit_t_event_listener::Aelicit
     as EventListenerAelicit;
 pub use self::aelicit_t_event_listener::EnableAelicitFromSelf

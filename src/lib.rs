@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/12/30
+//  @date 2016/12/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -24,21 +24,16 @@
 // use  =======================================================================
 pub use self::error::{ Result, Error, };
 pub use self::event_type::{ EventType, EventTypeRef, };
-pub use self::event_data::{ EventDataAelicitError,
-                            EventDataAelicitResult,
-                            EventDataAelicit,
+pub use self::event_data::{ EventDataAelicit,
                             EventDataEnableAelicitFromSelf,
                             EventDataEnableAelicitFromSelfField,
                             EventData, };
 pub use self::event::Event;
 pub use self::event_listener::{ TEventListener,
-                                EventListenerAelicitResult,
                                 EventListenerAelicit,
                                 EventListenerEnableAelicitFromSelf,
                                 EventListenerEnableAelicitFromSelfField, };
 pub use self::eventor::{ TEventor,
-                         EventorAelicitError,
-                         EventorAelicitResult,
                          EventorAelicit,
                          EventorEnableAelicitFromSelf,
                          EventorEnableAelicitFromSelfField,
