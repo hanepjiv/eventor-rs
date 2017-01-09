@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/11/26
+//  @date 2017/01/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -81,10 +81,7 @@ impl EventTypeMap {
                                      Take a different name. \"{}\"", name)))
                     },
                     None        => {
-                        if cfg!(debug_assertions) {
-                            println!("Eventor::new_type: {:#x} \"{}\"",
-                                     hash, name);
-                        }
+                        info!("Eventor::new_type: {:#x} \"{}\"", hash, name);
                         Ok(event_type)
                     },
                 }

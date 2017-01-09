@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2016/12/31
+//  @date 2017/01/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::sync::{ RwLock, };
+use ::std::sync::RwLock;
 // ----------------------------------------------------------------------------
 use super::error::Error;
 use super::event::{ Event, EventQueue, };
@@ -89,7 +89,7 @@ impl Eventor {
 }
 // ============================================================================
 impl EventorEnableAelicitFromSelf for Eventor {
-    enable_aelicit_from_self_impl_inner!(TEventor, EventorAelicit, _eefsf);
+    enable_aelicit_from_self_impl!(TEventor, EventorAelicit, _eefsf);
 }
 // ============================================================================
 impl TEventor for Eventor {

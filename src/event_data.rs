@@ -6,12 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/12/31
+//  @date 2017/01/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::fmt::{ Debug, };
-use ::std::any::{ Any, };
+use ::std::fmt::Debug;
+use ::std::any::Any;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_event_data, TEventData);
@@ -44,7 +44,7 @@ pub struct EventData< T: Debug + Any > {
 }
 // ============================================================================
 impl < T: Debug + Any > EventDataEnableAelicitFromSelf for EventData< T > {
-    enable_aelicit_from_self_impl_inner!(TEventData, EventDataAelicit, _eefsf);
+    enable_aelicit_from_self_impl!(TEventData, EventDataAelicit, _eefsf);
 }
 // ============================================================================
 impl < T: Debug + Any > EventData< T > {

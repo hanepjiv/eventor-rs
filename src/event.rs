@@ -6,15 +6,15 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2016/12/31
+//  @date 2017/01/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::collections::{ VecDeque, };
+use ::std::collections::VecDeque;
 // ----------------------------------------------------------------------------
 use super::Error;
 use super::event_data::{ TEventData, EventDataAelicit, };
-use super::event_type::{ EventTypeRef, };
+use super::event_type::EventTypeRef;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Event
@@ -80,15 +80,13 @@ impl Event {
     pub fn try_with_mut_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
         where T:        'static,
               F:        Fn(&mut T) -> ::elicit::Result<R> {
-        self.data.try_with_mut(
-            |d: &mut TEventData| -> ::elicit::Result<R> {
-                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                    f(t)
-                } else {
-                    Err(Box::new(Error::DowncastError))
-                }
+        self.data.try_with_mut(|d: &mut TEventData| -> ::elicit::Result<R> {
+            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                f(t)
+            } else {
+                Err(Box::new(Error::DowncastError))
             }
-        )
+        })
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
