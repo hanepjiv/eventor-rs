@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/01/09
+//  @date 2017/01/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -67,12 +67,12 @@
     unused_parens,
     unused_unsafe,
     unknown_crate_types,
-)]
-#![warn(
-    dead_code,
     missing_copy_implementations,
     missing_debug_implementations,
     unused_variables,
+)]
+#![warn(
+    dead_code,
 )]
 #![allow(
     box_pointers,

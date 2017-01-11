@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/01/09
+//  @date 2017/01/12
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -44,7 +44,7 @@ pub struct EventData< T: Debug + Any > {
 }
 // ============================================================================
 impl < T: Debug + Any > EventDataEnableAelicitFromSelf for EventData< T > {
-    enable_aelicit_from_self_impl!(TEventData, EventDataAelicit, _eefsf);
+    enable_aelicit_from_self_delegate!(TEventData, EventDataAelicit, _eefsf);
 }
 // ============================================================================
 impl < T: Debug + Any > EventData< T > {
