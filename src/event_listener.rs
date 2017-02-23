@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2016/12/31
+//  @date 2017/02/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -55,13 +55,12 @@ impl EventListenerMap {
                   event_hash: u32, id: uintptr_t,
                   listener: EventListenerAelicit)
                   -> Option< EventListenerAelicit > {
-        let &mut EventListenerMap(ref mut inner) = self;
-        if inner.contains_key(&event_hash) {
-            inner.get_mut(&event_hash).expect("EventListenerMap::insert").
+        if self.0.contains_key(&event_hash) {
+            self.0.get_mut(&event_hash).expect("EventListenerMap::insert").
                 insert(id, listener)
         } else {
-            match inner.insert(event_hash, EventListenerList::default()) {
-                None    => inner.get_mut(&event_hash).
+            match self.0.insert(event_hash, EventListenerList::default()) {
+                None    => self.0.get_mut(&event_hash).
                     expect("EventListenerMap::insert").
                     insert(id, listener),
                 Some(ref mut list) => list.insert(id, listener),
@@ -72,9 +71,8 @@ impl EventListenerMap {
     /// remove
     pub fn remove(&mut self, event_hash: u32, id: uintptr_t)
                   -> Option< EventListenerAelicit > {
-        let &mut EventListenerMap(ref mut inner) = self;
-        if inner.contains_key(&event_hash) {
-            inner.get_mut(&event_hash).expect("EventListenerMap::remove").
+        if self.0.contains_key(&event_hash) {
+            self.0.get_mut(&event_hash).expect("EventListenerMap::remove").
                 remove(&id)
         } else {
             None
@@ -86,8 +84,7 @@ impl EventListenerMap {
                                 -> Option< &mut EventListenerList >
         where Q:        Ord,
               u32:      ::std::borrow::Borrow< Q > {
-        let &mut EventListenerMap(ref mut inner) = self;
-        inner.get_mut(key)
+        self.0.get_mut(key)
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
@@ -105,23 +102,20 @@ impl EventListenerWaiting {
     // ========================================================================
     /// insert
     pub fn insert(&self, event_hash: u32, listener: EventListenerAelicit) {
-        let &EventListenerWaiting(ref inner) = self;
-        inner.write().expect("EventLitenerWaiting.insert").
+        self.0.write().expect("EventLitenerWaiting.insert").
             push((event_hash, listener))
     }
     // ========================================================================
     /// shrink_to_fit
     pub fn shrink_to_fit(&self) -> () {
-        let &EventListenerWaiting(ref inner) = self;
-        inner.write().expect("EventLitenerWaiting.shrink_to_fit").
+        self.0.write().expect("EventLitenerWaiting.shrink_to_fit").
             shrink_to_fit()
     }
     // ========================================================================
     /// apply
     pub fn apply< Q >(&self, map: &mut Q)
         where Q:        ::std::ops::DerefMut< Target = EventListenerMap > {
-        let &EventListenerWaiting(ref inner) = self;
-        let mut vec = inner.write().expect("EventLitenerWaiting.apply");
+        let mut vec = self.0.write().expect("EventLitenerWaiting.apply");
         for &(hash, ref listener) in vec.iter() {
             let id = listener.read().expect("EventListenerWaiting::apply").
                 peek_id();
@@ -145,32 +139,28 @@ impl EventListenerRemoving {
     // ========================================================================
     /// insert
     pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
-        let &EventListenerRemoving(ref inner) = self;
-        inner.write().expect("EventLitenerRemoving.insert").
+        self.0.write().expect("EventLitenerRemoving.insert").
             push((event_hash, id))
     }
     /*
     // ========================================================================
     /// contains
     pub fn contains(&self, x: &(u32, uintptr_t)) -> bool {
-        let &EventListenerRemoving(ref inner) = self;
-        inner.read().expect("EventLitenerRemoving.contains").
+        self.0.read().expect("EventLitenerRemoving.contains").
             contains(x)
     }
      */
     // ========================================================================
     /// shrink_to_fit
     pub fn shrink_to_fit(&self) -> () {
-        let &EventListenerRemoving(ref inner) = self;
-        inner.write().expect("EventLitenerRemoving.shrink_to_fit").
+        self.0.write().expect("EventLitenerRemoving.shrink_to_fit").
             shrink_to_fit()
     }
     // ========================================================================
     /// apply
     pub fn apply< Q >(&self, map: &mut Q)
         where Q:        ::std::ops::DerefMut< Target = EventListenerMap > {
-        let &EventListenerRemoving(ref inner) = self;
-        let mut vec = inner.write().expect("EventLitenerRemoving.apply");
+        let mut vec = self.0.write().expect("EventLitenerRemoving.apply");
         for &(hash, id) in vec.iter() {
             let _ = map.remove(hash, id);
         }

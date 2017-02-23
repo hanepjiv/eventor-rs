@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/01/03
+//  @date 2017/02/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -58,8 +58,7 @@ impl EventTypeMap {
     /// check_type
     pub fn check_type(&self, name: &str) -> (u32, Option< EventTypeRef >) {
         let hash = hash_combine(0u32, name.as_ref());
-        let &EventTypeMap(ref inner) = self;
-        match inner.get(&hash) {
+        match self.0.get(&hash) {
             Some(x)     => (hash, Some(x.clone())),
             None        => (hash, None),
         }
@@ -72,8 +71,7 @@ impl EventTypeMap {
             Some(r)     => Ok(r),  // already exists
             None        => {
                 let event_type = EventType::new(name, hash);
-                let &mut EventTypeMap(ref mut inner) = self;
-                match inner.insert(hash, event_type.clone()) {
+                match self.0.insert(hash, event_type.clone()) {
                     Some(_)     => {
                         Err(Error::EventorError(
                             format!("Eventor::new_type: \

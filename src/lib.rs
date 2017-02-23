@@ -6,12 +6,14 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/01/11
+//  @date 2017/02/23
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
 #![deny(
     fat_ptr_transmutes,
+    missing_copy_implementations,
+    missing_debug_implementations,
     missing_docs,
     unstable_features,
     unused_extern_crates,
@@ -23,8 +25,8 @@
     deprecated,
     deprecated_attr,
     extra_requirement_in_impl,
-    hr_lifetime_in_assoc_type,
     improper_ctypes,
+    legacy_imports,
     non_camel_case_types,
     non_shorthand_field_patterns,
     non_snake_case,
@@ -44,18 +46,6 @@
     unions_with_drop_fields,
     unknown_lints,
     unreachable_code,
-    while_true,
-    exceeding_bitshifts,
-    illegal_floating_point_constant_pattern,
-    illegal_struct_or_enum_constant_pattern,
-    inaccessible_extern_crate,
-    invalid_type_param_default,
-    lifetime_underscore,
-    mutable_transmutes,
-    no_mangle_const_items,
-    overlapping_inherent_impls,
-    super_or_self_in_global_path,
-    transmute_from_fn_item_types,
     unused_allocation,
     unused_assignments,
     unused_attributes,
@@ -66,10 +56,21 @@
     unused_mut,
     unused_parens,
     unused_unsafe,
-    unknown_crate_types,
-    missing_copy_implementations,
-    missing_debug_implementations,
     unused_variables,
+    while_true,
+    exceeding_bitshifts,
+    hr_lifetime_in_assoc_type,
+    illegal_floating_point_constant_pattern,
+    illegal_struct_or_enum_constant_pattern,
+    inaccessible_extern_crate,
+    invalid_type_param_default,
+    lifetime_underscore,
+    mutable_transmutes,
+    no_mangle_const_items,
+    overlapping_inherent_impls,
+    super_or_self_in_global_path,
+    transmute_from_fn_item_types,
+    unknown_crate_types,
 )]
 #![warn(
     dead_code,
@@ -81,10 +82,10 @@
     trivial_numeric_casts,
 )]
 // extern  ====================================================================
-#[macro_use] extern crate libc;
+extern crate libc;
 #[macro_use] extern crate log;
 // ----------------------------------------------------------------------------
-#[macro_use] extern crate hash_combine;
+extern crate hash_combine;
 #[macro_use] extern crate elicit;
 // use  =======================================================================
 pub use self::error::{ Result, Error, };

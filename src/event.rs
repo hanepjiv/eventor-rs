@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/01/09
+//  @date 2017/02/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -99,19 +99,16 @@ impl EventQueue {
     // ========================================================================
     /// push
     pub fn push(&mut self, event: Event) -> () {
-        let &mut EventQueue(ref mut deq) = self;
-        deq.push_back(event)
+        self.0.push_back(event)
     }
     // ========================================================================
     /// pop
     pub fn pop(&mut self) -> Option<Event> {
-        let &mut EventQueue(ref mut deq) = self;
-        deq.pop_front()
+        self.0.pop_front()
     }
     // ========================================================================
     /// shrink_to_fit
     pub fn shrink_to_fit(&mut self) -> () {
-        let &mut EventQueue(ref mut deq) = self;
-        deq.shrink_to_fit()
+        self.0.shrink_to_fit()
     }
 }
