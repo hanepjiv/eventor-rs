@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2017/02/24
+//  @date 2017/05/29
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -52,8 +52,9 @@ impl EventListenerMap {
     // ========================================================================
     /// insert
     pub fn insert(&mut self,
-                  event_hash: u32, id: uintptr_t,
-                  listener: EventListenerAelicit)
+                  event_hash:   u32,
+                  id:           uintptr_t,
+                  listener:     EventListenerAelicit)
                   -> Option< EventListenerAelicit > {
         if self.0.contains_key(&event_hash) {
             self.0.get_mut(&event_hash).expect("EventListenerMap::insert").

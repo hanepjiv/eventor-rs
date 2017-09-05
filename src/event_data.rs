@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/01/12
+//  @date 2017/05/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -50,7 +50,7 @@ impl < T: Debug + Any > EventDataEnableAelicitFromSelf for EventData< T > {
 impl < T: Debug + Any > EventData< T > {
     // ========================================================================
     /// new
-    pub fn new(data: T) -> Self { EventData {
+    pub fn new(data: T) -> Self { Self {
         _eefsf: EventDataEnableAelicitFromSelfField::default(),
         data:   data,
     } }

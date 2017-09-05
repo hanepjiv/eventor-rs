@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/02/24
+//  @date 2017/05/30
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -33,12 +33,10 @@ pub type EventTypeRef   = Arc<EventType>;
 impl EventType {
     // ========================================================================
     /// new
-    pub fn new< 'a >(name: &'a str, hash: u32) -> EventTypeRef {
-        Arc::new(EventType {
-            name:       name.to_string(),
-            hash:       hash,
-        })
-    }
+    fn new< 'a >(name: &'a str, hash: u32) -> Self { Self {
+        name:           name.to_string(),
+        hash:           hash,
+    } }
     // ========================================================================
     /// peek_name
     pub fn peek_name< 'a >(&'a self) -> &'a str { self.name.as_ref() }
@@ -56,7 +54,7 @@ impl EventTypeMap {
     // ========================================================================
     // ------------------------------------------------------------------------
     /// check_type
-    pub fn check_type(&self, name: &str) -> (u32, Option< EventTypeRef >) {
+    fn check_type(&self, name: &str) -> (u32, Option< EventTypeRef >) {
         let hash = hash_combine(0u32, name.as_ref());
         match self.0.get(&hash) {
             Some(x)     => (hash, Some(x.clone())),
@@ -66,20 +64,32 @@ impl EventTypeMap {
     // ------------------------------------------------------------------------
     /// new_type
     pub fn new_type(&mut self, name: &str) -> Result< EventTypeRef, Error > {
-        let (hash, ret) = self.check_type(name);
+        let l_name = name.to_lowercase();
+        let (hash, ret) = self.check_type(l_name.as_str());
         match ret {
-            Some(r)     => Ok(r),  // already exists
+            Some(r)     => {  // already exists
+                if r.peek_name() == l_name {
+                    Ok(r)
+                } else {
+                    Err(Error::EventorError(
+                        format!("Eventor::new_type: \
+                                 Hash value are in conflict. \
+                                 Take a different name. \
+                                 already:\"{}\"/ new:\"{}\"",
+                                r.peek_name(), l_name)))
+                }
+            },
             None        => {
-                let event_type = EventType::new(name, hash);
+                let event_type =
+                    Arc::new(EventType::new(l_name.as_str(), hash));
                 match self.0.insert(hash, event_type.clone()) {
                     Some(_)     => {
                         Err(Error::EventorError(
                             format!("Eventor::new_type: \
-                                     Hash value are in conflict. \
-                                     Take a different name. \"{}\"", name)))
+                                     Unknown insert error. \"{}\"", name)))
                     },
                     None        => {
-                        info!("Eventor::new_type: {:#x} \"{}\"", hash, name);
+                        info!("Eventor::new_type: {:#x} \"{}\"", hash, l_name);
                         Ok(event_type)
                     },
                 }
@@ -89,7 +99,8 @@ impl EventTypeMap {
     // ------------------------------------------------------------------------
     /// peek_type
     pub fn peek_type(&self, name: &str) -> Option< EventTypeRef > {
-        let (_, ret) = self.check_type(name);
+        let l_name = name.to_lowercase();
+        let (_, ret) = self.check_type(l_name.as_str());
         ret
     }
 }

@@ -13,10 +13,10 @@ homepage        = "https://github.com/hanepjiv/eventor-rs"
 repository      = "https://github.com/hanepjiv/eventor-rs.git"
 # =============================================================================
 [dependencies]
-libc            = { default-features = false, version = "^0.2.19" }
-log             = { default-features = false, version = "^0.3.6" }
+libc            = { default-features = false, version = "^0.2.30" }
+log             = { default-features = false, version = "^0.3.8" }
 # -----------------------------------------------------------------------------
-elicit       = { default-features = false, git = "https://github.com/hanepjiv/elicit-rs.git" }
+elicit          = { default-features = false, git = "https://github.com/hanepjiv/elicit-rs.git" }
 #elicit          = { default-features = false, path = "../../elicit-rs/orig" }
-hash_combine   = { default-features = false, git = "https://github.com/hanepjiv/hash_combine-rs.git" }
-#hash_combine  = { default-features = false, path = "../../hash_combine-rs/orig" }
+hash_combine    = { default-features = false, git = "https://github.com/hanepjiv/hash_combine-rs.git" }
+#hash_combine    = { default-features = false, path = "../../hash_combine-rs/orig" }

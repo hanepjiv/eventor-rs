@@ -3,6 +3,9 @@
 \#*\#
 .\#*
 *.backup
+*.orig
+*.rej
+*.log
 
 # Compiled files
 *.o

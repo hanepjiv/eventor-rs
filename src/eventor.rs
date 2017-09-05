@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2017/01/12
+//  @date 2017/09/05
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -145,10 +145,13 @@ impl TEventor for Eventor {
                         },
                         Some(list)  => {
                             for (_, ref mut listener) in list.iter_mut() {
-                                listener.write().expect("Eventor::dispatch").
+                                if !listener.write().
+                                    expect("Eventor::dispatch").
                                     on_event(&e,
                                              &self.aelicit_from_self()
-                                             .expect("Eventor::dispatch"));
+                                             .expect("Eventor::dispatch")) {
+                                    break;
+                                }
                             }
                         },
                     }
