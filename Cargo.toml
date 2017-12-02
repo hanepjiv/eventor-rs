@@ -13,7 +13,7 @@ homepage        = "https://github.com/hanepjiv/eventor-rs"
 repository      = "https://github.com/hanepjiv/eventor-rs.git"
 # =============================================================================
 [dependencies]
-libc            = { default-features = false, version = "^0.2.33" }
+libc            = { default-features = false, version = "^0.2.34" }
 log             = { default-features = false, version = "^0.3.8" }
 # -----------------------------------------------------------------------------
 elicit          = { default-features = false, git = "https://github.com/hanepjiv/elicit-rs.git" }
