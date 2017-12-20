@@ -10,56 +10,59 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::fmt::Debug;
-use ::std::any::Any;
+use std::fmt::Debug;
+use std::any::Any;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_event_data, TEventData);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_event_data::Aelicit
-    as EventDataAelicit;
-pub use self::aelicit_t_event_data::EnableAelicitFromSelf
-    as EventDataEnableAelicitFromSelf;
-pub use self::aelicit_t_event_data::EnableAelicitFromSelfField
-    as EventDataEnableAelicitFromSelfField;
+pub use self::aelicit_t_event_data::Aelicit as EventDataAelicit;
+pub use self::aelicit_t_event_data::EnableAelicitFromSelf as EventDataEAFS;
+pub use self::aelicit_t_event_data::EnableAelicitFromSelfField;
+use self::EnableAelicitFromSelfField as EventDataEAFSField;
 // ============================================================================
 /// trait TEventData
-pub trait TEventData: Debug +
-    EventDataEnableAelicitFromSelf + AsRef< Any > + AsMut< Any > {
-}
+pub trait TEventData: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any> {}
 // ----------------------------------------------------------------------------
-impl < T > TEventData for T
-    where T: Debug +
-    EventDataEnableAelicitFromSelf + AsRef< Any > + AsMut< Any > {
+impl<T> TEventData for T
+where
+    T: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any>,
+{
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventData
-#[derive( Debug, )]
-pub struct EventData< T: Debug + Any > {
-    /// EventDataEnableAelicitFromSelfField
-    _eefsf:     EventDataEnableAelicitFromSelfField,
+#[derive(Debug)]
+pub struct EventData<T: Debug + Any> {
+    /// EventDataEAFSField
+    _eefsf: EventDataEAFSField,
     /// data
-    data:       T,
+    data: T,
 }
 // ============================================================================
-impl < T: Debug + Any > EventDataEnableAelicitFromSelf for EventData< T > {
+impl<T: Debug + Any> EventDataEAFS for EventData<T> {
     enable_aelicit_from_self_delegate!(TEventData, EventDataAelicit, _eefsf);
 }
 // ============================================================================
-impl < T: Debug + Any > EventData< T > {
+impl<T: Debug + Any> EventData<T> {
     // ========================================================================
     /// new
-    pub fn new(data: T) -> Self { Self {
-        _eefsf: EventDataEnableAelicitFromSelfField::default(),
-        data:   data,
-    } }
+    pub fn new(data: T) -> Self {
+        Self {
+            _eefsf: EventDataEAFSField::default(),
+            data: data,
+        }
+    }
 }
 // ============================================================================
-impl < T: Debug + Any > AsRef< Any > for EventData< T > {
-    fn as_ref(&self) -> &Any { &self.data }
+impl<T: Debug + Any> AsRef<Any> for EventData<T> {
+    fn as_ref(&self) -> &Any {
+        &self.data
+    }
 }
 // ============================================================================
-impl < T: Debug + Any > AsMut< Any > for EventData< T > {
-    fn as_mut(&mut self) -> &mut Any { &mut self.data }
+impl<T: Debug + Any> AsMut<Any> for EventData<T> {
+    fn as_mut(&mut self) -> &mut Any {
+        &mut self.data
+    }
 }

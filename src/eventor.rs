@@ -10,42 +10,42 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::sync::RwLock;
+use std::sync::RwLock;
 // ----------------------------------------------------------------------------
 use super::error::Error;
-use super::event::{ Event, EventQueue, };
-use super::event_type::{ EventTypeRef, EventTypeMap, };
-use super::event_listener::{ EventListenerAelicit,
-                             EventListenerMap,
-                             EventListenerWaiting, EventListenerRemoving, };
+use super::event::{Event, EventQueue};
+use super::event_type::{EventTypeMap, EventTypeRef};
+use super::event_listener::{EventListenerAelicit, EventListenerMap,
+                            EventListenerRemoving, EventListenerWaiting};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_eventor, TEventor);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_eventor::Aelicit        as EventorAelicit;
-pub use self::aelicit_t_eventor::EnableAelicitFromSelf
-    as EventorEnableAelicitFromSelf;
-pub use self::aelicit_t_eventor::EnableAelicitFromSelfField
-    as EventorEnableAelicitFromSelfField;
+pub use self::aelicit_t_eventor::Aelicit as EventorAelicit;
+pub use self::aelicit_t_eventor::EnableAelicitFromSelf as EventorEAFS;
+pub use self::aelicit_t_eventor::EnableAelicitFromSelfField;
+use self::EnableAelicitFromSelfField as EventorEAFSField;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// TEventor
-pub trait TEventor: ::std::fmt::Debug + EventorEnableAelicitFromSelf {
+pub trait TEventor: ::std::fmt::Debug + EventorEAFS {
     // ========================================================================
     /// new_type
-    fn new_type(&self, &str) -> Result< EventTypeRef, Error >;
+    fn new_type(&self, &str) -> Result<EventTypeRef, Error>;
     // ------------------------------------------------------------------------
     /// peek_type
-    fn peek_type(&self, &str) -> Option< EventTypeRef >;
+    fn peek_type(&self, &str) -> Option<EventTypeRef>;
     // ////////////////////////////////////////////////////////////////////////
     // ------------------------------------------------------------------------
     /// insert_listener
-    fn insert_listener(&self,
-                       event_hash: u32, listener: &EventListenerAelicit) -> ();
+    fn insert_listener(
+        &self,
+        event_hash: u32,
+        listener: &EventListenerAelicit,
+    ) -> ();
     // ------------------------------------------------------------------------
     /// remove_listener
-    fn remove_listener(&self,
-                       event_hash: u32, id: ::libc::uintptr_t) -> ();
+    fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) -> ();
     // ========================================================================
     /// push_event
     fn push_event(&self, Event) -> ();
@@ -56,21 +56,21 @@ pub trait TEventor: ::std::fmt::Debug + EventorEnableAelicitFromSelf {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Eventor
-#[derive( Debug, )]
+#[derive(Debug)]
 pub struct Eventor {
     // base  ==================================================================
-    _eefsf:             EventorEnableAelicitFromSelfField,
+    _eefsf: EventorEAFSField,
     // field  =================================================================
     /// event type map
-    type_map:           RwLock< EventTypeMap >,
+    type_map: RwLock<EventTypeMap>,
     /// event queue
-    queue:              RwLock< EventQueue >,
+    queue: RwLock<EventQueue>,
     /// event listener map
-    listener_map:       RwLock< EventListenerMap >,
+    listener_map: RwLock<EventListenerMap>,
     /// event listener waiting
-    listener_waiting:   EventListenerWaiting,
+    listener_waiting: EventListenerWaiting,
     /// event listener removing
-    listener_removing:  EventListenerRemoving,
+    listener_removing: EventListenerRemoving,
 }
 // ============================================================================
 impl Eventor {
@@ -78,40 +78,47 @@ impl Eventor {
     /// new
     pub fn new() -> EventorAelicit {
         EventorAelicit::new(Eventor {
-            _eefsf:             EventorEnableAelicitFromSelfField::default(),
-            type_map:           RwLock::new(EventTypeMap::default()),
-            queue:              RwLock::new(EventQueue::default()),
-            listener_map:       RwLock::new(EventListenerMap::default()),
-            listener_waiting:   EventListenerWaiting::default(),
-            listener_removing:  EventListenerRemoving::default(),
+            _eefsf: EventorEAFSField::default(),
+            type_map: RwLock::new(EventTypeMap::default()),
+            queue: RwLock::new(EventQueue::default()),
+            listener_map: RwLock::new(EventListenerMap::default()),
+            listener_waiting: EventListenerWaiting::default(),
+            listener_removing: EventListenerRemoving::default(),
         })
     }
 }
 // ============================================================================
-impl EventorEnableAelicitFromSelf for Eventor {
+impl EventorEAFS for Eventor {
     enable_aelicit_from_self_delegate!(TEventor, EventorAelicit, _eefsf);
 }
 // ============================================================================
 impl TEventor for Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
-    fn new_type(&self, name: &str) -> Result< EventTypeRef, Error > {
-        self.type_map.write().expect("Eventor::new_type").new_type(name)
+    fn new_type(&self, name: &str) -> Result<EventTypeRef, Error> {
+        self.type_map
+            .write()
+            .expect("Eventor::new_type")
+            .new_type(name)
     }
     // ------------------------------------------------------------------------
-    fn peek_type(&self, name: &str) -> Option< EventTypeRef > {
-        self.type_map.read().expect("Eventor::peek_type").peek_type(name)
+    fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
+        self.type_map
+            .read()
+            .expect("Eventor::peek_type")
+            .peek_type(name)
     }
     // ========================================================================
     // ------------------------------------------------------------------------
-    fn insert_listener(&self,
-                       event_hash:      u32,
-                       listener:        &EventListenerAelicit) -> () {
+    fn insert_listener(
+        &self,
+        event_hash: u32,
+        listener: &EventListenerAelicit,
+    ) -> () {
         self.listener_waiting.insert(event_hash, listener.clone())
     }
     // ------------------------------------------------------------------------
-    fn remove_listener(&self,
-                       event_hash: u32, id: ::libc::uintptr_t) -> () {
+    fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) -> () {
         self.listener_removing.insert(event_hash, id)
     }
     // ========================================================================
@@ -121,43 +128,50 @@ impl TEventor for Eventor {
     }
     // ------------------------------------------------------------------------
     fn dispatch(&self) -> bool {
-        self.listener_waiting.
-            apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
+        self.listener_waiting
+            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
 
-        self.listener_removing.
-            apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
+        self.listener_removing
+            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
 
         let event = self.queue.write().expect("Eventor::dispatch").pop();
         match event {
-            None        => {
-                self.queue.write().expect("Eventor::dispatch").shrink_to_fit();
+            None => {
+                self.queue
+                    .write()
+                    .expect("Eventor::dispatch")
+                    .shrink_to_fit();
                 self.listener_waiting.shrink_to_fit();
                 self.listener_removing.shrink_to_fit();
                 false
-            },
-            Some(e)     => {
-                match self.listener_map.write().expect("Eventor::dispatch").
-                    get_mut(&(e.peek_type().peek_hash())) {
-                        None        => {
-                            if cfg!(debug_assertions) {
-                                println!("Eventor::dispatch: no listener");
-                            }
-                        },
-                        Some(list)  => {
-                            for (_, ref mut listener) in list.iter_mut() {
-                                if !listener.write().
-                                    expect("Eventor::dispatch").
-                                    on_event(&e,
-                                             &self.aelicit_from_self()
-                                             .expect("Eventor::dispatch")) {
-                                    break;
-                                }
-                            }
-                        },
+            }
+            Some(e) => {
+                match self.listener_map
+                    .write()
+                    .expect("Eventor::dispatch")
+                    .get_mut(&(e.peek_type().peek_hash()))
+                {
+                    None => {
+                        if cfg!(debug_assertions) {
+                            println!("Eventor::dispatch: no listener");
+                        }
                     }
+                    Some(list) => for (_, ref mut listener) in list.iter_mut()
+                    {
+                        if !listener
+                            .write()
+                            .expect("Eventor::dispatch")
+                            .on_event(
+                                &e,
+                                &self.aelicit_from_self()
+                                    .expect("Eventor::dispatch"),
+                            ) {
+                            break;
+                        }
+                    },
+                }
                 true
-            },
+            }
         }
     }
-
 }

@@ -10,95 +10,104 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use ::std::sync::Arc;
-use ::std::collections::BTreeMap;
+use std::sync::Arc;
+use std::collections::BTreeMap;
 // ----------------------------------------------------------------------------
-use ::hash_combine::hash_combine;
+use hash_combine::hash_combine;
 // ----------------------------------------------------------------------------
 use super::error::Error;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventType
-#[derive( Debug, Clone, )]
+#[derive(Debug, Clone)]
 pub struct EventType {
     /// name
-    name:       String,
+    name: String,
     /// hash
-    hash:       u32,
+    hash: u32,
 }
 // ============================================================================
 /// type EventTypeRef
-pub type EventTypeRef   = Arc<EventType>;
+pub type EventTypeRef = Arc<EventType>;
 // ============================================================================
 impl EventType {
     // ========================================================================
     /// new
-    fn new< 'a >(name: &'a str, hash: u32) -> Self { Self {
-        name:           name.to_string(),
-        hash:           hash,
-    } }
+    fn new<'a>(name: &'a str, hash: u32) -> Self {
+        Self {
+            name: name.to_string(),
+            hash: hash,
+        }
+    }
     // ========================================================================
     /// peek_name
-    pub fn peek_name< 'a >(&'a self) -> &'a str { self.name.as_ref() }
+    pub fn peek_name<'a>(&'a self) -> &'a str {
+        self.name.as_ref()
+    }
     // ========================================================================
     /// peek_hash
-    pub fn peek_hash(&self) -> u32 { self.hash }
+    pub fn peek_hash(&self) -> u32 {
+        self.hash
+    }
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// EventTypeMap
-#[derive( Debug, Default, )]
+#[derive(Debug, Default)]
 pub struct EventTypeMap(BTreeMap<u32, EventTypeRef>);
 // ============================================================================
 impl EventTypeMap {
     // ========================================================================
     // ------------------------------------------------------------------------
     /// check_type
-    fn check_type(&self, name: &str) -> (u32, Option< EventTypeRef >) {
+    fn check_type(&self, name: &str) -> (u32, Option<EventTypeRef>) {
         let hash = hash_combine(0u32, name.as_ref());
         match self.0.get(&hash) {
-            Some(x)     => (hash, Some(x.clone())),
-            None        => (hash, None),
+            Some(x) => (hash, Some(x.clone())),
+            None => (hash, None),
         }
     }
     // ------------------------------------------------------------------------
     /// new_type
-    pub fn new_type(&mut self, name: &str) -> Result< EventTypeRef, Error > {
+    pub fn new_type(&mut self, name: &str) -> Result<EventTypeRef, Error> {
         let l_name = name.to_lowercase();
         let (hash, ret) = self.check_type(l_name.as_str());
         match ret {
-            Some(r)     => {  // already exists
+            Some(r) => {
+                // already exists
                 if r.peek_name() == l_name {
                     Ok(r)
                 } else {
-                    Err(Error::EventorError(
-                        format!("Eventor::new_type: \
-                                 Hash value are in conflict. \
-                                 Take a different name. \
-                                 already:\"{}\"/ new:\"{}\"",
-                                r.peek_name(), l_name)))
+                    Err(Error::EventorError(format!(
+                        "Eventor::new_type: \
+                         Hash value are in conflict. \
+                         Take a different name. \
+                         already:\"{}\"/ new:\"{}\"",
+                        r.peek_name(),
+                        l_name
+                    )))
                 }
-            },
-            None        => {
+            }
+            None => {
                 let event_type =
                     Arc::new(EventType::new(l_name.as_str(), hash));
                 match self.0.insert(hash, event_type.clone()) {
-                    Some(_)     => {
-                        Err(Error::EventorError(
-                            format!("Eventor::new_type: \
-                                     Unknown insert error. \"{}\"", name)))
-                    },
-                    None        => {
+                    Some(_) => Err(Error::EventorError(format!(
+                        "Eventor::new_type: \
+                         Unknown insert error. \"{}\"",
+                        name
+                    ))),
+                    None => {
                         info!("Eventor::new_type: {:#x} \"{}\"", hash, l_name);
                         Ok(event_type)
-                    },
+                    }
                 }
             }
         }
     }
     // ------------------------------------------------------------------------
     /// peek_type
-    pub fn peek_type(&self, name: &str) -> Option< EventTypeRef > {
+    pub fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
         let l_name = name.to_lowercase();
         let (_, ret) = self.check_type(l_name.as_str());
         ret
