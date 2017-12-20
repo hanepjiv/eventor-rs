@@ -19,7 +19,7 @@ aelicit_define!(aelicit_t_event_data, TEventData);
 pub use self::aelicit_t_event_data::Aelicit as EventDataAelicit;
 pub use self::aelicit_t_event_data::EnableAelicitFromSelf as EventDataEAFS;
 pub use self::aelicit_t_event_data::EnableAelicitFromSelfField;
-use self::EnableAelicitFromSelfField as EventDataEAFSField;
+pub use self::EnableAelicitFromSelfField as EventDataEAFSField;
 // ============================================================================
 /// trait TEventData
 pub trait TEventData: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any> {}

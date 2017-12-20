@@ -41,17 +41,13 @@ extern crate hash_combine;
 // use  =======================================================================
 pub use self::error::{Error, Result};
 pub use self::event_type::{EventType, EventTypeRef};
-pub use self::event_data::{EventData, EventDataAelicit,
-                           EventDataEnableAelicitFromSelf,
-                           EventDataEnableAelicitFromSelfField};
+pub use self::event_data::{EventData, EventDataAelicit, EventDataEAFS,
+                           EventDataEAFSField};
 pub use self::event::Event;
-pub use self::event_listener::{EventListenerAelicit,
-                               EventListenerEnableAelicitFromSelf,
-                               EventListenerEnableAelicitFromSelfField,
-                               TEventListener};
-pub use self::eventor::{Eventor, EventorAelicit,
-                        EventorEnableAelicitFromSelf,
-                        EventorEnableAelicitFromSelfField, TEventor};
+pub use self::event_listener::{EventListenerAelicit, EventListenerEAFS,
+                               EventListenerEAFSField, TEventListener};
+pub use self::eventor::{Eventor, EventorAelicit, EventorEAFS,
+                        EventorEAFSField, TEventor};
 // mod  =======================================================================
 mod error;
 mod event_type;

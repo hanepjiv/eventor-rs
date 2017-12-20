@@ -24,7 +24,7 @@ aelicit_define!(aelicit_t_eventor, TEventor);
 pub use self::aelicit_t_eventor::Aelicit as EventorAelicit;
 pub use self::aelicit_t_eventor::EnableAelicitFromSelf as EventorEAFS;
 pub use self::aelicit_t_eventor::EnableAelicitFromSelfField;
-use self::EnableAelicitFromSelfField as EventorEAFSField;
+pub use self::EnableAelicitFromSelfField as EventorEAFSField;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// TEventor

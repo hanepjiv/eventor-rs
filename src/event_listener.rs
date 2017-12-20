@@ -24,9 +24,9 @@ aelicit_define!(aelicit_t_event_listener, TEventListener);
 // ----------------------------------------------------------------------------
 pub use self::aelicit_t_event_listener::Aelicit as EventListenerAelicit;
 pub use self::aelicit_t_event_listener::EnableAelicitFromSelf;
-use self::EnableAelicitFromSelf as EventListenerEAFS;
+pub use self::EnableAelicitFromSelf as EventListenerEAFS;
 pub use self::aelicit_t_event_listener::EnableAelicitFromSelfField;
-use self::EnableAelicitFromSelfField as EventListenerEAFSField;
+pub use self::EnableAelicitFromSelfField as EventListenerEAFSField;
 // ============================================================================
 /// trait TEventListener
 pub trait TEventListener: Debug + EventListenerEAFS {
