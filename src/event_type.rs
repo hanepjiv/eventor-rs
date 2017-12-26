@@ -78,7 +78,7 @@ impl EventTypeMap {
                 if r.peek_name() == l_name {
                     Ok(r)
                 } else {
-                    Err(Error::EventorError(format!(
+                    Err(Error::Eventor(format!(
                         "Eventor::new_type: \
                          Hash value are in conflict. \
                          Take a different name. \
@@ -92,7 +92,7 @@ impl EventTypeMap {
                 let event_type =
                     Arc::new(EventType::new(l_name.as_str(), hash));
                 match self.0.insert(hash, event_type.clone()) {
-                    Some(_) => Err(Error::EventorError(format!(
+                    Some(_) => Err(Error::Eventor(format!(
                         "Eventor::new_type: \
                          Unknown insert error. \"{}\"",
                         name

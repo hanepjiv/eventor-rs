@@ -10,23 +10,30 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// type Result
-pub type Result<T> = ::std::result::Result<T, Box<::std::error::Error>>;
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
 /// enum Error
+#[allow(variant_size_differences)]
 #[derive(Debug, Clone)]
 pub enum Error {
+    /// Elicit
+    Elicit(::elicit::Error),
     /// EventorError
-    EventorError(String),
-    /// DowncastError
-    DowncastError,
+    Eventor(String),
+    /// Downcast
+    Downcast,
+}
+// ============================================================================
+impl From<::elicit::Error> for Error {
+    fn from(e: ::elicit::Error) -> Self {
+        Error::Elicit(e)
+    }
 }
 // ============================================================================
 impl ::std::fmt::Display for Error {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            ref e @ Error::EventorError(_) | ref e @ Error::DowncastError => {
+            ref e @ Error::Elicit(_)
+                | ref e @ Error::Eventor(_)
+                | ref e @ Error::Downcast => {
                 write!(f, "{:?}", e)
             }
         }
@@ -36,15 +43,21 @@ impl ::std::fmt::Display for Error {
 impl ::std::error::Error for Error {
     fn description(&self) -> &str {
         match *self {
-            Error::EventorError(ref m) => m.as_str(),
-            Error::DowncastError => "::eventor::error::Error::DowncastError",
+            Error::Elicit(ref e) => e.description(),
+            Error::Eventor(ref m) => m.as_str(),
+            Error::Downcast => "::eventor::error::Error::Downcast",
         }
     }
     // ========================================================================
     fn cause(&self) -> Option<&::std::error::Error> {
         match *self {
-            Error::EventorError(_) => None,
-            Error::DowncastError => None,
+            Error::Elicit(ref e) => Some(e),
+            Error::Eventor(_) => None,
+            Error::Downcast => None,
         }
     }
 }
+// ////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+/// type Result
+pub type Result<T> = ::std::result::Result<T, Error>;

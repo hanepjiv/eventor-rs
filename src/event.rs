@@ -12,7 +12,7 @@
 // ============================================================================
 use std::collections::VecDeque;
 // ----------------------------------------------------------------------------
-use super::Error;
+use super::{ Error, Result };
 use super::event_data::{EventDataAelicit, TEventData};
 use super::event_type::EventTypeRef;
 // ////////////////////////////////////////////////////////////////////////////
@@ -42,63 +42,62 @@ impl Event {
     }
     // ========================================================================
     /// with_data
-    pub fn with_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
+    pub fn with_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&T) -> ::elicit::Result<R>,
+        F: Fn(&T) -> Result<R>,
     {
-        self.data.with(|d: &TEventData| -> ::elicit::Result<R> {
+        self.data.with(|d: &TEventData| -> Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
-                Err(Box::new(Error::DowncastError))
+                Err(Error::Downcast)
             }
         })
     }
     // ========================================================================
     /// with_mut_data
-    pub fn with_mut_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
+    pub fn with_mut_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&mut T) -> ::elicit::Result<R>,
+        F: Fn(&mut T) -> Result<R>,
     {
-        self.data
-            .with_mut(|d: &mut TEventData| -> ::elicit::Result<R> {
+        self.data.with_mut(|d: &mut TEventData| -> Result<R> {
                 if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
                     f(t)
                 } else {
-                    Err(Box::new(Error::DowncastError))
+                    Err(Error::Downcast)
                 }
             })
     }
     // ========================================================================
     /// try_with_data
-    pub fn try_with_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
+    pub fn try_with_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&T) -> ::elicit::Result<R>,
+        F: Fn(&T) -> Result<R>,
     {
-        self.data.try_with(|d: &TEventData| -> ::elicit::Result<R> {
+        self.data.try_with(|d: &TEventData| -> Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
-                Err(Box::new(Error::DowncastError))
+                Err(Error::Downcast)
             }
         })
     }
     // ========================================================================
     /// try_with_mut_data
-    pub fn try_with_mut_data<T, R, F>(&self, f: F) -> ::elicit::Result<R>
+    pub fn try_with_mut_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&mut T) -> ::elicit::Result<R>,
+        F: Fn(&mut T) -> Result<R>,
     {
         self.data
-            .try_with_mut(|d: &mut TEventData| -> ::elicit::Result<R> {
+            .try_with_mut(|d: &mut TEventData| -> Result<R> {
                 if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
                     f(t)
                 } else {
-                    Err(Box::new(Error::DowncastError))
+                    Err(Error::Downcast)
                 }
             })
     }
