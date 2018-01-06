@@ -45,7 +45,6 @@ condense_wildcard_suffixes                      = false
 force_explicit_abi                              = true
 write_mode                                      = "Overwrite"
 color                                           = "Auto"
-required_version                                = "0.3.2"
 unstable_features                               = false
 disable_all_formatting                          = false
 skip_children                                   = false

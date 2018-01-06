@@ -12,7 +12,7 @@
 // ============================================================================
 use std::collections::VecDeque;
 // ----------------------------------------------------------------------------
-use super::{ Error, Result };
+use super::{Error, Result};
 use super::event_data::{EventDataAelicit, TEventData};
 use super::event_type::EventTypeRef;
 // ////////////////////////////////////////////////////////////////////////////
@@ -63,12 +63,12 @@ impl Event {
         F: Fn(&mut T) -> Result<R>,
     {
         self.data.with_mut(|d: &mut TEventData| -> Result<R> {
-                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                    f(t)
-                } else {
-                    Err(Error::Downcast)
-                }
-            })
+            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                f(t)
+            } else {
+                Err(Error::Downcast)
+            }
+        })
     }
     // ========================================================================
     /// try_with_data
@@ -92,14 +92,13 @@ impl Event {
         T: 'static,
         F: Fn(&mut T) -> Result<R>,
     {
-        self.data
-            .try_with_mut(|d: &mut TEventData| -> Result<R> {
-                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                    f(t)
-                } else {
-                    Err(Error::Downcast)
-                }
-            })
+        self.data.try_with_mut(|d: &mut TEventData| -> Result<R> {
+            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                f(t)
+            } else {
+                Err(Error::Downcast)
+            }
+        })
     }
 }
 // ////////////////////////////////////////////////////////////////////////////

@@ -32,10 +32,8 @@ impl ::std::fmt::Display for Error {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
             ref e @ Error::Elicit(_)
-                | ref e @ Error::Eventor(_)
-                | ref e @ Error::Downcast => {
-                write!(f, "{:?}", e)
-            }
+            | ref e @ Error::Eventor(_)
+            | ref e @ Error::Downcast => write!(f, "{:?}", e),
         }
     }
 }

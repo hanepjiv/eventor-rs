@@ -153,7 +153,7 @@ impl TEventor for Eventor {
                 {
                     None => {
                         if cfg!(debug_assertions) {
-                            println!("Eventor::dispatch: no listener");
+                            info!("Eventor::dispatch: no listener: {:?}", e);
                         }
                     }
                     Some(list) => for (_, ref mut listener) in list.iter_mut()
@@ -163,8 +163,7 @@ impl TEventor for Eventor {
                             .expect("Eventor::dispatch")
                             .on_event(
                                 &e,
-                                &self.aelicit_from_self()
-                                    .expect("Eventor::dispatch"),
+                                &self.aelicit().expect("Eventor::dispatch"),
                             ) {
                             break;
                         }
