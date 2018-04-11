@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2017/09/05
+//  @date 2018/04/12
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -14,9 +14,9 @@ use std::sync::RwLock;
 // ----------------------------------------------------------------------------
 use super::error::Error;
 use super::event::{Event, EventQueue};
-use super::event_type::{EventTypeMap, EventTypeRef};
 use super::event_listener::{EventListenerAelicit, EventListenerMap,
                             EventListenerRemoving, EventListenerWaiting};
+use super::event_type::{EventTypeMap, EventTypeRef};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_eventor, TEventor);
@@ -31,10 +31,10 @@ pub use self::EnableAelicitFromSelfField as EventorEAFSField;
 pub trait TEventor: ::std::fmt::Debug + EventorEAFS {
     // ========================================================================
     /// new_type
-    fn new_type(&self, &str) -> Result<EventTypeRef, Error>;
+    fn new_type(&self, name: &str) -> Result<EventTypeRef, Error>;
     // ------------------------------------------------------------------------
     /// peek_type
-    fn peek_type(&self, &str) -> Option<EventTypeRef>;
+    fn peek_type(&self, name: &str) -> Option<EventTypeRef>;
     // ////////////////////////////////////////////////////////////////////////
     // ------------------------------------------------------------------------
     /// insert_listener
@@ -48,7 +48,7 @@ pub trait TEventor: ::std::fmt::Debug + EventorEAFS {
     fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) -> ();
     // ========================================================================
     /// push_event
-    fn push_event(&self, Event) -> ();
+    fn push_event(&self, event: Event) -> ();
     // ------------------------------------------------------------------------
     /// dispatch
     fn dispatch(&self) -> bool;
@@ -115,7 +115,8 @@ impl TEventor for Eventor {
         event_hash: u32,
         listener: &EventListenerAelicit,
     ) -> () {
-        self.listener_waiting.insert(event_hash, listener.clone())
+        self.listener_waiting
+            .insert(event_hash, listener.clone())
     }
     // ------------------------------------------------------------------------
     fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) -> () {
@@ -124,17 +125,27 @@ impl TEventor for Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
     fn push_event(&self, event: Event) -> () {
-        self.queue.write().expect("Eventor::push_event").push(event)
+        self.queue
+            .write()
+            .expect("Eventor::push_event")
+            .push(event)
     }
     // ------------------------------------------------------------------------
     fn dispatch(&self) -> bool {
         self.listener_waiting
-            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
+            .apply(&mut self.listener_map
+                .write()
+                .expect("Eventor::dispatch"));
 
         self.listener_removing
-            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
+            .apply(&mut self.listener_map
+                .write()
+                .expect("Eventor::dispatch"));
 
-        let event = self.queue.write().expect("Eventor::dispatch").pop();
+        let event = self.queue
+            .write()
+            .expect("Eventor::dispatch")
+            .pop();
         match event {
             None => {
                 self.queue

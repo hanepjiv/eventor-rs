@@ -6,15 +6,15 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/02/24
+//  @date 2018/04/12
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::collections::VecDeque;
 // ----------------------------------------------------------------------------
-use super::{Error, Result};
 use super::event_data::{EventDataAelicit, TEventData};
 use super::event_type::EventTypeRef;
+use super::{Error, Result};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Event
@@ -30,14 +30,11 @@ impl Event {
     // ========================================================================
     /// new
     pub fn new(type_: EventTypeRef, data: EventDataAelicit) -> Self {
-        Event {
-            type_: type_,
-            data: data,
-        }
+        Event { type_, data }
     }
     // ========================================================================
     /// peek_type
-    pub fn peek_type<'a>(&'a self) -> &'a EventTypeRef {
+    pub fn peek_type(&self) -> &EventTypeRef {
         &self.type_
     }
     // ========================================================================
@@ -62,13 +59,14 @@ impl Event {
         T: 'static,
         F: Fn(&mut T) -> Result<R>,
     {
-        self.data.with_mut(|d: &mut TEventData| -> Result<R> {
-            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
+        self.data
+            .with_mut(|d: &mut TEventData| -> Result<R> {
+                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                    f(t)
+                } else {
+                    Err(Error::Downcast)
+                }
+            })
     }
     // ========================================================================
     /// try_with_data
@@ -77,13 +75,14 @@ impl Event {
         T: 'static,
         F: Fn(&T) -> Result<R>,
     {
-        self.data.try_with(|d: &TEventData| -> Result<R> {
-            if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
+        self.data
+            .try_with(|d: &TEventData| -> Result<R> {
+                if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
+                    f(t)
+                } else {
+                    Err(Error::Downcast)
+                }
+            })
     }
     // ========================================================================
     /// try_with_mut_data
@@ -92,13 +91,14 @@ impl Event {
         T: 'static,
         F: Fn(&mut T) -> Result<R>,
     {
-        self.data.try_with_mut(|d: &mut TEventData| -> Result<R> {
-            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
+        self.data
+            .try_with_mut(|d: &mut TEventData| -> Result<R> {
+                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                    f(t)
+                } else {
+                    Err(Error::Downcast)
+                }
+            })
     }
 }
 // ////////////////////////////////////////////////////////////////////////////

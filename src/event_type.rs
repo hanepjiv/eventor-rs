@@ -6,12 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/05/30
+//  @date 2018/04/12
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::sync::Arc;
 use std::collections::BTreeMap;
+use std::sync::Arc;
 // ----------------------------------------------------------------------------
 use hash_combine::hash_combine;
 // ----------------------------------------------------------------------------
@@ -33,15 +33,15 @@ pub type EventTypeRef = Arc<EventType>;
 impl EventType {
     // ========================================================================
     /// new
-    fn new<'a>(name: &'a str, hash: u32) -> Self {
+    fn new(name: &str, hash: u32) -> Self {
         Self {
             name: name.to_string(),
-            hash: hash,
+            hash,
         }
     }
     // ========================================================================
     /// peek_name
-    pub fn peek_name<'a>(&'a self) -> &'a str {
+    pub fn peek_name(&self) -> &str {
         self.name.as_ref()
     }
     // ========================================================================

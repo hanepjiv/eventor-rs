@@ -6,12 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2017/05/29
+//  @date 2018/04/12
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::fmt::Debug;
 use std::collections::BTreeMap;
+use std::fmt::Debug;
 use std::sync::RwLock;
 // ----------------------------------------------------------------------------
 use libc::uintptr_t;
@@ -24,8 +24,8 @@ aelicit_define!(aelicit_t_event_listener, TEventListener);
 // ----------------------------------------------------------------------------
 pub use self::aelicit_t_event_listener::Aelicit as EventListenerAelicit;
 pub use self::aelicit_t_event_listener::EnableAelicitFromSelf;
-pub use self::EnableAelicitFromSelf as EventListenerEAFS;
 pub use self::aelicit_t_event_listener::EnableAelicitFromSelfField;
+pub use self::EnableAelicitFromSelf as EventListenerEAFS;
 pub use self::EnableAelicitFromSelfField as EventListenerEAFSField;
 // ============================================================================
 /// trait TEventListener
@@ -56,20 +56,14 @@ impl EventListenerMap {
         id: uintptr_t,
         listener: EventListenerAelicit,
     ) -> Option<EventListenerAelicit> {
-        if self.0.contains_key(&event_hash) {
+        Some(
             self.0
-                .get_mut(&event_hash)
-                .expect("EventListenerMap::insert")
-                .insert(id, listener)
-        } else {
-            match self.0.insert(event_hash, EventListenerList::default()) {
-                None => self.0
-                    .get_mut(&event_hash)
-                    .expect("EventListenerMap::insert")
-                    .insert(id, listener),
-                Some(ref mut list) => list.insert(id, listener),
-            }
-        }
+                .entry(event_hash)
+                .or_insert_with(EventListenerList::default)
+                .entry(id)
+                .or_insert(listener)
+                .clone(),
+        )
     }
     // ========================================================================
     /// remove
@@ -136,7 +130,9 @@ impl EventListenerWaiting {
     where
         Q: ::std::ops::DerefMut<Target = EventListenerMap>,
     {
-        let mut vec = self.0.write().expect("EventLitenerWaiting.apply");
+        let mut vec = self.0
+            .write()
+            .expect("EventLitenerWaiting.apply");
         for &(hash, ref listener) in vec.iter() {
             let id = listener
                 .read()
@@ -191,7 +187,9 @@ impl EventListenerRemoving {
     where
         Q: ::std::ops::DerefMut<Target = EventListenerMap>,
     {
-        let mut vec = self.0.write().expect("EventLitenerRemoving.apply");
+        let mut vec = self.0
+            .write()
+            .expect("EventLitenerRemoving.apply");
         for &(hash, id) in vec.iter() {
             let _ = map.remove(hash, id);
         }

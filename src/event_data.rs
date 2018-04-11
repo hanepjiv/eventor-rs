@@ -6,12 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2017/05/26
+//  @date 2018/04/12
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::fmt::Debug;
 use std::any::Any;
+use std::fmt::Debug;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_event_data, TEventData);
@@ -50,7 +50,7 @@ impl<T: Debug + Any> EventData<T> {
     pub fn new(data: T) -> Self {
         Self {
             _eefsf: EventDataEAFSField::default(),
-            data: data,
+            data,
         }
     }
 }
