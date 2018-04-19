@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/04/12
+//  @date 2018/04/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -42,7 +42,7 @@ impl Event {
     pub fn with_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&T) -> Result<R>,
+        F: FnOnce(&T) -> Result<R>,
     {
         self.data.with(|d: &TEventData| -> Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
@@ -57,48 +57,45 @@ impl Event {
     pub fn with_mut_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&mut T) -> Result<R>,
+        F: FnOnce(&mut T) -> Result<R>,
     {
-        self.data
-            .with_mut(|d: &mut TEventData| -> Result<R> {
-                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                    f(t)
-                } else {
-                    Err(Error::Downcast)
-                }
-            })
+        self.data.with_mut(|d: &mut TEventData| -> Result<R> {
+            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                f(t)
+            } else {
+                Err(Error::Downcast)
+            }
+        })
     }
     // ========================================================================
     /// try_with_data
     pub fn try_with_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&T) -> Result<R>,
+        F: FnOnce(&T) -> Result<R>,
     {
-        self.data
-            .try_with(|d: &TEventData| -> Result<R> {
-                if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
-                    f(t)
-                } else {
-                    Err(Error::Downcast)
-                }
-            })
+        self.data.try_with(|d: &TEventData| -> Result<R> {
+            if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
+                f(t)
+            } else {
+                Err(Error::Downcast)
+            }
+        })
     }
     // ========================================================================
     /// try_with_mut_data
     pub fn try_with_mut_data<T, R, F>(&self, f: F) -> Result<R>
     where
         T: 'static,
-        F: Fn(&mut T) -> Result<R>,
+        F: FnOnce(&mut T) -> Result<R>,
     {
-        self.data
-            .try_with_mut(|d: &mut TEventData| -> Result<R> {
-                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                    f(t)
-                } else {
-                    Err(Error::Downcast)
-                }
-            })
+        self.data.try_with_mut(|d: &mut TEventData| -> Result<R> {
+            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                f(t)
+            } else {
+                Err(Error::Downcast)
+            }
+        })
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
