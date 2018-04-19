@@ -11,14 +11,16 @@ readme          = "README.md"
 documentation   = "https://github.com/hanepjiv/eventor-rs/wiki"
 homepage        = "https://github.com/hanepjiv/eventor-rs"
 repository      = "https://github.com/hanepjiv/eventor-rs.git"
+publish         = false
 # =============================================================================
 [dependencies]
 libc            = { default-features = false, version = "^0.2" }
 log             = { default-features = false, version = "^0.4" }
 # -----------------------------------------------------------------------------
 #elicit          = { default-features = false, git = "https://github.com/hanepjiv/elicit-rs.git" }
-#elicit           = { default-features = false, path = "../../elicit-rs/orig"
+#elicit          = { default-features = false, path = "../../elicit-rs/orig"
 elicit          = { default-features = false, version = "^0.7" }
 # -----------------------------------------------------------------------------
-hash_combine    = { default-features = false, git = "https://github.com/hanepjiv/hash_combine-rs.git" }
+#hash_combine   = { default-features = false, git = "https://github.com/hanepjiv/hash_combine-rs.git" }
 #hash_combine    = { default-features = false, path = "../../hash_combine-rs/orig" }
+hash_combine    = { default-features = false, version = "^0.3" }
