@@ -59,13 +59,14 @@ impl Event {
         T: 'static,
         F: FnOnce(&mut T) -> Result<R>,
     {
-        self.data.with_mut(|d: &mut TEventData| -> Result<R> {
-            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
+        self.data
+            .with_mut(|d: &mut TEventData| -> Result<R> {
+                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                    f(t)
+                } else {
+                    Err(Error::Downcast)
+                }
+            })
     }
     // ========================================================================
     /// try_with_data
@@ -74,13 +75,14 @@ impl Event {
         T: 'static,
         F: FnOnce(&T) -> Result<R>,
     {
-        self.data.try_with(|d: &TEventData| -> Result<R> {
-            if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
+        self.data
+            .try_with(|d: &TEventData| -> Result<R> {
+                if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
+                    f(t)
+                } else {
+                    Err(Error::Downcast)
+                }
+            })
     }
     // ========================================================================
     /// try_with_mut_data
@@ -89,13 +91,14 @@ impl Event {
         T: 'static,
         F: FnOnce(&mut T) -> Result<R>,
     {
-        self.data.try_with_mut(|d: &mut TEventData| -> Result<R> {
-            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
+        self.data
+            .try_with_mut(|d: &mut TEventData| -> Result<R> {
+                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                    f(t)
+                } else {
+                    Err(Error::Downcast)
+                }
+            })
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
