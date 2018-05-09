@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2018/04/12
+//  @date 2018/05/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -15,7 +15,8 @@ use std::sync::RwLock;
 use super::error::Error;
 use super::event::{Event, EventQueue};
 use super::event_listener::{EventListenerAelicit, EventListenerMap,
-                            EventListenerRemoving, EventListenerWaiting};
+                            EventListenerRemoving, EventListenerWaiting,
+                            RetOnEvent};
 use super::event_type::{EventTypeMap, EventTypeRef};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -115,8 +116,7 @@ impl TEventor for Eventor {
         event_hash: u32,
         listener: &EventListenerAelicit,
     ) -> () {
-        self.listener_waiting
-            .insert(event_hash, listener.clone())
+        self.listener_waiting.insert(event_hash, listener.clone())
     }
     // ------------------------------------------------------------------------
     fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) -> () {
@@ -125,27 +125,17 @@ impl TEventor for Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
     fn push_event(&self, event: Event) -> () {
-        self.queue
-            .write()
-            .expect("Eventor::push_event")
-            .push(event)
+        self.queue.write().expect("Eventor::push_event").push(event)
     }
     // ------------------------------------------------------------------------
     fn dispatch(&self) -> bool {
         self.listener_waiting
-            .apply(&mut self.listener_map
-                .write()
-                .expect("Eventor::dispatch"));
+            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
 
         self.listener_removing
-            .apply(&mut self.listener_map
-                .write()
-                .expect("Eventor::dispatch"));
+            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
 
-        let event = self.queue
-            .write()
-            .expect("Eventor::dispatch")
-            .pop();
+        let event = self.queue.write().expect("Eventor::dispatch").pop();
         match event {
             None => {
                 self.queue
@@ -169,7 +159,7 @@ impl TEventor for Eventor {
                     }
                     Some(list) => for (_, ref mut listener) in list.iter_mut()
                     {
-                        if !listener
+                        if let RetOnEvent::Complete = listener
                             .write()
                             .expect("Eventor::dispatch")
                             .on_event(

@@ -6,13 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2018/04/19
+//  @date 2018/05/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error
-#[allow(variant_size_differences)]
-#[derive(Debug, Clone)]
+#[allow(missing_copy_implementations, variant_size_differences)]
+#[derive(Debug)]
 pub enum Error {
     /// Elicit
     Elicit(::elicit::Error),

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2018/04/12
+//  @date 2018/05/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -18,6 +18,16 @@ use libc::uintptr_t;
 // ----------------------------------------------------------------------------
 use super::event::Event;
 use super::eventor::EventorAelicit;
+// ////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+/// enum RetOnEvent
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum RetOnEvent {
+    /// Next
+    Next,
+    /// Complete
+    Complete,
+}
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_event_listener, TEventListener);
@@ -35,7 +45,11 @@ pub trait TEventListener: Debug + EventListenerEAFS {
     fn peek_id(&self) -> uintptr_t;
     // ========================================================================
     /// on_event
-    fn on_event(&mut self, event: &Event, eventor: &EventorAelicit) -> bool;
+    fn on_event(
+        &mut self,
+        event: &Event,
+        eventor: &EventorAelicit,
+    ) -> RetOnEvent;
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -130,9 +144,7 @@ impl EventListenerWaiting {
     where
         Q: ::std::ops::DerefMut<Target = EventListenerMap>,
     {
-        let mut vec = self.0
-            .write()
-            .expect("EventLitenerWaiting.apply");
+        let mut vec = self.0.write().expect("EventLitenerWaiting.apply");
         for &(hash, ref listener) in vec.iter() {
             let id = listener
                 .read()
@@ -187,9 +199,7 @@ impl EventListenerRemoving {
     where
         Q: ::std::ops::DerefMut<Target = EventListenerMap>,
     {
-        let mut vec = self.0
-            .write()
-            .expect("EventLitenerRemoving.apply");
+        let mut vec = self.0.write().expect("EventLitenerRemoving.apply");
         for &(hash, id) in vec.iter() {
             let _ = map.remove(hash, id);
         }
