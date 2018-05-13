@@ -6,20 +6,20 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/04/12
+//  @date 2018/05/13
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::any::Any;
-use std::fmt::Debug;
+use std::{any::Any, fmt::Debug};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_event_data, TEventData);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_event_data::Aelicit as EventDataAelicit;
-pub use self::aelicit_t_event_data::EnableAelicitFromSelf as EventDataEAFS;
-pub use self::aelicit_t_event_data::EnableAelicitFromSelfField;
-pub use self::EnableAelicitFromSelfField as EventDataEAFSField;
+pub use self::aelicit_t_event_data::{
+    Aelicit as EventDataAelicit, EnableAelicitFromSelf as EventDataEAFS,
+    EnableAelicitFromSelfField,
+    EnableAelicitFromSelfField as EventDataEAFSField,
+};
 // ============================================================================
 /// trait TEventData
 pub trait TEventData: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any> {}

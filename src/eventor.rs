@@ -6,26 +6,29 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2018/05/09
+//  @date 2018/05/13
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::sync::RwLock;
 // ----------------------------------------------------------------------------
-use super::error::Error;
-use super::event::{Event, EventQueue};
-use super::event_listener::{EventListenerAelicit, EventListenerMap,
-                            EventListenerRemoving, EventListenerWaiting,
-                            RetOnEvent};
-use super::event_type::{EventTypeMap, EventTypeRef};
+use super::{
+    error::Error, event::{Event, EventQueue},
+    event_listener::{
+        EventListenerAelicit, EventListenerMap, EventListenerRemoving,
+        EventListenerWaiting, RetOnEvent,
+    },
+    event_type::{EventTypeMap, EventTypeRef},
+};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_eventor, TEventor);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_eventor::Aelicit as EventorAelicit;
-pub use self::aelicit_t_eventor::EnableAelicitFromSelf as EventorEAFS;
-pub use self::aelicit_t_eventor::EnableAelicitFromSelfField;
-pub use self::EnableAelicitFromSelfField as EventorEAFSField;
+pub use self::aelicit_t_eventor::{
+    Aelicit as EventorAelicit, EnableAelicitFromSelf as EventorEAFS,
+    EnableAelicitFromSelfField,
+    EnableAelicitFromSelfField as EventorEAFSField,
+};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// TEventor

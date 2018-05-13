@@ -6,15 +6,16 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/04/19
+//  @date 2018/05/13
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::collections::VecDeque;
 // ----------------------------------------------------------------------------
-use super::event_data::{EventDataAelicit, TEventData};
-use super::event_type::EventTypeRef;
-use super::{Error, Result};
+use super::{
+    event_data::{EventDataAelicit, TEventData}, event_type::EventTypeRef,
+    {Error, Result},
+};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Event
@@ -39,11 +40,10 @@ impl Event {
     }
     // ========================================================================
     /// with_data
-    pub fn with_data<T, R, F>(&self, f: F) -> Result<R>
-    where
-        T: 'static,
-        F: FnOnce(&T) -> Result<R>,
-    {
+    pub fn with_data<T: 'static, R>(
+        &self,
+        f: impl FnOnce(&T) -> Result<R>,
+    ) -> Result<R> {
         self.data.with(|d: &TEventData| -> Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
@@ -54,11 +54,10 @@ impl Event {
     }
     // ========================================================================
     /// with_mut_data
-    pub fn with_mut_data<T, R, F>(&self, f: F) -> Result<R>
-    where
-        T: 'static,
-        F: FnOnce(&mut T) -> Result<R>,
-    {
+    pub fn with_mut_data<T: 'static, R>(
+        &self,
+        f: impl FnOnce(&mut T) -> Result<R>,
+    ) -> Result<R> {
         self.data.with_mut(|d: &mut TEventData| -> Result<R> {
             if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
                 f(t)
@@ -69,11 +68,10 @@ impl Event {
     }
     // ========================================================================
     /// try_with_data
-    pub fn try_with_data<T, R, F>(&self, f: F) -> Result<R>
-    where
-        T: 'static,
-        F: FnOnce(&T) -> Result<R>,
-    {
+    pub fn try_with_data<T: 'static, R>(
+        &self,
+        f: impl FnOnce(&T) -> Result<R>,
+    ) -> Result<R> {
         self.data.try_with(|d: &TEventData| -> Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
@@ -84,11 +82,10 @@ impl Event {
     }
     // ========================================================================
     /// try_with_mut_data
-    pub fn try_with_mut_data<T, R, F>(&self, f: F) -> Result<R>
-    where
-        T: 'static,
-        F: FnOnce(&mut T) -> Result<R>,
-    {
+    pub fn try_with_mut_data<T: 'static, R>(
+        &self,
+        f: impl FnOnce(&mut T) -> Result<R>,
+    ) -> Result<R> {
         self.data.try_with_mut(|d: &mut TEventData| -> Result<R> {
             if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
                 f(t)

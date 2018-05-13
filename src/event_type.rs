@@ -6,12 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/04/12
+//  @date 2018/05/13
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::collections::BTreeMap;
-use std::sync::Arc;
+use std::{collections::BTreeMap, sync::Arc};
 // ----------------------------------------------------------------------------
 use hash_combine::hash_combine;
 // ----------------------------------------------------------------------------

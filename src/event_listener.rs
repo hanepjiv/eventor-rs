@@ -6,13 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2018/05/09
+//  @date 2018/05/13
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::collections::BTreeMap;
-use std::fmt::Debug;
-use std::sync::RwLock;
+use std::{collections::BTreeMap, fmt::Debug, sync::RwLock};
 // ----------------------------------------------------------------------------
 use libc::uintptr_t;
 // ----------------------------------------------------------------------------
@@ -140,10 +138,10 @@ impl EventListenerWaiting {
     }
     // ========================================================================
     /// apply
-    pub fn apply<Q>(&self, map: &mut Q)
-    where
-        Q: ::std::ops::DerefMut<Target = EventListenerMap>,
-    {
+    pub fn apply(
+        &self,
+        map: &mut impl ::std::ops::DerefMut<Target = EventListenerMap>,
+    ) {
         let mut vec = self.0.write().expect("EventLitenerWaiting.apply");
         for &(hash, ref listener) in vec.iter() {
             let id = listener
@@ -195,10 +193,10 @@ impl EventListenerRemoving {
     }
     // ========================================================================
     /// apply
-    pub fn apply<Q>(&self, map: &mut Q)
-    where
-        Q: ::std::ops::DerefMut<Target = EventListenerMap>,
-    {
+    pub fn apply(
+        &self,
+        map: &mut impl ::std::ops::DerefMut<Target = EventListenerMap>,
+    ) {
         let mut vec = self.0.write().expect("EventLitenerRemoving.apply");
         for &(hash, id) in vec.iter() {
             let _ = map.remove(hash, id);
