@@ -6,13 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2018/05/09
+//  @date 2018/06/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error
 #[allow(missing_copy_implementations, variant_size_differences)]
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Error {
     /// Elicit
     Elicit(::elicit::Error),
@@ -59,3 +59,24 @@ impl ::std::error::Error for Error {
 // ============================================================================
 /// type Result
 pub type Result<T> = ::std::result::Result<T, Error>;
+// ////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+#[cfg(test)]
+mod tests {
+    // use  ===================================================================
+    use super::{Error, Result};
+    // ========================================================================
+    #[test]
+    fn test_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<Error>();
+        assert_send::<Result<()>>();
+    }
+    // ------------------------------------------------------------------------
+    #[test]
+    fn test_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<Error>();
+        assert_sync::<Result<()>>();
+    }
+}
