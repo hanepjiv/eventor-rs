@@ -150,7 +150,8 @@ impl TEventor for Eventor {
                 false
             }
             Some(e) => {
-                match self.listener_map
+                match self
+                    .listener_map
                     .write()
                     .expect("Eventor::dispatch")
                     .get_mut(&(e.peek_type().peek_hash()))
