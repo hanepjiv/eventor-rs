@@ -1,31 +1,32 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 # =============================================================================
 [package]
-name            = "eventor"
-version         = "0.4.3"
-authors         = ["hanepjiv <hanepjiv@gmail.com>"]
-license         = "MIT/Apache-2.0"
-keywords        = ["subsystem", "event"]
-description     = "Event library"
-readme          = "README.md"
-documentation   = "https://github.com/hanepjiv/eventor-rs/wiki"
-homepage        = "https://github.com/hanepjiv/eventor-rs"
-repository      = "https://github.com/hanepjiv/eventor-rs.git"
-publish         = true
+name                    = "eventor"
+version                 = "0.4.4-alpha.0"
+authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
+license                 = "MIT/Apache-2.0"
+keywords                = ["subsystem", "event"]
+description             = "Event library"
+readme                  = "README.md"
+documentation           = "https://github.com/hanepjiv/eventor-rs/wiki"
+homepage                = "https://github.com/hanepjiv/eventor-rs"
+repository              = "https://github.com/hanepjiv/eventor-rs.git"
+publish                 = false
 # =============================================================================
 [dependencies]
-libc            = { default-features = false, version = "^0.2" }
-log             = { default-features = false, version = "^0.4" }
-elicit             = { default-features = false, version = "^0.7" }
-# -----------------------------------------------------------------------------
-#elicit          = { default-features = false, git = "https://github.com/hanepjiv/elicit-rs.git" }
-#elicit          = { default-features = false, path = "../../elicit-rs/orig" }
-#elicit          = { default-features = false, version = "^0.7" }
-# -----------------------------------------------------------------------------
-#hash_combine    = { default-features = false, git = "https://github.com/hanepjiv/hash_combine-rs.git" }
-#hash_combine    = { default-features = false, path = "../../hash_combine-rs/orig" }
-hash_combine    = { default-features = false, version = "^0.3" }
+libc                    = { default-features = false, version = "^0.2" }
+log                     = { default-features = false, version = "^0.4" }
+elicit                  = { default-features = false, version = "^0.7" }
+hash_combine            = { default-features = false, version = "^0.3" }
 # =============================================================================
-[replace]
-#"elicit:0.7.3"  = { default-features = false, git = "https://github.com/hanepjiv/elicit-rs.git" }
-#"elicit:0.7.3"  = { default-features = false, path = "../../elicit-rs/orig" }
+#[replace."elicit:0.7.4"]
+#default-features        = false
+#git                     = "https://github.com/hanepjiv/elicit-rs.git"
+#tag                     = "v0.7.4"
+#path                   = "../../elicit-rs/orig"
+# -----------------------------------------------------------------------------
+#[replace."hash_combine:0.3.4"]
+#default-features        = false
+#git                     = "https://github.com/hanepjiv/hash_combine-rs.git"
+#tag                     = "v0.3.4"
+#path                    = "../../hash_combine-rs/orig"

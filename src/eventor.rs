@@ -13,7 +13,8 @@
 use std::sync::RwLock;
 // ----------------------------------------------------------------------------
 use super::{
-    error::Error, event::{Event, EventQueue},
+    error::Error,
+    event::{Event, EventQueue},
     event_listener::{
         EventListenerAelicit, EventListenerMap, EventListenerRemoving,
         EventListenerWaiting, RetOnEvent,

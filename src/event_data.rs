@@ -24,11 +24,9 @@ pub use self::aelicit_t_event_data::{
 /// trait TEventData
 pub trait TEventData: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any> {}
 // ----------------------------------------------------------------------------
-impl<T> TEventData for T
-where
-    T: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any>,
-{
-}
+impl<T> TEventData for T where
+    T: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any>
+{}
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventData

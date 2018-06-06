@@ -13,7 +13,8 @@
 use std::collections::VecDeque;
 // ----------------------------------------------------------------------------
 use super::{
-    event_data::{EventDataAelicit, TEventData}, event_type::EventTypeRef,
+    event_data::{EventDataAelicit, TEventData},
+    event_type::EventTypeRef,
     {Error, Result},
 };
 // ////////////////////////////////////////////////////////////////////////////

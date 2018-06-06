@@ -50,7 +50,8 @@ extern crate elicit;
 extern crate hash_combine;
 // use  =======================================================================
 pub use self::{
-    error::{Error, Result}, event::Event,
+    error::{Error, Result},
+    event::Event,
     event_data::{
         EventData, EventDataAelicit, EventDataEAFS, EventDataEAFSField,
     },

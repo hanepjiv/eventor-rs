@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2018/06/01
+//  @date 2018/06/15
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -30,15 +30,12 @@ impl From<::elicit::Error> for Error {
 // ============================================================================
 impl ::std::fmt::Display for Error {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        match *self {
-            ref e @ Error::Elicit(_)
-            | ref e @ Error::Eventor(_)
-            | ref e @ Error::Downcast => write!(f, "{:?}", e),
-        }
+        <Self as ::std::fmt::Debug>::fmt(self, f)
     }
 }
 // ============================================================================
 impl ::std::error::Error for Error {
+    // ========================================================================
     fn description(&self) -> &str {
         match *self {
             Error::Elicit(ref e) => e.description(),
