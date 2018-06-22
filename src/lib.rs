@@ -6,16 +6,17 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/06/07
+//  @date 2018/06/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.26.2 (594fb253c 2018-06-01)
+// rustc 1.27.0 (3eda71b00 2018-06-19)
 #![deny(
-    anonymous_parameters, missing_copy_implementations,
+    absolute_paths_not_starting_with_crate, anonymous_parameters,
+    bare_trait_objects, missing_copy_implementations,
     missing_debug_implementations, missing_docs, unstable_features,
     unused_extern_crates, unused_import_braces, unused_qualifications,
-    unused_results, variant_size_differences, const_err,
+    unused_results, variant_size_differences, const_err, deprecated,
     illegal_floating_point_literal_pattern, improper_ctypes,
     incoherent_fundamental_impls, late_bound_lifetime_arguments,
     non_camel_case_types, non_shorthand_field_patterns, non_snake_case,
@@ -25,20 +26,20 @@
     safe_packed_borrows, stable_features, type_alias_bounds,
     tyvar_behind_raw_pointer, unconditional_recursion, unions_with_drop_fields,
     unknown_lints, unreachable_code, unreachable_patterns,
-    unstable_name_collision, unused_allocation, unused_assignments,
-    unused_attributes, unused_comparisons, unused_doc_comment, unused_features,
-    unused_imports, unused_macros, unused_must_use, unused_mut, unused_parens,
-    unused_unsafe, unused_variables, while_true, exceeding_bitshifts,
-    invalid_type_param_default, legacy_constructor_visibility,
-    legacy_directory_ownership, legacy_imports, missing_fragment_specifier,
-    mutable_transmutes, no_mangle_const_items,
+    unstable_name_collisions, unused_allocation, unused_assignments,
+    unused_attributes, unused_comparisons, unused_doc_comments,
+    unused_features, unused_imports, unused_macros, unused_must_use,
+    unused_mut, unused_parens, unused_unsafe, unused_variables, while_true,
+    exceeding_bitshifts, invalid_type_param_default,
+    legacy_constructor_visibility, legacy_directory_ownership, legacy_imports,
+    missing_fragment_specifier, mutable_transmutes, no_mangle_const_items,
     parenthesized_params_in_types_and_modules, pub_use_of_private_extern_crate,
     safe_extern_statics, unknown_crate_types
 )]
-#![warn(bare_trait_object, dead_code, deprecated, renamed_and_removed_lints)]
+#![warn(dead_code, deprecated, renamed_and_removed_lints, unreachable_pub)]
 #![allow(
-    box_pointers, elided_lifetime_in_path, single_use_lifetime, trivial_casts,
-    trivial_numeric_casts, unsafe_code
+    box_pointers, elided_lifetimes_in_paths, single_use_lifetimes,
+    trivial_casts, trivial_numeric_casts, unsafe_code
 )]
 // extern  ====================================================================
 extern crate libc;
@@ -50,8 +51,7 @@ extern crate elicit;
 extern crate hash_combine;
 // use  =======================================================================
 pub use self::{
-    error::{Error, Result},
-    event::Event,
+    error::{Error, Result}, event::Event,
     event_data::{
         EventData, EventDataAelicit, EventDataEAFS, EventDataEAFSField,
     },

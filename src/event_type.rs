@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/05/13
+//  @date 2018/06/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -53,7 +53,7 @@ impl EventType {
 // ============================================================================
 /// EventTypeMap
 #[derive(Debug, Default)]
-pub struct EventTypeMap(BTreeMap<u32, EventTypeRef>);
+pub(crate) struct EventTypeMap(BTreeMap<u32, EventTypeRef>);
 // ============================================================================
 impl EventTypeMap {
     // ========================================================================
@@ -68,7 +68,10 @@ impl EventTypeMap {
     }
     // ------------------------------------------------------------------------
     /// new_type
-    pub fn new_type(&mut self, name: &str) -> Result<EventTypeRef, Error> {
+    pub(crate) fn new_type(
+        &mut self,
+        name: &str,
+    ) -> Result<EventTypeRef, Error> {
         let l_name = name.to_lowercase();
         let (hash, ret) = self.check_type(l_name.as_str());
         match ret {
@@ -106,7 +109,7 @@ impl EventTypeMap {
     }
     // ------------------------------------------------------------------------
     /// peek_type
-    pub fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
+    pub(crate) fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
         let l_name = name.to_lowercase();
         let (_, ret) = self.check_type(l_name.as_str());
         ret

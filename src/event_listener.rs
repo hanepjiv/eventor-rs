@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2018/05/13
+//  @date 2018/06/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -52,17 +52,17 @@ pub trait TEventListener: Debug + EventListenerEAFS {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// type EventListenerList
-pub type EventListenerList = BTreeMap<uintptr_t, EventListenerAelicit>;
+pub(crate) type EventListenerList = BTreeMap<uintptr_t, EventListenerAelicit>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventListenerMap
 #[derive(Debug, Default)]
-pub struct EventListenerMap(BTreeMap<u32, EventListenerList>);
+pub(crate) struct EventListenerMap(BTreeMap<u32, EventListenerList>);
 // ============================================================================
 impl EventListenerMap {
     // ========================================================================
     /// insert
-    pub fn insert(
+    pub(crate) fn insert(
         &mut self,
         event_hash: u32,
         id: uintptr_t,
@@ -79,7 +79,7 @@ impl EventListenerMap {
     }
     // ========================================================================
     /// remove
-    pub fn remove(
+    pub(crate) fn remove(
         &mut self,
         event_hash: u32,
         id: uintptr_t,
@@ -95,7 +95,7 @@ impl EventListenerMap {
     }
     // ========================================================================
     /// get_mut
-    pub fn get_mut<Q: ?Sized>(
+    pub(crate) fn get_mut<Q: ?Sized>(
         &mut self,
         key: &Q,
     ) -> Option<&mut EventListenerList>
@@ -110,7 +110,9 @@ impl EventListenerMap {
 // ============================================================================
 /// struct EventListenerWaiting
 #[derive(Debug)]
-pub struct EventListenerWaiting(RwLock<Vec<(u32, EventListenerAelicit)>>);
+pub(crate) struct EventListenerWaiting(
+    RwLock<Vec<(u32, EventListenerAelicit)>>,
+);
 // ============================================================================
 impl Default for EventListenerWaiting {
     // ========================================================================
@@ -122,7 +124,11 @@ impl Default for EventListenerWaiting {
 impl EventListenerWaiting {
     // ========================================================================
     /// insert
-    pub fn insert(&self, event_hash: u32, listener: EventListenerAelicit) {
+    pub(crate) fn insert(
+        &self,
+        event_hash: u32,
+        listener: EventListenerAelicit,
+    ) {
         self.0
             .write()
             .expect("EventLitenerWaiting.insert")
@@ -130,7 +136,7 @@ impl EventListenerWaiting {
     }
     // ========================================================================
     /// shrink_to_fit
-    pub fn shrink_to_fit(&self) -> () {
+    pub(crate) fn shrink_to_fit(&self) -> () {
         self.0
             .write()
             .expect("EventLitenerWaiting.shrink_to_fit")
@@ -138,7 +144,7 @@ impl EventListenerWaiting {
     }
     // ========================================================================
     /// apply
-    pub fn apply(
+    pub(crate) fn apply(
         &self,
         map: &mut impl ::std::ops::DerefMut<Target = EventListenerMap>,
     ) {
@@ -157,7 +163,7 @@ impl EventListenerWaiting {
 // ============================================================================
 /// struct EventListenerRemoving
 #[derive(Debug)]
-pub struct EventListenerRemoving(RwLock<Vec<(u32, uintptr_t)>>);
+pub(crate) struct EventListenerRemoving(RwLock<Vec<(u32, uintptr_t)>>);
 // ============================================================================
 impl Default for EventListenerRemoving {
     // ========================================================================
@@ -169,7 +175,7 @@ impl Default for EventListenerRemoving {
 impl EventListenerRemoving {
     // ========================================================================
     /// insert
-    pub fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
+    pub(crate) fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
         self.0
             .write()
             .expect("EventLitenerRemoving.insert")
@@ -178,14 +184,14 @@ impl EventListenerRemoving {
     /*
     // ========================================================================
     /// contains
-    pub fn contains(&self, x: &(u32, uintptr_t)) -> bool {
+    pub(crate) fn contains(&self, x: &(u32, uintptr_t)) -> bool {
         self.0.read().expect("EventLitenerRemoving.contains").
             contains(x)
     }
      */
     // ========================================================================
     /// shrink_to_fit
-    pub fn shrink_to_fit(&self) -> () {
+    pub(crate) fn shrink_to_fit(&self) -> () {
         self.0
             .write()
             .expect("EventLitenerRemoving.shrink_to_fit")
@@ -193,7 +199,7 @@ impl EventListenerRemoving {
     }
     // ========================================================================
     /// apply
-    pub fn apply(
+    pub(crate) fn apply(
         &self,
         map: &mut impl ::std::ops::DerefMut<Target = EventListenerMap>,
     ) {

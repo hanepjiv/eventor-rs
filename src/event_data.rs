@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/05/13
+//  @date 2018/06/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -22,11 +22,16 @@ pub use self::aelicit_t_event_data::{
 };
 // ============================================================================
 /// trait TEventData
-pub trait TEventData: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any> {}
+pub trait TEventData:
+    Debug + EventDataEAFS + AsRef<dyn Any> + AsMut<dyn Any>
+{
+}
 // ----------------------------------------------------------------------------
-impl<T> TEventData for T where
-    T: Debug + EventDataEAFS + AsRef<Any> + AsMut<Any>
-{}
+impl<T> TEventData for T
+where
+    T: Debug + EventDataEAFS + AsRef<dyn Any> + AsMut<dyn Any>,
+{
+}
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventData
@@ -53,14 +58,14 @@ impl<T: Debug + Any> EventData<T> {
     }
 }
 // ============================================================================
-impl<T: Debug + Any> AsRef<Any> for EventData<T> {
-    fn as_ref(&self) -> &Any {
+impl<T: Debug + Any> AsRef<dyn Any> for EventData<T> {
+    fn as_ref(&self) -> &dyn Any {
         &self.data
     }
 }
 // ============================================================================
-impl<T: Debug + Any> AsMut<Any> for EventData<T> {
-    fn as_mut(&mut self) -> &mut Any {
+impl<T: Debug + Any> AsMut<dyn Any> for EventData<T> {
+    fn as_mut(&mut self) -> &mut dyn Any {
         &mut self.data
     }
 }

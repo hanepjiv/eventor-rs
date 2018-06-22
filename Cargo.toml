@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "eventor"
-version                 = "0.4.4-alpha.0"
+version                 = "0.4.4-alpha.1"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT/Apache-2.0"
 keywords                = ["subsystem", "event"]

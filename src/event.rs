@@ -6,15 +6,14 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/05/13
+//  @date 2018/06/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::collections::VecDeque;
 // ----------------------------------------------------------------------------
 use super::{
-    event_data::{EventDataAelicit, TEventData},
-    event_type::EventTypeRef,
+    event_data::{EventDataAelicit, TEventData}, event_type::EventTypeRef,
     {Error, Result},
 };
 // ////////////////////////////////////////////////////////////////////////////
@@ -45,7 +44,7 @@ impl Event {
         &self,
         f: impl FnOnce(&T) -> Result<R>,
     ) -> Result<R> {
-        self.data.with(|d: &TEventData| -> Result<R> {
+        self.data.with(|d: &dyn TEventData| -> Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
@@ -59,7 +58,7 @@ impl Event {
         &self,
         f: impl FnOnce(&mut T) -> Result<R>,
     ) -> Result<R> {
-        self.data.with_mut(|d: &mut TEventData| -> Result<R> {
+        self.data.with_mut(|d: &mut dyn TEventData| -> Result<R> {
             if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
                 f(t)
             } else {
@@ -73,7 +72,7 @@ impl Event {
         &self,
         f: impl FnOnce(&T) -> Result<R>,
     ) -> Result<R> {
-        self.data.try_with(|d: &TEventData| -> Result<R> {
+        self.data.try_with(|d: &dyn TEventData| -> Result<R> {
             if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
@@ -87,35 +86,36 @@ impl Event {
         &self,
         f: impl FnOnce(&mut T) -> Result<R>,
     ) -> Result<R> {
-        self.data.try_with_mut(|d: &mut TEventData| -> Result<R> {
-            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
+        self.data
+            .try_with_mut(|d: &mut dyn TEventData| -> Result<R> {
+                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
+                    f(t)
+                } else {
+                    Err(Error::Downcast)
+                }
+            })
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventQueue
 #[derive(Debug, Default)]
-pub struct EventQueue(VecDeque<Event>);
+pub(crate) struct EventQueue(VecDeque<Event>);
 // ============================================================================
 impl EventQueue {
     // ========================================================================
     /// push
-    pub fn push(&mut self, event: Event) -> () {
+    pub(crate) fn push(&mut self, event: Event) -> () {
         self.0.push_back(event)
     }
     // ========================================================================
     /// pop
-    pub fn pop(&mut self) -> Option<Event> {
+    pub(crate) fn pop(&mut self) -> Option<Event> {
         self.0.pop_front()
     }
     // ========================================================================
     /// shrink_to_fit
-    pub fn shrink_to_fit(&mut self) -> () {
+    pub(crate) fn shrink_to_fit(&mut self) -> () {
         self.0.shrink_to_fit()
     }
 }
