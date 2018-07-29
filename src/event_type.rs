@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/06/22
+//  @date 2018/07/29
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -100,7 +100,10 @@ impl EventTypeMap {
                         name
                     ))),
                     None => {
-                        info!("Eventor::new_type: {:#x} \"{}\"", hash, l_name);
+                        info!(
+                            "Eventor::new_type: \"{}\" = {:#x}",
+                            l_name, hash
+                        );
                         Ok(event_type)
                     }
                 }

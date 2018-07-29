@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2018/05/13
+//  @date 2018/07/29
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -23,49 +23,9 @@ use super::{
 };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-aelicit_define!(aelicit_t_eventor, TEventor);
-// ----------------------------------------------------------------------------
-pub use self::aelicit_t_eventor::{
-    Aelicit as EventorAelicit, EnableAelicitFromSelf as EventorEAFS,
-    EnableAelicitFromSelfField,
-    EnableAelicitFromSelfField as EventorEAFSField,
-};
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
-/// TEventor
-pub trait TEventor: ::std::fmt::Debug + EventorEAFS {
-    // ========================================================================
-    /// new_type
-    fn new_type(&self, name: &str) -> Result<EventTypeRef, Error>;
-    // ------------------------------------------------------------------------
-    /// peek_type
-    fn peek_type(&self, name: &str) -> Option<EventTypeRef>;
-    // ////////////////////////////////////////////////////////////////////////
-    // ------------------------------------------------------------------------
-    /// insert_listener
-    fn insert_listener(
-        &self,
-        event_hash: u32,
-        listener: &EventListenerAelicit,
-    ) -> ();
-    // ------------------------------------------------------------------------
-    /// remove_listener
-    fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) -> ();
-    // ========================================================================
-    /// push_event
-    fn push_event(&self, event: Event) -> ();
-    // ------------------------------------------------------------------------
-    /// dispatch
-    fn dispatch(&self) -> bool;
-}
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
 /// struct Eventor
 #[derive(Debug)]
 pub struct Eventor {
-    // base  ==================================================================
-    _eefsf: EventorEAFSField,
-    // field  =================================================================
     /// event type map
     type_map: RwLock<EventTypeMap>,
     /// event queue
@@ -81,33 +41,27 @@ pub struct Eventor {
 impl Eventor {
     // ========================================================================
     /// new
-    pub fn new() -> EventorAelicit {
-        EventorAelicit::new(Eventor {
-            _eefsf: EventorEAFSField::default(),
+    pub fn new() -> Self {
+        Eventor {
             type_map: RwLock::new(EventTypeMap::default()),
             queue: RwLock::new(EventQueue::default()),
             listener_map: RwLock::new(EventListenerMap::default()),
             listener_waiting: EventListenerWaiting::default(),
             listener_removing: EventListenerRemoving::default(),
-        })
+        }
     }
-}
-// ============================================================================
-impl EventorEAFS for Eventor {
-    enable_aelicit_from_self_delegate!(TEventor, EventorAelicit, _eefsf);
-}
-// ============================================================================
-impl TEventor for Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
-    fn new_type(&self, name: &str) -> Result<EventTypeRef, Error> {
+    /// new_type
+    pub fn new_type(&self, name: &str) -> Result<EventTypeRef, Error> {
         self.type_map
             .write()
             .expect("Eventor::new_type")
             .new_type(name)
     }
     // ------------------------------------------------------------------------
-    fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
+    /// peek_type
+    pub fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
         self.type_map
             .read()
             .expect("Eventor::peek_type")
@@ -115,7 +69,8 @@ impl TEventor for Eventor {
     }
     // ========================================================================
     // ------------------------------------------------------------------------
-    fn insert_listener(
+    /// insert_listener
+    pub fn insert_listener(
         &self,
         event_hash: u32,
         listener: &EventListenerAelicit,
@@ -123,16 +78,23 @@ impl TEventor for Eventor {
         self.listener_waiting.insert(event_hash, listener.clone())
     }
     // ------------------------------------------------------------------------
-    fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) -> () {
+    /// remove_listener
+    pub fn remove_listener(
+        &self,
+        event_hash: u32,
+        id: ::libc::uintptr_t,
+    ) -> () {
         self.listener_removing.insert(event_hash, id)
     }
     // ========================================================================
     // ------------------------------------------------------------------------
-    fn push_event(&self, event: Event) -> () {
+    /// push_event
+    pub fn push_event(&self, event: Event) -> () {
         self.queue.write().expect("Eventor::push_event").push(event)
     }
     // ------------------------------------------------------------------------
-    fn dispatch(&self) -> bool {
+    /// dispatch
+    pub fn dispatch(&self) -> bool {
         self.listener_waiting
             .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
 
@@ -167,10 +129,8 @@ impl TEventor for Eventor {
                         if let RetOnEvent::Complete = listener
                             .write()
                             .expect("Eventor::dispatch")
-                            .on_event(
-                                &e,
-                                &self.aelicit().expect("Eventor::dispatch"),
-                            ) {
+                            .on_event(&e, &self)
+                        {
                             break;
                         }
                     },

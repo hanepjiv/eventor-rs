@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2018/06/22
+//  @date 2018/07/29
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -14,8 +14,7 @@ use std::{collections::BTreeMap, fmt::Debug, sync::RwLock};
 // ----------------------------------------------------------------------------
 use libc::uintptr_t;
 // ----------------------------------------------------------------------------
-use super::event::Event;
-use super::eventor::EventorAelicit;
+use super::{event::Event, Eventor};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum RetOnEvent
@@ -43,11 +42,7 @@ pub trait TEventListener: Debug + EventListenerEAFS {
     fn peek_id(&self) -> uintptr_t;
     // ========================================================================
     /// on_event
-    fn on_event(
-        &mut self,
-        event: &Event,
-        eventor: &EventorAelicit,
-    ) -> RetOnEvent;
+    fn on_event(&mut self, event: &Event, eventor: &Eventor) -> RetOnEvent;
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================

@@ -27,11 +27,9 @@ pub trait TEventData:
 {
 }
 // ----------------------------------------------------------------------------
-impl<T> TEventData for T
-where
-    T: Debug + EventDataEAFS + AsRef<dyn Any> + AsMut<dyn Any>,
-{
-}
+impl<T> TEventData for T where
+    T: Debug + EventDataEAFS + AsRef<dyn Any> + AsMut<dyn Any>
+{}
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventData
