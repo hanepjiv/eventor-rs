@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2018/07/29
+//  @date 2018/07/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -14,7 +14,7 @@ use std::{collections::BTreeMap, fmt::Debug, sync::RwLock};
 // ----------------------------------------------------------------------------
 use libc::uintptr_t;
 // ----------------------------------------------------------------------------
-use super::{event::Event, Eventor};
+use super::{Event, Eventor};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum RetOnEvent
@@ -27,7 +27,7 @@ pub enum RetOnEvent {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-aelicit_define!(aelicit_t_event_listener, TEventListener);
+aelicit_define!(aelicit_t_event_listener, EventListener);
 // ----------------------------------------------------------------------------
 pub use self::aelicit_t_event_listener::Aelicit as EventListenerAelicit;
 pub use self::aelicit_t_event_listener::EnableAelicitFromSelf;
@@ -35,8 +35,8 @@ pub use self::aelicit_t_event_listener::EnableAelicitFromSelfField;
 pub use self::EnableAelicitFromSelf as EventListenerEAFS;
 pub use self::EnableAelicitFromSelfField as EventListenerEAFSField;
 // ============================================================================
-/// trait TEventListener
-pub trait TEventListener: Debug + EventListenerEAFS {
+/// trait EventListener
+pub trait EventListener: Debug + EventListenerEAFS {
     // ========================================================================
     /// peek_id
     fn peek_id(&self) -> uintptr_t;

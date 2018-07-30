@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2018/07/29
+//  @date 2018/07/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -38,10 +38,8 @@ pub struct Eventor {
     listener_removing: EventListenerRemoving,
 }
 // ============================================================================
-impl Eventor {
-    // ========================================================================
-    /// new
-    pub fn new() -> Self {
+impl Default for Eventor {
+    fn default() -> Self {
         Eventor {
             type_map: RwLock::new(EventTypeMap::default()),
             queue: RwLock::new(EventQueue::default()),
@@ -49,6 +47,14 @@ impl Eventor {
             listener_waiting: EventListenerWaiting::default(),
             listener_removing: EventListenerRemoving::default(),
         }
+    }
+}
+// ============================================================================
+impl Eventor {
+    // ========================================================================
+    /// fn new
+    pub fn new() -> Self {
+        Self::default()
     }
     // ========================================================================
     // ------------------------------------------------------------------------
@@ -60,7 +66,7 @@ impl Eventor {
             .new_type(name)
     }
     // ------------------------------------------------------------------------
-    /// peek_type
+    /// fn peek_typs
     pub fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
         self.type_map
             .read()
@@ -68,8 +74,7 @@ impl Eventor {
             .peek_type(name)
     }
     // ========================================================================
-    // ------------------------------------------------------------------------
-    /// insert_listener
+    /// fn insert_listener
     pub fn insert_listener(
         &self,
         event_hash: u32,
@@ -87,13 +92,12 @@ impl Eventor {
         self.listener_removing.insert(event_hash, id)
     }
     // ========================================================================
-    // ------------------------------------------------------------------------
-    /// push_event
+    /// fn push_event
     pub fn push_event(&self, event: Event) -> () {
         self.queue.write().expect("Eventor::push_event").push(event)
     }
     // ------------------------------------------------------------------------
-    /// dispatch
+    /// fn dispatch
     pub fn dispatch(&self) -> bool {
         self.listener_waiting
             .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));

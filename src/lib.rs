@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/07/29
+//  @date 2018/07/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -104,8 +104,8 @@ pub use self::{
         EventData, EventDataAelicit, EventDataEAFS, EventDataEAFSField,
     },
     event_listener::{
-        EventListenerAelicit, EventListenerEAFS, EventListenerEAFSField,
-        RetOnEvent, TEventListener,
+        EventListener, EventListenerAelicit, EventListenerEAFS,
+        EventListenerEAFSField, RetOnEvent,
     },
     event_type::{EventType, EventTypeRef},
     eventor::Eventor,
