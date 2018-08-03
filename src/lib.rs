@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/07/31
+//  @date 2018/08/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.27.2 (58cc626de 2018-07-18)
+// rustc 1.28.0 (9634041f0 2018-07-30)
 #![deny(
     absolute_paths_not_starting_with_crate,
     anonymous_parameters,
@@ -21,14 +21,16 @@
     unstable_features,
     unused_extern_crates,
     unused_import_braces,
+    unused_labels,
+    unused_lifetimes,
     unused_qualifications,
     unused_results,
     variant_size_differences,
-    const_err,
     deprecated,
+    duplicate_associated_type_bindings,
     illegal_floating_point_literal_pattern,
     improper_ctypes,
-    incoherent_fundamental_impls,
+    intra_doc_link_resolution_failure,
     late_bound_lifetime_arguments,
     non_camel_case_types,
     non_shorthand_field_patterns,
@@ -44,6 +46,7 @@
     private_no_mangle_statics,
     safe_packed_borrows,
     stable_features,
+    trivial_bounds,
     type_alias_bounds,
     tyvar_behind_raw_pointer,
     unconditional_recursion,
@@ -66,11 +69,13 @@
     unused_unsafe,
     unused_variables,
     while_true,
+    const_err,
+    duplicate_macro_exports,
     exceeding_bitshifts,
+    incoherent_fundamental_impls,
     invalid_type_param_default,
     legacy_constructor_visibility,
     legacy_directory_ownership,
-    legacy_imports,
     missing_fragment_specifier,
     mutable_transmutes,
     no_mangle_const_items,
