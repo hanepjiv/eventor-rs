@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2018/07/31
+//  @date 2019/07/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -18,7 +18,7 @@ use super::{Event, Eventor};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum RetOnEvent
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RetOnEvent {
     /// Next
     Next,
@@ -180,8 +180,8 @@ impl EventListenerRemoving {
     // ========================================================================
     /// contains
     pub(crate) fn contains(&self, x: &(u32, uintptr_t)) -> bool {
-        self.0.read().expect("EventLitenerRemoving.contains").
-            contains(x)
+    self.0.read().expect("EventLitenerRemoving.contains").
+        contains(x)
     }
      */
     // ========================================================================
