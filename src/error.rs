@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2019/07/09
+//  @date 2020/03/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -18,15 +18,15 @@ use std::error::Error as StdError;
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Error {
     /// Elicit
-    Elicit(::elicit::Error),
+    Elicit(elicit::Error),
     /// EventorError
     Eventor(String),
     /// Downcast
     Downcast,
 }
 // ============================================================================
-impl From<::elicit::Error> for Error {
-    fn from(e: ::elicit::Error) -> Self {
+impl From<elicit::Error> for Error {
+    fn from(e: elicit::Error) -> Self {
         Error::Elicit(e)
     }
 }
@@ -39,15 +39,7 @@ impl ::std::fmt::Display for Error {
 // ============================================================================
 impl StdError for Error {
     // ========================================================================
-    fn description(&self) -> &str {
-        match *self {
-            Error::Elicit(ref e) => e.description(),
-            Error::Eventor(ref m) => m.as_str(),
-            Error::Downcast => "::eventor::error::Error::Downcast",
-        }
-    }
-    // ========================================================================
-    fn cause(&self) -> Option<&dyn StdError> {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
             Error::Elicit(ref e) => Some(e),
             Error::Eventor(_) => None,

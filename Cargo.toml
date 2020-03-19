@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "eventor"
-version                 = "0.6.1"
+version                 = "0.6.3-alpha.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT/Apache-2.0"
 keywords                = ["subsystem", "event"]
@@ -11,7 +11,7 @@ readme                  = "README.md"
 documentation           = "https://github.com/hanepjiv/eventor-rs/wiki"
 homepage                = "https://github.com/hanepjiv/eventor-rs"
 repository              = "https://github.com/hanepjiv/eventor-rs.git"
-publish                 = true
+publish                 = false
 # =============================================================================
 [dependencies]
 libc                    = { default-features = false, version = "^0.2" }
@@ -20,7 +20,7 @@ elicit                  = { default-features = false, version = "^0.7" }
 hash_combine            = { default-features = false, version = "^0.3" }
 # =============================================================================
 #[replace."elicit:0.7.4"]
-#default-features        = false
+#default-features        = false0
 #git                     = "https://github.com/hanepjiv/elicit-rs.git"
 #tag                     = "v0.7.4"
 #path                   = "../../elicit-rs/orig"

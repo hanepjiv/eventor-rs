@@ -6,11 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2018/07/31
+//  @date 2020/03/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::sync::RwLock;
+// ----------------------------------------------------------------------------
+use log::info;
 // ----------------------------------------------------------------------------
 use super::{
     error::Error,
@@ -128,16 +130,17 @@ impl Eventor {
                             info!("Eventor::dispatch: no listener: {:?}", e);
                         }
                     }
-                    Some(list) => for (_, ref mut listener) in list.iter_mut()
-                    {
-                        if let RetOnEvent::Complete = listener
-                            .write()
-                            .expect("Eventor::dispatch")
-                            .on_event(&e, &self)
-                        {
-                            break;
+                    Some(list) => {
+                        for (_, ref mut listener) in list.iter_mut() {
+                            if let RetOnEvent::Complete = listener
+                                .write()
+                                .expect("Eventor::dispatch")
+                                .on_event(&e, &self)
+                            {
+                                break;
+                            }
                         }
-                    },
+                    }
                 }
                 true
             }

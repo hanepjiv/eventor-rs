@@ -6,15 +6,18 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2018/06/22
+//  @date 2020/03/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::{any::Any, fmt::Debug};
+// ----------------------------------------------------------------------------
+use elicit::{aelicit_define, enable_aelicit_from_self_delegate};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 aelicit_define!(aelicit_t_event_data, TEventData);
 // ----------------------------------------------------------------------------
+#[allow(unreachable_pub)]
 pub use self::aelicit_t_event_data::{
     Aelicit as EventDataAelicit, EnableAelicitFromSelf as EventDataEAFS,
     EnableAelicitFromSelfField,
@@ -29,7 +32,8 @@ pub trait TEventData:
 // ----------------------------------------------------------------------------
 impl<T> TEventData for T where
     T: Debug + EventDataEAFS + AsRef<dyn Any> + AsMut<dyn Any>
-{}
+{
+}
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventData

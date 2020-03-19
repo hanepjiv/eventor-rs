@@ -6,12 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2019/07/09
+//  @date 2020/03/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::{collections::BTreeMap, fmt::Debug, sync::RwLock};
 // ----------------------------------------------------------------------------
+use elicit::aelicit_define;
 use libc::uintptr_t;
 // ----------------------------------------------------------------------------
 use super::{Event, Eventor};
@@ -29,11 +30,12 @@ pub enum RetOnEvent {
 // ============================================================================
 aelicit_define!(aelicit_t_event_listener, EventListener);
 // ----------------------------------------------------------------------------
-pub use self::aelicit_t_event_listener::Aelicit as EventListenerAelicit;
-pub use self::aelicit_t_event_listener::EnableAelicitFromSelf;
-pub use self::aelicit_t_event_listener::EnableAelicitFromSelfField;
-pub use self::EnableAelicitFromSelf as EventListenerEAFS;
-pub use self::EnableAelicitFromSelfField as EventListenerEAFSField;
+#[allow(unreachable_pub)]
+pub use self::aelicit_t_event_listener::{
+    Aelicit as EventListenerAelicit,
+    EnableAelicitFromSelf as EventListenerEAFS,
+    EnableAelicitFromSelfField as EventListenerEAFSField,
+};
 // ============================================================================
 /// trait EventListener
 pub trait EventListener: Debug + EventListenerEAFS {
@@ -181,7 +183,7 @@ impl EventListenerRemoving {
     /// contains
     pub(crate) fn contains(&self, x: &(u32, uintptr_t)) -> bool {
     self.0.read().expect("EventLitenerRemoving.contains").
-        contains(x)
+    contains(x)
     }
      */
     // ========================================================================
