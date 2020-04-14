@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2020/03/19
+//  @date 2020/04/14
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -98,7 +98,7 @@ impl EventListenerMap {
     ) -> Option<&mut EventListenerList>
     where
         Q: Ord,
-        u32: ::std::borrow::Borrow<Q>,
+        u32: std::borrow::Borrow<Q>,
     {
         self.0.get_mut(key)
     }
@@ -143,7 +143,7 @@ impl EventListenerWaiting {
     /// apply
     pub(crate) fn apply(
         &self,
-        map: &mut impl ::std::ops::DerefMut<Target = EventListenerMap>,
+        map: &mut impl std::ops::DerefMut<Target = EventListenerMap>,
     ) {
         let mut vec = self.0.write().expect("EventLitenerWaiting.apply");
         for &(hash, ref listener) in vec.iter() {
@@ -198,7 +198,7 @@ impl EventListenerRemoving {
     /// apply
     pub(crate) fn apply(
         &self,
-        map: &mut impl ::std::ops::DerefMut<Target = EventListenerMap>,
+        map: &mut impl std::ops::DerefMut<Target = EventListenerMap>,
     ) {
         let mut vec = self.0.write().expect("EventLitenerRemoving.apply");
         for &(hash, id) in vec.iter() {

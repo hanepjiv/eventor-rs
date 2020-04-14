@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2020/03/19
+//  @date 2020/04/14
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -14,11 +14,13 @@
 #![deny(
     absolute_paths_not_starting_with_crate,
     anonymous_parameters,
+    box_pointers,
     deprecated_in_future,
     elided_lifetimes_in_paths,
     explicit_outlives_requirements,
     indirect_structural_match,
     keyword_idents,
+    macro_use_extern_crate,
     meta_variable_misuse,
     missing_copy_implementations,
     missing_debug_implementations,
@@ -106,13 +108,8 @@
     soft_unstable,
     unknown_crate_types
 )]
-#![warn(macro_use_extern_crate, dead_code, renamed_and_removed_lints)]
+#![warn(dead_code, renamed_and_removed_lints)]
 #![allow(box_pointers)]
-// extern  ====================================================================
-extern crate elicit;
-extern crate hash_combine;
-extern crate libc;
-extern crate log;
 // mod  =======================================================================
 mod error;
 mod event;

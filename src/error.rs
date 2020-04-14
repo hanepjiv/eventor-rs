@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2020/03/19
+//  @date 2020/04/14
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -31,9 +31,9 @@ impl From<elicit::Error> for Error {
     }
 }
 // ============================================================================
-impl ::std::fmt::Display for Error {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        <Self as ::std::fmt::Debug>::fmt(self, f)
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        <Self as std::fmt::Debug>::fmt(self, f)
     }
 }
 // ============================================================================
@@ -50,7 +50,7 @@ impl StdError for Error {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// type Result
-pub type Result<T> = ::std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]
