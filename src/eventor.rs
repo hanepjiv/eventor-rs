@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2020/03/19
+//  @date 2024/03/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -81,21 +81,17 @@ impl Eventor {
         &self,
         event_hash: u32,
         listener: &EventListenerAelicit,
-    ) -> () {
+    ) {
         self.listener_waiting.insert(event_hash, listener.clone())
     }
     // ------------------------------------------------------------------------
     /// remove_listener
-    pub fn remove_listener(
-        &self,
-        event_hash: u32,
-        id: ::libc::uintptr_t,
-    ) -> () {
+    pub fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) {
         self.listener_removing.insert(event_hash, id)
     }
     // ========================================================================
     /// fn push_event
-    pub fn push_event(&self, event: Event) -> () {
+    pub fn push_event(&self, event: Event) {
         self.queue.write().expect("Eventor::push_event").push(event)
     }
     // ------------------------------------------------------------------------
@@ -135,7 +131,7 @@ impl Eventor {
                             if let RetOnEvent::Complete = listener
                                 .write()
                                 .expect("Eventor::dispatch")
-                                .on_event(&e, &self)
+                                .on_event(&e, self)
                             {
                                 break;
                             }

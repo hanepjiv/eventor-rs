@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2020/04/14
+//  @date 2024/03/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -68,7 +68,7 @@ impl EventListenerMap {
         Some(
             self.0
                 .entry(event_hash)
-                .or_insert_with(EventListenerList::default)
+                .or_default()
                 .entry(id)
                 .or_insert(listener)
                 .clone(),
@@ -133,7 +133,7 @@ impl EventListenerWaiting {
     }
     // ========================================================================
     /// shrink_to_fit
-    pub(crate) fn shrink_to_fit(&self) -> () {
+    pub(crate) fn shrink_to_fit(&self) {
         self.0
             .write()
             .expect("EventLitenerWaiting.shrink_to_fit")
@@ -172,7 +172,7 @@ impl Default for EventListenerRemoving {
 impl EventListenerRemoving {
     // ========================================================================
     /// insert
-    pub(crate) fn insert(&self, event_hash: u32, id: uintptr_t) -> () {
+    pub(crate) fn insert(&self, event_hash: u32, id: uintptr_t) {
         self.0
             .write()
             .expect("EventLitenerRemoving.insert")
@@ -188,7 +188,7 @@ impl EventListenerRemoving {
      */
     // ========================================================================
     /// shrink_to_fit
-    pub(crate) fn shrink_to_fit(&self) -> () {
+    pub(crate) fn shrink_to_fit(&self) {
         self.0
             .write()
             .expect("EventLitenerRemoving.shrink_to_fit")
