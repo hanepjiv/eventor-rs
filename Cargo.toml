@@ -1,9 +1,9 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 # =============================================================================
 [package]
-edition                 = "2018"
+edition                 = "2021"
 name                    = "eventor"
-version                 = "0.6.4-alpha.0"
+version                 = "0.6.4-alpha.2"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT/Apache-2.0"
 keywords                = ["subsystem", "event"]

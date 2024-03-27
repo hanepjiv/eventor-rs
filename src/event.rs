@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2020/04/14
+//  @date 2024/03/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -46,7 +46,7 @@ impl Event {
         f: impl FnOnce(&T) -> Result<R>,
     ) -> Result<R> {
         self.data.with(|d: &dyn TEventData| -> Result<R> {
-            if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
+            if let Some(t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
                 Err(Error::Downcast)
@@ -74,7 +74,7 @@ impl Event {
         f: impl FnOnce(&T) -> Result<R>,
     ) -> Result<R> {
         self.data.try_with(|d: &dyn TEventData| -> Result<R> {
-            if let Some(ref t) = d.as_ref().downcast_ref::<T>() {
+            if let Some(t) = d.as_ref().downcast_ref::<T>() {
                 f(t)
             } else {
                 Err(Error::Downcast)
@@ -106,7 +106,7 @@ pub(crate) struct EventQueue(VecDeque<Event>);
 impl EventQueue {
     // ========================================================================
     /// push
-    pub(crate) fn push(&mut self, event: Event) -> () {
+    pub(crate) fn push(&mut self, event: Event) {
         self.0.push_back(event)
     }
     // ========================================================================
@@ -116,7 +116,7 @@ impl EventQueue {
     }
     // ========================================================================
     /// shrink_to_fit
-    pub(crate) fn shrink_to_fit(&mut self) -> () {
+    pub(crate) fn shrink_to_fit(&mut self) {
         self.0.shrink_to_fit()
     }
 }
