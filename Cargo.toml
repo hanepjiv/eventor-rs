@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "eventor"
-version                 = "0.6.4-alpha.2"
+version                 = "0.6.4-alpha.3"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT/Apache-2.0"
 keywords                = ["subsystem", "event"]
@@ -20,14 +20,14 @@ log                     = { default-features = false, version = "^0.4" }
 elicit                  = { default-features = false, version = "^0.7" }
 hash_combine            = { default-features = false, version = "^0.3" }
 # =============================================================================
-#[replace."elicit:0.7.4"]
+#[replace."elicit:0.7.10"]
 #default-features        = false
 #git                     = "https://github.com/hanepjiv/elicit-rs.git"
-#tag                     = "v0.7.4"
+#tag                     = "v0.7.10"
 #path                   = "../../elicit-rs/orig"
 # -----------------------------------------------------------------------------
-#[replace."hash_combine:0.3.4"]
+#[replace."hash_combine:0.3.8"]
 #default-features        = false
 #git                     = "https://github.com/hanepjiv/hash_combine-rs.git"
-#tag                     = "v0.3.4"
+#tag                     = "v0.3.8"
 #path                    = "../../hash_combine-rs/orig"

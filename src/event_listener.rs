@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2024/03/25
+//  @date 2024/03/30
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -92,12 +92,12 @@ impl EventListenerMap {
     }
     // ========================================================================
     /// get_mut
-    pub(crate) fn get_mut<Q: ?Sized>(
+    pub(crate) fn get_mut<Q>(
         &mut self,
         key: &Q,
     ) -> Option<&mut EventListenerList>
     where
-        Q: Ord,
+        Q: ?Sized + Ord,
         u32: std::borrow::Borrow<Q>,
     {
         self.0.get_mut(key)
@@ -151,7 +151,7 @@ impl EventListenerWaiting {
                 .read()
                 .expect("EventListenerWaiting::apply")
                 .peek_id();
-            let _ = map.insert(hash, id, listener.clone());
+            drop(map.insert(hash, id, listener.clone()));
         }
         vec.clear();
     }
@@ -202,7 +202,7 @@ impl EventListenerRemoving {
     ) {
         let mut vec = self.0.write().expect("EventLitenerRemoving.apply");
         for &(hash, id) in vec.iter() {
-            let _ = map.remove(hash, id);
+            drop(map.remove(hash, id));
         }
         vec.clear();
     }
