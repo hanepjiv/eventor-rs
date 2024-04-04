@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/03/25
+//  @date 2024/04/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -17,7 +17,6 @@ use elicit::{aelicit_define, enable_aelicit_from_self_delegate};
 // ============================================================================
 aelicit_define!(aelicit_t_event_data, TEventData);
 // ----------------------------------------------------------------------------
-#[allow(unreachable_pub)]
 pub use self::aelicit_t_event_data::{
     Aelicit as EventDataAelicit, EnableAelicitFromSelf as EventDataEAFS,
     EnableAelicitFromSelfField as EventDataEAFSField,

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2024/03/30
+//  @date 2024/04/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -30,7 +30,6 @@ pub enum RetOnEvent {
 // ============================================================================
 aelicit_define!(aelicit_t_event_listener, EventListener);
 // ----------------------------------------------------------------------------
-#[allow(unreachable_pub)]
 pub use self::aelicit_t_event_listener::{
     Aelicit as EventListenerAelicit,
     EnableAelicitFromSelf as EventListenerEAFS,
