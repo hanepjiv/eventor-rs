@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2024/04/04
+//  @date 2024/04/07
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -140,6 +140,7 @@ impl EventListenerWaiting {
     }
     // ========================================================================
     /// apply
+    #[allow(box_pointers)]
     pub(crate) fn apply(
         &self,
         map: &mut impl std::ops::DerefMut<Target = EventListenerMap>,

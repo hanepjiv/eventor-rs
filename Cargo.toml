@@ -3,9 +3,9 @@
 [package]
 edition                 = "2021"
 name                    = "eventor"
-version                 = "0.6.4-alpha.4"
+version                 = "0.6.4-alpha.5"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
-license                 = "MIT/Apache-2.0"
+license                 = "MIT OR Apache-2.0"
 keywords                = ["subsystem", "event"]
 description             = "Event library"
 readme                  = "README.md"

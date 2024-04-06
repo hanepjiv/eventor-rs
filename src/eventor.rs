@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/03/28
+//  @date 2024/04/07
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -86,7 +86,7 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     /// remove_listener
-    pub fn remove_listener(&self, event_hash: u32, id: ::libc::uintptr_t) {
+    pub fn remove_listener(&self, event_hash: u32, id: libc::uintptr_t) {
         self.listener_removing.insert(event_hash, id)
     }
     // ========================================================================
@@ -96,6 +96,7 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     /// fn dispatch
+    #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
         self.listener_waiting
             .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
