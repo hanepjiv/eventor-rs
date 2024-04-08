@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/07
+//  @date 2024/04/08
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -205,9 +205,7 @@ mod eventor;
 pub use self::{
     error::{Error, Result},
     event::Event,
-    event_data::{
-        EventData, EventDataAelicit, EventDataEAFS, EventDataEAFSField,
-    },
+    event_data::{event_data_wrapper, EventDataWrapper},
     event_listener::{
         EventListener, EventListenerAelicit, EventListenerEAFS,
         EventListenerEAFSField, RetOnEvent,

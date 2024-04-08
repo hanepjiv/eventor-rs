@@ -13,7 +13,7 @@
 use std::{collections::VecDeque, result::Result as StdResult};
 // ----------------------------------------------------------------------------
 use super::{
-    event_data::{EventDataAelicit, TEventData},
+    event_data::{EventDataTrait, EventDataWrapper},
     event_type::EventTypeRef,
     Error,
 };
@@ -25,13 +25,13 @@ pub struct Event {
     /// type
     type_: EventTypeRef,
     /// data
-    data: EventDataAelicit,
+    data: EventDataWrapper,
 }
 // ============================================================================
 impl Event {
     // ========================================================================
     /// new
-    pub fn new(type_: EventTypeRef, data: EventDataAelicit) -> Self {
+    pub fn new(type_: EventTypeRef, data: EventDataWrapper) -> Self {
         Self { type_, data }
     }
     // ========================================================================
@@ -49,7 +49,7 @@ impl Event {
         D: 'static,
         E: From<Error> + From<elicit::Error>,
     {
-        self.data.with(|d: &dyn TEventData| -> StdResult<T, E> {
+        self.data.with(|d: &dyn EventDataTrait| -> StdResult<T, E> {
             d.as_ref()
                 .downcast_ref::<D>()
                 .ok_or(Error::Downcast)
@@ -67,7 +67,7 @@ impl Event {
         E: From<Error> + From<elicit::Error>,
     {
         self.data
-            .with_mut(|d: &mut dyn TEventData| -> StdResult<T, E> {
+            .with_mut(|d: &mut dyn EventDataTrait| -> StdResult<T, E> {
                 d.as_mut()
                     .downcast_mut::<D>()
                     .ok_or(Error::Downcast)
@@ -84,12 +84,13 @@ impl Event {
         D: 'static,
         E: From<Error> + From<elicit::Error>,
     {
-        self.data.try_with(|d: &dyn TEventData| -> StdResult<T, E> {
-            d.as_ref()
-                .downcast_ref::<D>()
-                .ok_or(Error::Downcast)
-                .map(f)?
-        })
+        self.data
+            .try_with(|d: &dyn EventDataTrait| -> StdResult<T, E> {
+                d.as_ref()
+                    .downcast_ref::<D>()
+                    .ok_or(Error::Downcast)
+                    .map(f)?
+            })
     }
     // ========================================================================
     /// try_with_mut
@@ -101,13 +102,14 @@ impl Event {
         D: 'static,
         E: From<Error> + From<elicit::Error>,
     {
-        self.data
-            .try_with_mut(|d: &mut dyn TEventData| -> StdResult<T, E> {
+        self.data.try_with_mut(
+            |d: &mut dyn EventDataTrait| -> StdResult<T, E> {
                 d.as_mut()
                     .downcast_mut::<D>()
                     .ok_or(Error::Downcast)
                     .map(f)?
-            })
+            },
+        )
     }
 }
 // ////////////////////////////////////////////////////////////////////////////

@@ -105,42 +105,35 @@ impl Eventor {
             .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
 
         let event = self.queue.write().expect("Eventor::dispatch").pop();
-        match event {
-            None => {
-                self.queue
-                    .write()
-                    .expect("Eventor::dispatch")
-                    .shrink_to_fit();
-                self.listener_waiting.shrink_to_fit();
-                self.listener_removing.shrink_to_fit();
-                false
-            }
-            Some(e) => {
-                match self
-                    .listener_map
-                    .write()
-                    .expect("Eventor::dispatch")
-                    .get_mut(&(e.peek_type().peek_hash()))
-                {
-                    None => {
-                        if cfg!(debug_assertions) {
-                            info!("Eventor::dispatch: no listener: {:?}", e);
-                        }
-                    }
-                    Some(list) => {
-                        for (_, ref mut listener) in list.iter_mut() {
-                            if let RetOnEvent::Complete = listener
-                                .write()
-                                .expect("Eventor::dispatch")
-                                .on_event(&e, self)
-                            {
-                                break;
-                            }
-                        }
+
+        if let Some(e) = event {
+            if let Some(list) = self
+                .listener_map
+                .write()
+                .expect("Eventor::dispatch")
+                .get_mut(&(e.peek_type().peek_hash()))
+            {
+                for (_, ref mut listener) in list.iter_mut() {
+                    if let RetOnEvent::Complete = listener
+                        .write()
+                        .expect("Eventor::dispatch")
+                        .on_event(&e, self)
+                    {
+                        break;
                     }
                 }
-                true
+            } else if cfg!(debug_assertions) {
+                info!("Eventor::dispatch: no listener: {:?}", e);
             }
+            true
+        } else {
+            self.queue
+                .write()
+                .expect("Eventor::dispatch")
+                .shrink_to_fit();
+            self.listener_waiting.shrink_to_fit();
+            self.listener_removing.shrink_to_fit();
+            false
         }
     }
 }
