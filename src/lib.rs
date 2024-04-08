@@ -62,7 +62,6 @@
     const_evaluatable_unchecked,
     const_eval_mutable_ptr_in_final_value,
     const_item_mutation,
-    dead_code,
     deprecated,
     deprecated_where_clause_location,
     deref_into_dyn_supertrait,
@@ -194,7 +193,7 @@
     useless_deprecated,
     missing_debug_implementations
 )]
-#![deny(trivial_casts, box_pointers)]
+#![deny(trivial_casts, box_pointers, dead_code)]
 // mod  =======================================================================
 mod error;
 mod event;

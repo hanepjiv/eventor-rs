@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2024/04/04
+//  @date 2024/04/08
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -18,10 +18,17 @@ use std::error::Error as StdError;
 pub enum Error {
     /// Elicit
     Elicit(elicit::Error),
-    /// EventorError
+    /// Eventor
     Eventor(String),
     /// Downcast
     Downcast,
+    /// HashConflict
+    HashConflict {
+        /// already
+        already: String,
+        /// new
+        new: String,
+    },
 }
 // ============================================================================
 impl From<elicit::Error> for Error {
@@ -42,6 +49,7 @@ impl StdError for Error {
         match *self {
             Error::Elicit(ref e) => Some(e),
             Error::Eventor(_) => None,
+            Error::HashConflict { .. } => None,
             Error::Downcast => None,
         }
     }

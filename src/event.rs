@@ -6,16 +6,16 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/03/25
+//  @date 2024/04/08
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::collections::VecDeque;
+use std::{collections::VecDeque, result::Result as StdResult};
 // ----------------------------------------------------------------------------
 use super::{
     event_data::{EventDataAelicit, TEventData},
     event_type::EventTypeRef,
-    {Error, Result},
+    Error,
 };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -32,7 +32,7 @@ impl Event {
     // ========================================================================
     /// new
     pub fn new(type_: EventTypeRef, data: EventDataAelicit) -> Self {
-        Event { type_, data }
+        Self { type_, data }
     }
     // ========================================================================
     /// peek_type
@@ -40,60 +40,73 @@ impl Event {
         &self.type_
     }
     // ========================================================================
-    /// with_data
-    pub fn with_data<T: 'static, R>(
+    /// with
+    pub fn with<D, T, E>(
         &self,
-        f: impl FnOnce(&T) -> Result<R>,
-    ) -> Result<R> {
-        self.data.with(|d: &dyn TEventData| -> Result<R> {
-            if let Some(t) = d.as_ref().downcast_ref::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
+        f: impl FnOnce(&D) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    where
+        D: 'static,
+        E: From<Error> + From<elicit::Error>,
+    {
+        self.data.with(|d: &dyn TEventData| -> StdResult<T, E> {
+            d.as_ref()
+                .downcast_ref::<D>()
+                .ok_or(Error::Downcast)
+                .map(f)?
         })
     }
     // ========================================================================
-    /// with_mut_data
-    pub fn with_mut_data<T: 'static, R>(
+    /// with_mut
+    pub fn with_mut<D, T, E>(
         &self,
-        f: impl FnOnce(&mut T) -> Result<R>,
-    ) -> Result<R> {
-        self.data.with_mut(|d: &mut dyn TEventData| -> Result<R> {
-            if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
-    }
-    // ========================================================================
-    /// try_with_data
-    pub fn try_with_data<T: 'static, R>(
-        &self,
-        f: impl FnOnce(&T) -> Result<R>,
-    ) -> Result<R> {
-        self.data.try_with(|d: &dyn TEventData| -> Result<R> {
-            if let Some(t) = d.as_ref().downcast_ref::<T>() {
-                f(t)
-            } else {
-                Err(Error::Downcast)
-            }
-        })
-    }
-    // ========================================================================
-    /// try_with_mut_data
-    pub fn try_with_mut_data<T: 'static, R>(
-        &self,
-        f: impl FnOnce(&mut T) -> Result<R>,
-    ) -> Result<R> {
+        f: impl FnOnce(&mut D) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    where
+        D: 'static,
+        E: From<Error> + From<elicit::Error>,
+    {
         self.data
-            .try_with_mut(|d: &mut dyn TEventData| -> Result<R> {
-                if let Some(ref mut t) = d.as_mut().downcast_mut::<T>() {
-                    f(t)
-                } else {
-                    Err(Error::Downcast)
-                }
+            .with_mut(|d: &mut dyn TEventData| -> StdResult<T, E> {
+                d.as_mut()
+                    .downcast_mut::<D>()
+                    .ok_or(Error::Downcast)
+                    .map(f)?
+            })
+    }
+    // ========================================================================
+    /// try_with
+    pub fn try_with<D, T, E>(
+        &self,
+        f: impl FnOnce(&D) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    where
+        D: 'static,
+        E: From<Error> + From<elicit::Error>,
+    {
+        self.data.try_with(|d: &dyn TEventData| -> StdResult<T, E> {
+            d.as_ref()
+                .downcast_ref::<D>()
+                .ok_or(Error::Downcast)
+                .map(f)?
+        })
+    }
+    // ========================================================================
+    /// try_with_mut
+    pub fn try_with_mut<D, T, E>(
+        &self,
+        f: impl FnOnce(&mut D) -> StdResult<T, E>,
+    ) -> StdResult<T, E>
+    where
+        D: 'static,
+        E: From<Error> + From<elicit::Error>,
+    {
+        self.data
+            .try_with_mut(|d: &mut dyn TEventData| -> StdResult<T, E> {
+                d.as_mut()
+                    .downcast_mut::<D>()
+                    .ok_or(Error::Downcast)
+                    .map(f)?
             })
     }
 }
