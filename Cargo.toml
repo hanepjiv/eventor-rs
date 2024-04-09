@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "eventor"
-version                 = "0.8.0-alpha.0"
+version                 = "0.8.0-alpha.1"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["subsystem", "event"]
@@ -22,4 +22,4 @@ hash_combine            = { default-features = false, version = "^0.3" }
 [dependencies.elicit]
 default-features        = false
 version                 = "^0.8"
-#path                    = "../../elicit-rs/orig"
+#path                   = "../../elicit-rs/orig"

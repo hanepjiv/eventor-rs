@@ -205,7 +205,7 @@ mod eventor;
 pub use self::{
     error::{Error, Result},
     event::Event,
-    event_data::{event_data_wrapper, EventDataWrapper},
+    event_data::EventDataBox,
     event_listener::{
         EventListener, EventListenerAelicit, EventListenerEAFS,
         EventListenerEAFSField, RetOnEvent,

@@ -21,7 +21,7 @@ pub enum Error {
     /// Eventor
     Eventor(String),
     /// Downcast
-    Downcast,
+    Downcast(String),
     /// HashConflict
     HashConflict {
         /// already
@@ -50,7 +50,7 @@ impl StdError for Error {
             Error::Elicit(ref e) => Some(e),
             Error::Eventor(_) => None,
             Error::HashConflict { .. } => None,
-            Error::Downcast => None,
+            Error::Downcast(_) => None,
         }
     }
 }

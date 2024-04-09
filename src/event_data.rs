@@ -6,68 +6,73 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/08
+//  @date 2024/04/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::{any::Any, fmt::Debug};
+use std::{
+    any::Any,
+    fmt::Debug,
+    sync::{Arc, RwLock},
+};
 // ----------------------------------------------------------------------------
-use elicit::{aelicit_define, enable_aelicit_from_self_delegate};
-// ////////////////////////////////////////////////////////////////////////////
+use super::Error;
 // ============================================================================
-aelicit_define!(aelicit_event_data_trait, EventDataTrait);
-// ----------------------------------------------------------------------------
-pub use self::aelicit_event_data_trait::Aelicit as EventDataWrapper;
-use self::aelicit_event_data_trait::EnableAelicitFromSelf as EventDataEAFS;
-// ============================================================================
-/// trait EventDataTrait
-pub(crate) trait EventDataTrait:
-    Debug + AsRef<dyn Any> + AsMut<dyn Any> + EventDataEAFS
-{
-}
-// ----------------------------------------------------------------------------
-impl<T> EventDataTrait for T where
-    T: Debug + AsRef<dyn Any> + AsMut<dyn Any> + EventDataEAFS
-{
-}
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
-/// struct EventDataShell
+/// EventDataBox
+#[allow(box_pointers)]
 #[derive(Debug)]
-struct EventDataShell<T: Debug + Any + Send + Sync> {
-    /// data
-    data: T,
+pub struct EventDataBox {
+    inner: Arc<RwLock<Box<dyn Any + Send + Sync>>>,
 }
 // ============================================================================
-impl<T: Debug + Any + Send + Sync> EventDataShell<T> {
+impl EventDataBox {
     // ========================================================================
     /// new
-    fn new(data: T) -> Self {
-        Self { data }
+    #[allow(box_pointers)]
+    pub fn new<D>(data: D) -> Self
+    where
+        D: Any + Send + Sync + Debug,
+    {
+        Self {
+            inner: Arc::new(RwLock::new(Box::new(data))),
+        }
     }
-}
-// ============================================================================
-impl<T: Debug + Any + Send + Sync> EventDataEAFS for EventDataShell<T> {
-    enable_aelicit_from_self_delegate!(EventDataTrait, EventDataWrapper);
-}
-// ============================================================================
-impl<T: Debug + Any + Send + Sync> AsRef<dyn Any> for EventDataShell<T> {
-    fn as_ref(&self) -> &dyn Any {
-        &self.data
+    // ========================================================================
+    #[allow(box_pointers)]
+    /// with
+    pub(crate) fn with<D, T, E0, E1>(
+        &self,
+        f: impl FnOnce(&D) -> Result<T, E0>,
+    ) -> Result<T, E1>
+    where
+        D: 'static,
+        E1: From<E0> + From<Error>,
+    {
+        if let Ok(x) = self.inner.read() {
+            Ok(f(x.downcast_ref().ok_or(Error::Downcast(
+                "EventDataBox::with".to_string(),
+            ))?)?)
+        } else {
+            Err(Error::Eventor("EventDataBox::with".to_string()).into())
+        }
     }
-}
-// ============================================================================
-impl<T: Debug + Any + Send + Sync> AsMut<dyn Any> for EventDataShell<T> {
-    fn as_mut(&mut self) -> &mut dyn Any {
-        &mut self.data
+    // ========================================================================
+    #[allow(box_pointers)]
+    /// with_mut
+    pub(crate) fn with_mut<D, T, E0, E1>(
+        &self,
+        f: impl FnOnce(&mut D) -> Result<T, E0>,
+    ) -> Result<T, E1>
+    where
+        D: 'static,
+        E1: From<E0> + From<Error>,
+    {
+        if let Ok(mut x) = self.inner.write() {
+            Ok(f(x.downcast_mut().ok_or(Error::Downcast(
+                "EventDataBox::with_mut".to_string(),
+            ))?)?)
+        } else {
+            Err(Error::Eventor("EventDataBox::with_mut".to_string()).into())
+        }
     }
-}
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
-/// event_data_wrapper
-pub fn event_data_wrapper<T>(data: T) -> EventDataWrapper
-where
-    T: Debug + Any + Send + Sync,
-{
-    EventDataWrapper::new(EventDataShell::new(data))
 }
