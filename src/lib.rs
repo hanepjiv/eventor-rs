@@ -6,13 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/08
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.77.1 (7cf61ebde 2024-03-27)]
+// rustc 1.77.2 (25ef9e3d8 2024-04-09)
 #![forbid(
-    clippy::all,
     absolute_paths_not_starting_with_crate,
     deprecated_in_future,
     elided_lifetimes_in_paths,
@@ -24,6 +23,7 @@
     meta_variable_misuse,
     missing_abi,
     missing_copy_implementations,
+    missing_debug_implementations,
     missing_docs,
     non_ascii_idents,
     rust_2021_incompatible_closure_captures,
@@ -33,7 +33,6 @@
     single_use_lifetimes,
     trivial_numeric_casts,
     unit_bindings,
-    unreachable_pub,
     unsafe_code,
     unsafe_op_in_unsafe_fn,
     unstable_features,
@@ -191,9 +190,9 @@
     undropped_manually_drops,
     unknown_crate_types,
     useless_deprecated,
-    missing_debug_implementations
+    unreachable_pub
 )]
-#![deny(trivial_casts, box_pointers, dead_code)]
+#![deny(clippy::all, box_pointers, dead_code, trivial_casts)]
 // mod  =======================================================================
 mod error;
 mod event;
