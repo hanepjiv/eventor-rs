@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/08
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -18,8 +18,8 @@ use super::{
     error::Error,
     event::{Event, EventQueue},
     event_listener::{
-        EventListenerAelicit, EventListenerMap, EventListenerRemoving,
-        EventListenerWaiting, RetOnEvent,
+        aelicit_user::Aelicit as EventListenerAelicit, EventListenerMap,
+        EventListenerRemoving, EventListenerWaiting, RetOnEvent,
     },
     event_type::{EventTypeMap, EventTypeRef},
 };

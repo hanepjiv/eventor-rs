@@ -24,7 +24,6 @@
     missing_abi,
     missing_copy_implementations,
     missing_debug_implementations,
-    missing_docs,
     non_ascii_idents,
     rust_2021_incompatible_closure_captures,
     rust_2021_incompatible_or_patterns,
@@ -190,9 +189,10 @@
     undropped_manually_drops,
     unknown_crate_types,
     useless_deprecated,
-    unreachable_pub
+    unreachable_pub,
+    missing_docs
 )]
-#![deny(clippy::all, box_pointers, dead_code, trivial_casts)]
+#![deny(clippy::all, box_pointers, trivial_casts)]
 // mod  =======================================================================
 mod error;
 mod event;
@@ -206,8 +206,9 @@ pub use self::{
     event::Event,
     event_data::EventDataBox,
     event_listener::{
-        EventListener, EventListenerAelicit, EventListenerEAFS,
-        EventListenerEAFSField, RetOnEvent,
+        aelicit_author as event_listener_aelicit_author,
+        aelicit_user as event_listener_aelicit_user, EventListener,
+        RetOnEvent,
     },
     event_type::{EventType, EventTypeRef},
     eventor::Eventor,

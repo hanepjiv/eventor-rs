@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/09
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -21,9 +21,7 @@ use super::Error;
 /// EventDataBox
 #[allow(box_pointers)]
 #[derive(Debug)]
-pub struct EventDataBox {
-    inner: Arc<RwLock<Box<dyn Any + Send + Sync>>>,
-}
+pub struct EventDataBox(Arc<RwLock<Box<dyn Any + Send + Sync>>>);
 // ============================================================================
 impl EventDataBox {
     // ========================================================================
@@ -33,46 +31,46 @@ impl EventDataBox {
     where
         D: Any + Send + Sync + Debug,
     {
-        Self {
-            inner: Arc::new(RwLock::new(Box::new(data))),
-        }
+        Self(Arc::new(RwLock::new(Box::new(data))))
     }
     // ========================================================================
     #[allow(box_pointers)]
     /// with
-    pub(crate) fn with<D, T, E0, E1>(
+    pub(crate) fn with<D, T, E>(
         &self,
-        f: impl FnOnce(&D) -> Result<T, E0>,
-    ) -> Result<T, E1>
+        f: impl FnOnce(&D) -> Result<T, E>,
+    ) -> Result<T, E>
     where
         D: 'static,
-        E1: From<E0> + From<Error>,
+        E: From<Error>,
     {
-        if let Ok(x) = self.inner.read() {
-            Ok(f(x.downcast_ref().ok_or(Error::Downcast(
-                "EventDataBox::with".to_string(),
-            ))?)?)
-        } else {
-            Err(Error::Eventor("EventDataBox::with".to_string()).into())
-        }
+        f(self
+            .0
+            .read()
+            .map_err(|_| Error::Eventor("EventDataBox::with".to_string()))?
+            .downcast_ref()
+            .ok_or_else(|| {
+                Error::Downcast("EventDataBox::with".to_string())
+            })?)
     }
     // ========================================================================
     #[allow(box_pointers)]
     /// with_mut
-    pub(crate) fn with_mut<D, T, E0, E1>(
+    pub(crate) fn with_mut<D, T, E>(
         &self,
-        f: impl FnOnce(&mut D) -> Result<T, E0>,
-    ) -> Result<T, E1>
+        f: impl FnOnce(&mut D) -> Result<T, E>,
+    ) -> Result<T, E>
     where
         D: 'static,
-        E1: From<E0> + From<Error>,
+        E: From<Error>,
     {
-        if let Ok(mut x) = self.inner.write() {
-            Ok(f(x.downcast_mut().ok_or(Error::Downcast(
-                "EventDataBox::with_mut".to_string(),
-            ))?)?)
-        } else {
-            Err(Error::Eventor("EventDataBox::with_mut".to_string()).into())
-        }
+        f(self
+            .0
+            .write()
+            .map_err(|_| Error::Eventor("EventDataBox::with_mut".to_string()))?
+            .downcast_mut()
+            .ok_or_else(|| {
+                Error::Downcast("EventDataBox::with_mut".to_string())
+            })?)
     }
 }

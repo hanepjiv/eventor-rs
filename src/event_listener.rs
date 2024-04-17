@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2024/04/08
+//  @date 2024/04/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -28,16 +28,9 @@ pub enum RetOnEvent {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-aelicit_define!(aelicit_t_event_listener, EventListener);
-// ----------------------------------------------------------------------------
-pub use self::aelicit_t_event_listener::{
-    Aelicit as EventListenerAelicit,
-    EnableAelicitFromSelf as EventListenerEAFS,
-    EnableAelicitFromSelfField as EventListenerEAFSField,
-};
-// ============================================================================
 /// trait EventListener
-pub trait EventListener: Debug + EventListenerEAFS {
+#[aelicit_define(event_listener_aelicit)]
+pub trait EventListener: Debug + Sync + Send {
     // ========================================================================
     /// peek_id
     fn peek_id(&self) -> uintptr_t;
@@ -45,6 +38,10 @@ pub trait EventListener: Debug + EventListenerEAFS {
     /// on_event
     fn on_event(&mut self, event: &Event, eventor: &Eventor) -> RetOnEvent;
 }
+// ============================================================================
+pub use event_listener_aelicit::author as aelicit_author;
+use event_listener_aelicit::author::Aelicit as EventListenerAelicit;
+pub use event_listener_aelicit::user as aelicit_user;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// type EventListenerList
@@ -80,14 +77,7 @@ impl EventListenerMap {
         event_hash: u32,
         id: uintptr_t,
     ) -> Option<EventListenerAelicit> {
-        if self.0.contains_key(&event_hash) {
-            self.0
-                .get_mut(&event_hash)
-                .expect("EventListenerMap::remove")
-                .remove(&id)
-        } else {
-            None
-        }
+        self.0.get_mut(&event_hash)?.remove(&id)
     }
     // ========================================================================
     /// get_mut
