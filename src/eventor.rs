@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/21
+//  @date 2024/04/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::sync::RwLock;
+use std::sync::{Mutex, RwLock};
 // ----------------------------------------------------------------------------
 use log::info;
 use uuid::Uuid;
@@ -20,38 +20,26 @@ use super::{
     event::{Event, EventQueue},
     event_listener::{
         aelicit_user::Aelicit as EventListenerAelicit, EventListenerMap,
-        EventListenerRemoving, EventListenerWaiting, RetOnEvent,
+        RetOnEvent,
     },
     event_type::{EventType, EventTypeMap},
 };
+use crate::inner::Mediator;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Eventor
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Eventor {
     /// event type map
     type_map: RwLock<EventTypeMap>,
     /// event queue
-    queue: RwLock<EventQueue>,
+    queue: Mutex<EventQueue>,
     /// event listener map
-    listener_map: RwLock<EventListenerMap>,
-    /// event listener waiting
-    listener_waiting: EventListenerWaiting,
-    /// event listener removing
-    listener_removing: EventListenerRemoving,
+    listener_map: Mutex<EventListenerMap>,
+    /// mediator
+    mediator: Mediator,
 }
-// ============================================================================
-impl Default for Eventor {
-    fn default() -> Self {
-        Eventor {
-            type_map: RwLock::new(EventTypeMap::default()),
-            queue: RwLock::new(EventQueue::default()),
-            listener_map: RwLock::new(EventListenerMap::default()),
-            listener_waiting: EventListenerWaiting::default(),
-            listener_removing: EventListenerRemoving::default(),
-        }
-    }
-}
+
 // ============================================================================
 impl Eventor {
     // ========================================================================
@@ -87,40 +75,38 @@ impl Eventor {
     pub fn insert_listener(
         &self,
         event_hash: u32,
-        listener: &EventListenerAelicit,
+        id: Uuid,
+        listener: EventListenerAelicit,
     ) {
-        self.listener_waiting.insert(event_hash, listener.clone())
+        self.mediator.insert(event_hash, id, listener)
     }
     // ------------------------------------------------------------------------
     /// remove_listener
     pub fn remove_listener(&self, event_hash: u32, id: &Uuid) {
-        self.listener_removing.insert(event_hash, id)
+        self.mediator.remove(event_hash, id)
     }
     // ========================================================================
     /// fn push_event
     pub fn push_event(&self, event: Event) {
-        self.queue.write().expect("Eventor::push_event").push(event)
+        self.queue.lock().expect("Eventor::push_event").push(event)
     }
     // ------------------------------------------------------------------------
     /// fn dispatch
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
-        self.listener_waiting
-            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
+        self.mediator
+            .apply(&mut self.listener_map.lock().expect("Eventor::dispatch"));
 
-        self.listener_removing
-            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
-
-        let event = self.queue.write().expect("Eventor::dispatch").pop();
+        let event = self.queue.lock().expect("Eventor::dispatch").pop();
 
         if let Some(e) = event {
             if let Some(list) = self
                 .listener_map
-                .write()
+                .lock()
                 .expect("Eventor::dispatch")
                 .get_mut(&(e.peek_type().peek_hash()))
             {
-                for (_, ref mut listener) in list.iter_mut() {
+                for (_, listener) in list.iter_mut() {
                     if let RetOnEvent::Complete = listener
                         .write()
                         .expect("Eventor::dispatch")
@@ -135,11 +121,9 @@ impl Eventor {
             true
         } else {
             self.queue
-                .write()
+                .lock()
                 .expect("Eventor::dispatch")
                 .shrink_to_fit();
-            self.listener_waiting.shrink_to_fit();
-            self.listener_removing.shrink_to_fit();
             false
         }
     }

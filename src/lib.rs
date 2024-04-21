@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/20
+//  @date 2024/04/21
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -193,7 +193,9 @@
     missing_docs
 )]
 #![deny(clippy::all, box_pointers, trivial_casts)]
+// ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
+mod inner;
 mod error;
 mod event;
 mod event_data;

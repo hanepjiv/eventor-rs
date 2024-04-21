@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/21
+//  @date 2024/04/22
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -20,7 +20,6 @@ use super::{error::Error, event_data::EventDataBox, event_type::EventType};
 pub struct Event {
     /// type
     type_: EventType,
-    /// data
     /// event data box
     data: EventDataBox,
 }
