@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/16
+//  @date 2024/04/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -210,6 +210,6 @@ pub use self::{
         aelicit_user as event_listener_aelicit_user, EventListener,
         RetOnEvent,
     },
-    event_type::{EventType, EventTypeRef},
+    event_type::EventType,
     eventor::Eventor,
 };

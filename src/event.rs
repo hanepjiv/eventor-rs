@@ -6,20 +6,20 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/09
+//  @date 2024/04/21
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::{collections::VecDeque, result::Result as StdResult};
 // ----------------------------------------------------------------------------
-use super::{event_data::EventDataBox, event_type::EventTypeRef, Error};
+use super::{error::Error, event_data::EventDataBox, event_type::EventType};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Event
 #[derive(Debug)]
 pub struct Event {
     /// type
-    type_: EventTypeRef,
+    type_: EventType,
     /// data
     /// event data box
     data: EventDataBox,
@@ -28,12 +28,12 @@ pub struct Event {
 impl Event {
     // ========================================================================
     /// new
-    pub fn new(type_: EventTypeRef, data: EventDataBox) -> Self {
+    pub fn new(type_: EventType, data: EventDataBox) -> Self {
         Self { type_, data }
     }
     // ========================================================================
     /// peek_type
-    pub fn peek_type(&self) -> &EventTypeRef {
+    pub fn peek_type(&self) -> &EventType {
         &self.type_
     }
     // ========================================================================

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/08
+//  @date 2024/04/21
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -18,49 +18,44 @@ use log::info;
 use super::error::Error;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct EventType
 #[derive(Debug, Clone)]
-pub struct EventType {
-    /// name
-    name: String,
-    /// hash
-    hash: u32,
-}
-// ============================================================================
-/// type EventTypeRef
-pub type EventTypeRef = Arc<EventType>;
+/// EventType
+pub struct EventType(Arc<(String, u32)>);
 // ============================================================================
 impl EventType {
     // ========================================================================
     /// new
-    fn new(name: &str, hash: u32) -> Self {
-        Self {
-            name: name.to_string(),
-            hash,
-        }
+    fn new<T>(name: T, hash: u32) -> Self
+    where
+        T: Into<String>,
+    {
+        Self(Arc::new((name.into(), hash)))
     }
     // ========================================================================
     /// peek_name
     pub fn peek_name(&self) -> &str {
-        self.name.as_ref()
+        self.0 .0.as_ref()
     }
     // ========================================================================
     /// peek_hash
     pub fn peek_hash(&self) -> u32 {
-        self.hash
+        self.0 .1
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// EventTypeMap
 #[derive(Debug, Default)]
-pub(crate) struct EventTypeMap(BTreeMap<u32, EventTypeRef>);
+pub(crate) struct EventTypeMap(BTreeMap<u32, EventType>);
 // ============================================================================
 impl EventTypeMap {
     // ========================================================================
     // ------------------------------------------------------------------------
     /// check_type
-    fn check_type(&self, name: &str) -> (u32, Option<EventTypeRef>) {
+    fn check_type<T>(&self, name: T) -> (u32, Option<EventType>)
+    where
+        T: AsRef<[u8]>,
+    {
         let hash = hash_combine(0u32, name.as_ref());
         match self.0.get(&hash) {
             Some(x) => (hash, Some(x.clone())),
@@ -69,11 +64,11 @@ impl EventTypeMap {
     }
     // ------------------------------------------------------------------------
     /// new_type
-    pub(crate) fn new_type(
-        &mut self,
-        name: &str,
-    ) -> Result<EventTypeRef, Error> {
-        let l_name = name.to_lowercase();
+    pub(crate) fn new_type<T>(&mut self, name: T) -> Result<EventType, Error>
+    where
+        T: AsRef<str> + std::fmt::Display,
+    {
+        let l_name = name.as_ref().to_lowercase();
         let (hash, ret) = self.check_type(l_name.as_str());
         if let Some(r) = ret {
             // already exists
@@ -87,7 +82,7 @@ impl EventTypeMap {
                 })
             }
         } else {
-            let event_type = Arc::new(EventType::new(l_name.as_str(), hash));
+            let event_type = EventType::new(l_name.as_str(), hash);
             if self.0.insert(hash, event_type.clone()).is_some() {
                 Err(Error::Eventor(format!(
                     "Eventor::new_type: \
@@ -102,8 +97,11 @@ impl EventTypeMap {
     }
     // ------------------------------------------------------------------------
     /// peek_type
-    pub(crate) fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
-        let (_, ret) = self.check_type(name.to_lowercase().as_str());
+    pub(crate) fn peek_type<T>(&self, name: T) -> Option<EventType>
+    where
+        T: AsRef<str>,
+    {
+        let (_, ret) = self.check_type(name.as_ref().to_lowercase().as_str());
         ret
     }
 }

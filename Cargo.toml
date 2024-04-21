@@ -15,15 +15,21 @@ repository              = "https://github.com/hanepjiv/eventor-rs.git"
 publish                 = false
 # =============================================================================
 [dependencies]
-libc                    = { default-features = false, version = "^0.2" }
-log                     = { default-features = false, version = "^0.4" }
 hash_combine            = { default-features = false, version = "^0.3" }
+log                     = { default-features = false, version = "^0.4" }
+uuid                    = { default-features = false, version = "^1" }
 # -----------------------------------------------------------------------------
 [dependencies.elicit]
 default-features        = false
-version                 = "^0.9"
+version                 = "^0.10"
 
 #git                     = "ssh://git@github.com/hanepjiv/elicit-rs.git"
 #branch                  = "main"
 
 #path                   = "../../elicit-rs/orig"
+# =============================================================================
+[workspace]
+exclude                 = [ "examples/"
+                            ]
+members                 = [
+                            ]

@@ -1,0 +1,21 @@
+[package]
+name                    = "threads"
+version                 = "0.1.0"
+edition                 = "2021"
+
+authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
+license                 = "MIT OR Apache-2.0"
+publish                 = false
+
+[dependencies]
+eventor                 = { default_features = false, path = "../../" }
+
+elicit                  = { default_features = false, version = "^0.10" }
+
+[dependencies.uuid]
+default-features        = false
+version                 = "^1"
+features                = [ "std",
+                            "v7",
+                            "fast-rng",
+                            ]

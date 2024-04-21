@@ -6,13 +6,14 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/16
+//  @date 2024/04/21
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::sync::RwLock;
 // ----------------------------------------------------------------------------
 use log::info;
+use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use super::{
     error::Error,
@@ -21,7 +22,7 @@ use super::{
         aelicit_user::Aelicit as EventListenerAelicit, EventListenerMap,
         EventListenerRemoving, EventListenerWaiting, RetOnEvent,
     },
-    event_type::{EventTypeMap, EventTypeRef},
+    event_type::{EventType, EventTypeMap},
 };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -61,19 +62,25 @@ impl Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
     /// new_type
-    pub fn new_type(&self, name: &str) -> Result<EventTypeRef, Error> {
+    pub fn new_type<T>(&self, name: T) -> Result<EventType, Error>
+    where
+        T: AsRef<str>,
+    {
         self.type_map
             .write()
             .expect("Eventor::new_type")
-            .new_type(name)
+            .new_type(name.as_ref())
     }
     // ------------------------------------------------------------------------
     /// fn peek_typs
-    pub fn peek_type(&self, name: &str) -> Option<EventTypeRef> {
+    pub fn peek_type<T>(&self, name: T) -> Option<EventType>
+    where
+        T: AsRef<str>,
+    {
         self.type_map
             .read()
             .expect("Eventor::peek_type")
-            .peek_type(name)
+            .peek_type(name.as_ref())
     }
     // ========================================================================
     /// fn insert_listener
@@ -86,7 +93,7 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     /// remove_listener
-    pub fn remove_listener(&self, event_hash: u32, id: libc::uintptr_t) {
+    pub fn remove_listener(&self, event_hash: u32, id: &Uuid) {
         self.listener_removing.insert(event_hash, id)
     }
     // ========================================================================

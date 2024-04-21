@@ -6,16 +6,16 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2024/04/16
+//  @date 2024/04/21
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::{collections::BTreeMap, fmt::Debug, sync::RwLock};
 // ----------------------------------------------------------------------------
 use elicit::aelicit_define;
-use libc::uintptr_t;
+use uuid::Uuid;
 // ----------------------------------------------------------------------------
-use super::{Event, Eventor};
+use super::{event::Event, eventor::Eventor};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum RetOnEvent
@@ -33,19 +33,20 @@ pub enum RetOnEvent {
 pub trait EventListener: Debug + Sync + Send {
     // ========================================================================
     /// peek_id
-    fn peek_id(&self) -> uintptr_t;
+    fn peek_id(&self) -> &Uuid;
     // ========================================================================
     /// on_event
     fn on_event(&mut self, event: &Event, eventor: &Eventor) -> RetOnEvent;
 }
 // ============================================================================
 pub use event_listener_aelicit::author as aelicit_author;
-use event_listener_aelicit::author::Aelicit as EventListenerAelicit;
 pub use event_listener_aelicit::user as aelicit_user;
+// ----------------------------------------------------------------------------
+use aelicit_author::Aelicit as EventListenerAelicit;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// type EventListenerList
-pub(crate) type EventListenerList = BTreeMap<uintptr_t, EventListenerAelicit>;
+pub(crate) type EventListenerList = BTreeMap<Uuid, EventListenerAelicit>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventListenerMap
@@ -58,26 +59,24 @@ impl EventListenerMap {
     pub(crate) fn insert(
         &mut self,
         event_hash: u32,
-        id: uintptr_t,
+        id: &Uuid,
         listener: EventListenerAelicit,
-    ) -> Option<EventListenerAelicit> {
-        Some(
-            self.0
-                .entry(event_hash)
-                .or_default()
-                .entry(id)
-                .or_insert(listener)
-                .clone(),
-        )
+    ) {
+        let _ = self
+            .0
+            .entry(event_hash)
+            .or_default()
+            .entry(*id)
+            .or_insert(listener);
     }
     // ========================================================================
     /// remove
     pub(crate) fn remove(
         &mut self,
         event_hash: u32,
-        id: uintptr_t,
+        id: &Uuid,
     ) -> Option<EventListenerAelicit> {
-        self.0.get_mut(&event_hash)?.remove(&id)
+        self.0.get_mut(&event_hash)?.remove(id)
     }
     // ========================================================================
     /// get_mut
@@ -95,17 +94,10 @@ impl EventListenerMap {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventListenerWaiting
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub(crate) struct EventListenerWaiting(
     RwLock<Vec<(u32, EventListenerAelicit)>>,
 );
-// ============================================================================
-impl Default for EventListenerWaiting {
-    // ========================================================================
-    fn default() -> Self {
-        EventListenerWaiting(RwLock::new(Vec::default()))
-    }
-}
 // ============================================================================
 impl EventListenerWaiting {
     // ========================================================================
@@ -117,7 +109,7 @@ impl EventListenerWaiting {
     ) {
         self.0
             .write()
-            .expect("EventLitenerWaiting.insert")
+            .expect("EventLitenerWaiting::insert")
             .push((event_hash, listener))
     }
     // ========================================================================
@@ -125,7 +117,7 @@ impl EventListenerWaiting {
     pub(crate) fn shrink_to_fit(&self) {
         self.0
             .write()
-            .expect("EventLitenerWaiting.shrink_to_fit")
+            .expect("EventLitenerWaiting::shrink_to_fit")
             .shrink_to_fit()
     }
     // ========================================================================
@@ -135,13 +127,16 @@ impl EventListenerWaiting {
         &self,
         map: &mut impl std::ops::DerefMut<Target = EventListenerMap>,
     ) {
-        let mut vec = self.0.write().expect("EventLitenerWaiting.apply");
+        let mut vec = self.0.write().expect("EventLitenerWaiting::apply");
         for &(hash, ref listener) in vec.iter() {
-            let id = listener
-                .read()
-                .expect("EventListenerWaiting::apply")
-                .peek_id();
-            drop(map.insert(hash, id, listener.clone()));
+            map.insert(
+                hash,
+                listener
+                    .read()
+                    .expect("EventListenerWaiting::apply")
+                    .peek_id(),
+                listener.clone(),
+            );
         }
         vec.clear();
     }
@@ -149,39 +144,24 @@ impl EventListenerWaiting {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventListenerRemoving
-#[derive(Debug)]
-pub(crate) struct EventListenerRemoving(RwLock<Vec<(u32, uintptr_t)>>);
-// ============================================================================
-impl Default for EventListenerRemoving {
-    // ========================================================================
-    fn default() -> Self {
-        EventListenerRemoving(RwLock::new(Vec::default()))
-    }
-}
+#[derive(Debug, Default)]
+pub(crate) struct EventListenerRemoving(RwLock<Vec<(u32, Uuid)>>);
 // ============================================================================
 impl EventListenerRemoving {
     // ========================================================================
     /// insert
-    pub(crate) fn insert(&self, event_hash: u32, id: uintptr_t) {
+    pub(crate) fn insert(&self, event_hash: u32, id: &Uuid) {
         self.0
             .write()
-            .expect("EventLitenerRemoving.insert")
-            .push((event_hash, id))
+            .expect("EventLitenerRemoving::insert")
+            .push((event_hash, *id))
     }
-    /*
-    // ========================================================================
-    /// contains
-    pub(crate) fn contains(&self, x: &(u32, uintptr_t)) -> bool {
-    self.0.read().expect("EventLitenerRemoving.contains").
-    contains(x)
-    }
-     */
     // ========================================================================
     /// shrink_to_fit
     pub(crate) fn shrink_to_fit(&self) {
         self.0
             .write()
-            .expect("EventLitenerRemoving.shrink_to_fit")
+            .expect("EventLitenerRemoving::shrink_to_fit")
             .shrink_to_fit()
     }
     // ========================================================================
@@ -190,9 +170,9 @@ impl EventListenerRemoving {
         &self,
         map: &mut impl std::ops::DerefMut<Target = EventListenerMap>,
     ) {
-        let mut vec = self.0.write().expect("EventLitenerRemoving.apply");
+        let mut vec = self.0.write().expect("EventLitenerRemoving::apply");
         for &(hash, id) in vec.iter() {
-            drop(map.remove(hash, id));
+            drop(map.remove(hash, &id));
         }
         vec.clear();
     }
