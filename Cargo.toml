@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "eventor"
-version                 = "0.9.1"
+version                 = "0.10.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["subsystem", "event"]
@@ -12,7 +12,7 @@ readme                  = "README.md"
 documentation           = "https://github.com/hanepjiv/eventor-rs/wiki"
 homepage                = "https://github.com/hanepjiv/eventor-rs"
 repository              = "https://github.com/hanepjiv/eventor-rs.git"
-publish                 = false
+publish                 = true
 # =============================================================================
 [dependencies]
 hash_combine            = { default-features = false, version = "^0.3" }

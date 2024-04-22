@@ -29,7 +29,7 @@ use crate::{
 // ============================================================================
 /// struct MediatorInner
 #[derive(Debug, Default)]
-pub(crate) struct MediatorInner {
+struct MediatorInner {
     newface: BTreeMap<u32, BTreeMap<Uuid, EventListenerAelicit>>,
     retiree: BTreeMap<u32, BTreeSet<Uuid>>,
 }
