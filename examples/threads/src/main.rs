@@ -127,7 +127,7 @@ fn main() -> Result<()> {
     eventor.insert_listener(4201860248, listener.clone());
     eventor.insert_listener(4201860249, listener);
 
-    {
+    for i in 0..num_cpu {
         let a = alive.clone();
         let e = eventor.clone();
         threads.push(spawn(move || {
@@ -137,7 +137,7 @@ fn main() -> Result<()> {
                 }
                 yield_now();
             }
-            format!("dispatcher")
+            format!("dispatcher thread({i})")
         }));
     }
 
@@ -148,12 +148,12 @@ fn main() -> Result<()> {
         threads.push(spawn(move || {
             let mut times = 0usize;
             while a.load(Ordering::Acquire) {
-                println!("push event_00 id({i}) times={times}");
+                println!("push event_00 thread({i}) times={times}");
                 e.push_event(Event::new(e00.clone(), EventDataBox::new(i)));
                 times += 1;
                 sleep(Duration::from_millis(100));
             }
-            format!("pusher {} id({i})", e00.peek_name())
+            format!("pusher {} thread({i})", e00.peek_name())
         }));
     }
 
@@ -164,12 +164,12 @@ fn main() -> Result<()> {
         threads.push(spawn(move || {
             let mut times = 0usize;
             while a.load(Ordering::Acquire) {
-                println!("push event_01 id({i}) times={times}");
+                println!("push event_01 thread({i}) times={times}");
                 e.push_event(Event::new(e01.clone(), EventDataBox::new(i)));
                 times += 1;
                 sleep(Duration::from_millis(200));
             }
-            format!("pusher {} id({i})", e01.peek_name())
+            format!("pusher {} thread({i})", e01.peek_name())
         }));
     }
 

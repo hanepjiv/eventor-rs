@@ -16,13 +16,11 @@ use std::{
     collections::{btree_map::Entry, BTreeMap, BTreeSet},
     sync::Mutex,
 };
-// ----------------------------------------------------------------------------
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
-use crate::{
-    event_listener::EventListenerMap,
-    event_listener_aelicit_user::Aelicit as EventListenerAelicit,
-};
+use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
+// ----------------------------------------------------------------------------
+use super::ListenerMap;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 // ////////////////////////////////////////////////////////////////////////////
@@ -65,7 +63,7 @@ impl MediatorInner {
     /// apply
     pub(crate) fn apply(
         &mut self,
-        map: &mut impl std::ops::DerefMut<Target = EventListenerMap>,
+        map: &mut impl std::ops::DerefMut<Target = ListenerMap>,
     ) {
         for (hash, btree) in self.newface.iter_mut() {
             for (id, listener) in btree.iter() {
@@ -113,7 +111,7 @@ impl Mediator {
     /// apply
     pub(crate) fn apply(
         &self,
-        map: &mut impl std::ops::DerefMut<Target = EventListenerMap>,
+        map: &mut impl std::ops::DerefMut<Target = ListenerMap>,
     ) {
         self.0
             .lock()

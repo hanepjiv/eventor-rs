@@ -10,7 +10,7 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::{collections::BTreeMap, fmt::Debug};
+use std::fmt::Debug;
 // ----------------------------------------------------------------------------
 use elicit::aelicit_define;
 use uuid::Uuid;
@@ -41,52 +41,3 @@ pub trait EventListener: Debug + Sync + Send {
 // ============================================================================
 pub use event_listener_aelicit::author as aelicit_author;
 pub use event_listener_aelicit::user as aelicit_user;
-// ----------------------------------------------------------------------------
-use aelicit_author::Aelicit as EventListenerAelicit;
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
-type BTreeUUIDAelicit = BTreeMap<Uuid, EventListenerAelicit>;
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
-/// struct EventListenerMap
-#[derive(Debug, Default)]
-pub(crate) struct EventListenerMap(BTreeMap<u32, BTreeUUIDAelicit>);
-// ============================================================================
-impl EventListenerMap {
-    // ========================================================================
-    /// insert
-    pub(crate) fn insert(
-        &mut self,
-        event_hash: u32,
-        id: &Uuid,
-        listener: EventListenerAelicit,
-    ) {
-        let _ = self
-            .0
-            .entry(event_hash)
-            .or_default()
-            .entry(*id)
-            .or_insert(listener);
-    }
-    // ========================================================================
-    /// remove
-    pub(crate) fn remove(
-        &mut self,
-        event_hash: u32,
-        id: &Uuid,
-    ) -> Option<EventListenerAelicit> {
-        self.0.get_mut(&event_hash)?.remove(id)
-    }
-    // ========================================================================
-    /// get_mut
-    pub(crate) fn get_mut<Q>(
-        &mut self,
-        key: &Q,
-    ) -> Option<&mut BTreeUUIDAelicit>
-    where
-        Q: ?Sized + Ord,
-        u32: std::borrow::Borrow<Q>,
-    {
-        self.0.get_mut(key)
-    }
-}

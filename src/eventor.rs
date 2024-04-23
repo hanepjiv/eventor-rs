@@ -19,12 +19,11 @@ use super::{
     error::Error,
     event::{Event, EventQueue},
     event_listener::{
-        aelicit_user::Aelicit as EventListenerAelicit, EventListenerMap,
-        RetOnEvent,
+        aelicit_user::Aelicit as EventListenerAelicit, RetOnEvent,
     },
     event_type::{EventType, EventTypeMap},
 };
-use crate::inner::Mediator;
+use crate::inner::{ListenerMap, Mediator};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Eventor
@@ -35,7 +34,7 @@ pub struct Eventor {
     /// event queue
     queue: Mutex<EventQueue>,
     /// event listener map
-    listener_map: Mutex<EventListenerMap>,
+    listener_map: Mutex<ListenerMap>,
     /// mediator
     mediator: Mediator,
 }
@@ -98,33 +97,34 @@ impl Eventor {
 
         let event = self.queue.lock().expect("Eventor::dispatch").pop();
 
-        if let Some(e) = event {
-            if let Some(list) = self
-                .listener_map
-                .lock()
-                .expect("Eventor::dispatch")
-                .get_mut(&(e.peek_type().peek_hash()))
-            {
-                for (_, listener) in list.iter() {
-                    if let RetOnEvent::Complete = listener
-                        .read()
-                        .expect("Eventor::dispatch")
-                        .on_event(&e, self)
-                    {
-                        break;
-                    }
-                }
-            } else if cfg!(debug_assertions) {
-                info!("Eventor::dispatch: no listener: {:?}", e);
-            }
-            true
-        } else {
+        let Some(e) = event else {
             self.queue
                 .lock()
                 .expect("Eventor::dispatch")
                 .shrink_to_fit();
-            false
+            return false;
+        };
+
+        if let Some(list) = self
+            .listener_map
+            .lock()
+            .expect("Eventor::dispatch")
+            .get(&(e.peek_type().peek_hash()))
+        {
+            for (_, listener) in list.read().expect("Eventor::dispatch").iter()
+            {
+                if let RetOnEvent::Complete = listener
+                    .read()
+                    .expect("Eventor::dispatch")
+                    .on_event(&e, self)
+                {
+                    break;
+                }
+            }
+        } else if cfg!(debug_assertions) {
+            info!("Eventor::dispatch: no listener: {:?}", e);
         }
+        true
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
