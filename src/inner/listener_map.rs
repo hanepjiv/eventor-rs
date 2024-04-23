@@ -10,7 +10,10 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use std::{collections::BTreeMap, sync::RwLock};
+use std::{
+    collections::BTreeMap,
+    sync::{RwLock, TryLockError},
+};
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
@@ -31,28 +34,39 @@ impl ListenerMap {
         hash: u32,
         id: &Uuid,
         listener: EventListenerAelicit,
-    ) {
-        let _ = self
-            .0
-            .entry(hash)
-            .or_default()
-            .write()
-            .expect("listener insert")
-            .entry(*id)
-            .or_insert(listener);
+    ) -> bool {
+        let map = self.0.entry(hash).or_default();
+        match map.try_write() {
+            Ok(mut x) => {
+                let _ = x.entry(*id).or_insert(listener);
+                return true;
+            }
+            Err(e) => match e {
+                TryLockError::WouldBlock => {
+                    return false;
+                }
+                _ => panic!("listener insert"),
+            },
+        }
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(
-        &mut self,
-        hash: u32,
-        id: &Uuid,
-    ) -> Option<EventListenerAelicit> {
-        self.0
-            .get(&hash)?
-            .write()
-            .expect("listener remove")
-            .remove(id)
+    pub(crate) fn remove(&mut self, hash: u32, id: &Uuid) -> bool {
+        let Some(map) = self.0.get(&hash) else {
+            return true;
+        };
+        match map.try_write() {
+            Ok(mut x) => {
+                drop(x.remove(id));
+                return true;
+            }
+            Err(e) => match e {
+                TryLockError::WouldBlock => {
+                    return false;
+                }
+                _ => panic!("listener remove"),
+            },
+        }
     }
     // ========================================================================
     /// get

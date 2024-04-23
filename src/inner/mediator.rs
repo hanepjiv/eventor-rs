@@ -66,17 +66,12 @@ impl MediatorInner {
         map: &mut impl std::ops::DerefMut<Target = ListenerMap>,
     ) {
         for (hash, btree) in self.newface.iter_mut() {
-            for (id, listener) in btree.iter() {
-                map.insert(*hash, id, listener.clone());
-            }
-            btree.clear();
+            btree.retain(|id, listener| {
+                !map.insert(*hash, id, listener.clone())
+            });
         }
-
         for (hash, bset) in self.retiree.iter_mut() {
-            for id in bset.iter() {
-                drop(map.remove(*hash, id));
-            }
-            bset.clear();
+            bset.retain(|id| !map.remove(*hash, id));
         }
     }
 }

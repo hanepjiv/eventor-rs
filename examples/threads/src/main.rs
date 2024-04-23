@@ -76,7 +76,7 @@ impl EventListener for Listener {
                     EventDataBox::new(99u64),
                 ));
                 eventor.remove_listener(4201860248, self.peek_id());
-                RetOnEvent::Complete
+                RetOnEvent::Next
             }
             4201860249 => {
                 event
@@ -91,7 +91,7 @@ impl EventListener for Listener {
                     self.aelicit_from_self()
                         .expect("Listener::on_event: aelicit_from_self"),
                 );
-                RetOnEvent::Complete
+                RetOnEvent::Next
             }
             x => {
                 println!("Listener::on_event: unknown hash {x}");
@@ -122,10 +122,11 @@ fn main() -> Result<()> {
     let event_type_01 = eventor.new_type("event_type_01")?;
     println!("{:?}", event_type_01);
 
-    let listener_id = Uuid::now_v7();
-    let listener = Listener::new(listener_id);
-    eventor.insert_listener(4201860248, listener.clone());
-    eventor.insert_listener(4201860249, listener);
+    for _ in 0..2 {
+        let listener = Listener::new(Uuid::now_v7());
+        eventor.insert_listener(4201860248, listener.clone());
+        eventor.insert_listener(4201860249, listener);
+    }
 
     for i in 0..num_cpu {
         let a = alive.clone();
@@ -151,7 +152,7 @@ fn main() -> Result<()> {
                 println!("push event_00 thread({i}) times={times}");
                 e.push_event(Event::new(e00.clone(), EventDataBox::new(i)));
                 times += 1;
-                sleep(Duration::from_millis(100));
+                sleep(Duration::from_millis(10));
             }
             format!("pusher {} thread({i})", e00.peek_name())
         }));
@@ -167,13 +168,13 @@ fn main() -> Result<()> {
                 println!("push event_01 thread({i}) times={times}");
                 e.push_event(Event::new(e01.clone(), EventDataBox::new(i)));
                 times += 1;
-                sleep(Duration::from_millis(200));
+                sleep(Duration::from_millis(20));
             }
             format!("pusher {} thread({i})", e01.peek_name())
         }));
     }
 
-    sleep(Duration::from_millis(1000));
+    sleep(Duration::from_millis(50));
 
     alive.store(false, Ordering::Release); // stop all threads.
 
