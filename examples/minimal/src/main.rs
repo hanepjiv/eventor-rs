@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/04/22
+//  @date 2024/04/23
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -34,7 +34,7 @@ impl EventListener for Listener {
         &self.0
     }
     // ========================================================================
-    fn on_event(&mut self, event: &Event, _eventor: &Eventor) -> RetOnEvent {
+    fn on_event(&self, event: &Event, _eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
             4201860248 => {
                 event
@@ -80,22 +80,20 @@ fn main() -> Result<()> {
 
     {
         let listener_id = Uuid::now_v7();
-        println!("listener: {listener_id}");
         eventor.insert_listener(
             4201860248,
-            listener_id,
             EventListenerAelicit::new(Listener(listener_id))?,
         );
+        println!("listener: {listener_id}");
     }
 
     {
         let listener_id = Uuid::now_v7();
-        println!("listener: {listener_id}");
         eventor.insert_listener(
             4201860249,
-            listener_id,
             EventListenerAelicit::new(Listener(listener_id))?,
-        )
+        );
+        println!("listener: {listener_id}");
     }
 
     for i in 0..2 {

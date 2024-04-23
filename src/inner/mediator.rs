@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2024/04/22
+//  @date 2024/04/23
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -40,9 +40,9 @@ impl MediatorInner {
     pub(crate) fn insert(
         &mut self,
         event_hash: u32,
-        id: Uuid,
         listener: EventListenerAelicit,
     ) {
+        let id = listener.read().expect("eventor::insert").peek_id().clone();
         let _ = self.retiree.entry(event_hash).or_default().remove(&id);
         let _ = self
             .newface
@@ -92,13 +92,12 @@ impl Mediator {
     pub(crate) fn insert(
         &self,
         event_hash: u32,
-        id: Uuid,
         listener: EventListenerAelicit,
     ) {
         self.0
             .lock()
             .expect("eventor::inner::Mediator::insert")
-            .insert(event_hash, id, listener);
+            .insert(event_hash, listener);
     }
     // ========================================================================
     /// remove

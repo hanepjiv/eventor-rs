@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2024/04/21
+//  @date 2024/04/23
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -36,7 +36,7 @@ pub trait EventListener: Debug + Sync + Send {
     fn peek_id(&self) -> &Uuid;
     // ========================================================================
     /// on_event
-    fn on_event(&mut self, event: &Event, eventor: &Eventor) -> RetOnEvent;
+    fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent;
 }
 // ============================================================================
 pub use event_listener_aelicit::author as aelicit_author;

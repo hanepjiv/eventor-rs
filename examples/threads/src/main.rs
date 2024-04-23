@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/04/22
+//  @date 2024/04/23
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -59,7 +59,7 @@ impl EventListener for Listener {
         &self.uuid
     }
     // ========================================================================
-    fn on_event(&mut self, event: &Event, eventor: &Eventor) -> RetOnEvent {
+    fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
             4201860248 => {
                 event
@@ -88,7 +88,6 @@ impl EventListener for Listener {
                     .expect("on 01");
                 eventor.insert_listener(
                     4201860248,
-                    *self.peek_id(),
                     self.aelicit_from_self()
                         .expect("Listener::on_event: aelicit_from_self"),
                 );
@@ -125,8 +124,8 @@ fn main() -> Result<()> {
 
     let listener_id = Uuid::now_v7();
     let listener = Listener::new(listener_id);
-    eventor.insert_listener(4201860248, listener_id, listener.clone());
-    eventor.insert_listener(4201860249, listener_id, listener);
+    eventor.insert_listener(4201860248, listener.clone());
+    eventor.insert_listener(4201860249, listener);
 
     {
         let a = alive.clone();

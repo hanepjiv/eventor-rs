@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/22
+//  @date 2024/04/23
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -75,10 +75,9 @@ impl Eventor {
     pub fn insert_listener(
         &self,
         event_hash: u32,
-        id: Uuid,
         listener: EventListenerAelicit,
     ) {
-        self.mediator.insert(event_hash, id, listener)
+        self.mediator.insert(event_hash, listener)
     }
     // ------------------------------------------------------------------------
     /// remove_listener
@@ -106,9 +105,9 @@ impl Eventor {
                 .expect("Eventor::dispatch")
                 .get_mut(&(e.peek_type().peek_hash()))
             {
-                for (_, listener) in list.iter_mut() {
+                for (_, listener) in list.iter() {
                     if let RetOnEvent::Complete = listener
-                        .write()
+                        .read()
                         .expect("Eventor::dispatch")
                         .on_event(&e, self)
                     {
