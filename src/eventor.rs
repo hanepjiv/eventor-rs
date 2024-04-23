@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/23
+//  @date 2024/04/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -108,13 +108,12 @@ impl Eventor {
             return false;
         };
 
-        let opt = self
+        let Some(list) = self
             .listener_map
             .read()
             .expect("Eventor::dispatch: listener_map")
-            .get(&(e.peek_type().peek_hash()));
-
-        let Some(list) = opt else {
+            .get(&(e.peek_type().peek_hash()))
+        else {
             if cfg!(debug_assertions) {
                 info!("Eventor::dispatch: no listener: {:?}", e);
             }

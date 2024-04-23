@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/04/23
+//  @date 2024/04/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -128,7 +128,7 @@ fn main() -> Result<()> {
         eventor.insert_listener(4201860249, listener);
     }
 
-    for i in 0..1 {
+    for i in 0..2 {
         let a = alive.clone();
         let e = eventor.clone();
         threads.push(spawn(move || {
