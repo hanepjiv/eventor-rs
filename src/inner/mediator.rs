@@ -13,7 +13,7 @@
 #![allow(box_pointers)]
 // use  =======================================================================
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{btree_map::Entry, BTreeMap, BTreeSet},
     sync::Mutex,
 };
 // ----------------------------------------------------------------------------
@@ -43,7 +43,9 @@ impl MediatorInner {
         listener: EventListenerAelicit,
     ) {
         let id = listener.read().expect("eventor::insert").peek_id().clone();
-        let _ = self.retiree.entry(event_hash).or_default().remove(&id);
+        if let Entry::Occupied(mut x) = self.retiree.entry(event_hash) {
+            let _ = x.get_mut().remove(&id);
+        }
         let _ = self
             .newface
             .entry(event_hash)
@@ -54,7 +56,9 @@ impl MediatorInner {
     // ========================================================================
     /// remove
     pub(crate) fn remove(&mut self, event_hash: u32, id: &Uuid) {
-        drop(self.newface.entry(event_hash).or_default().remove(id));
+        if let Entry::Occupied(mut x) = self.newface.entry(event_hash) {
+            drop(x.get_mut().remove(&id));
+        }
         let _ = self.retiree.entry(event_hash).or_default().insert(*id);
     }
     // ========================================================================
@@ -69,7 +73,6 @@ impl MediatorInner {
             }
             btree.clear();
         }
-        self.newface.clear();
 
         for (hash, bset) in self.retiree.iter_mut() {
             for id in bset.iter() {
@@ -77,7 +80,6 @@ impl MediatorInner {
             }
             bset.clear();
         }
-        self.retiree.clear();
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
