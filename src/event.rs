@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/22
+//  @date 2024/04/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -71,6 +71,11 @@ impl EventQueue {
     /// push
     pub(crate) fn push(&mut self, event: Event) {
         self.0.push_back(event)
+    }
+    // ========================================================================
+    /// push_front
+    pub(crate) fn push_front(&mut self, event: Event) {
+        self.0.push_front(event)
     }
     // ========================================================================
     /// pop

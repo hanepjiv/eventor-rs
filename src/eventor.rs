@@ -100,7 +100,7 @@ impl Eventor {
             .expect("Eventor::dispatch: event queue")
             .pop();
 
-        let Some(e) = event else {
+        let Some(eve) = event else {
             self.queue
                 .lock()
                 .expect("Eventor::dispatch: event queue shrink")
@@ -108,31 +108,62 @@ impl Eventor {
             return false;
         };
 
-        let Some(list) = self
-            .listener_map
-            .read()
-            .expect("Eventor::dispatch: listener_map")
-            .get(&(e.peek_type().peek_hash()))
-        else {
-            if cfg!(debug_assertions) {
-                info!("Eventor::dispatch: no listener: {:?}", e);
-            }
-            return true;
+        let list = {
+            let Some(list) = self
+                .listener_map
+                .read()
+                .expect("Eventor::dispatch: listener_map")
+                .get(&(eve.peek_type().peek_hash()))
+            else {
+                if cfg!(debug_assertions) {
+                    info!("Eventor::dispatch: no listener: {eve:?}");
+                }
+                return true;
+            };
+            list
         };
 
-        for (_, listener) in list
+        match list.try_read() {
+            Ok(x) => {
+                for (_, listener) in x.iter() {
+                    if let RetOnEvent::Complete = listener
+                        .read()
+                        .expect("Eventor::dispatch: listener")
+                        .on_event(&eve, self)
+                    {
+                        break;
+                    }
+                }
+            }
+            Err(e) => match e {
+                std::sync::TryLockError::WouldBlock => {
+                    self.queue
+                        .lock()
+                        .expect("Eventor::dispatch: event queue return")
+                        .push_front(eve);
+                    return true;
+                }
+                _ => {
+                    // poisoned
+                    panic!("Eventor::dispatch: listener_map list");
+                }
+            },
+        }
+        /*
+            for (_, listener) in list
             .read()
             .expect("Eventor::dispatch: listener_map list")
             .iter()
-        {
-            if let RetOnEvent::Complete = listener
-                .read()
-                .expect("Eventor::dispatch: listener")
-                .on_event(&e, self)
             {
-                break;
-            }
+            if let RetOnEvent::Complete = listener
+            .read()
+            .expect("Eventor::dispatch: listener")
+            .on_event(&e, self)
+            {
+            break;
         }
+        }
+         */
 
         true
     }
