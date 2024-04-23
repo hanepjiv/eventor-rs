@@ -45,7 +45,7 @@ impl ListenerMap {
                 TryLockError::WouldBlock => {
                     return false;
                 }
-                _ => panic!("listener insert"),
+                _ => panic!("Eventer::dispatch: apply listener insert"),
             },
         }
     }
@@ -64,7 +64,7 @@ impl ListenerMap {
                 TryLockError::WouldBlock => {
                     return false;
                 }
-                _ => panic!("listener remove"),
+                _ => panic!("Eventor::dispatch apply listener remove"),
             },
         }
     }

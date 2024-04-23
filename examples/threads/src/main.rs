@@ -122,13 +122,13 @@ fn main() -> Result<()> {
     let event_type_01 = eventor.new_type("event_type_01")?;
     println!("{:?}", event_type_01);
 
-    for _ in 0..2 {
+    for _ in 0..1 {
         let listener = Listener::new(Uuid::now_v7());
         eventor.insert_listener(4201860248, listener.clone());
         eventor.insert_listener(4201860249, listener);
     }
 
-    for i in 0..num_cpu {
+    for i in 0..1 {
         let a = alive.clone();
         let e = eventor.clone();
         threads.push(spawn(move || {

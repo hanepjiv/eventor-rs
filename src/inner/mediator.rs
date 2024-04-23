@@ -40,7 +40,11 @@ impl MediatorInner {
         event_hash: u32,
         listener: EventListenerAelicit,
     ) {
-        let id = listener.read().expect("eventor::insert").peek_id().clone();
+        let id = listener
+            .read()
+            .expect("Eventor::insert: listener")
+            .peek_id()
+            .clone();
         if let Entry::Occupied(mut x) = self.retiree.entry(event_hash) {
             let _ = x.get_mut().remove(&id);
         }
@@ -62,8 +66,8 @@ impl MediatorInner {
     // ========================================================================
     /// apply
     pub(crate) fn apply(&mut self, map: &RwLock<ListenerMap>) {
-        for (hash, btree) in self.newface.iter_mut() {
-            btree.retain(|id, listener| {
+        for (hash, tree) in self.newface.iter_mut() {
+            tree.retain(|id, listener| {
                 !map.write().expect("Eventor::dispatch apply insert").insert(
                     *hash,
                     id,
@@ -71,8 +75,8 @@ impl MediatorInner {
                 )
             });
         }
-        for (hash, bset) in self.retiree.iter_mut() {
-            bset.retain(|id| {
+        for (hash, set) in self.retiree.iter_mut() {
+            set.retain(|id| {
                 !map.read()
                     .expect("Eventor::dispatch apply remove")
                     .remove(*hash, id)
@@ -96,7 +100,7 @@ impl Mediator {
     ) {
         self.0
             .lock()
-            .expect("eventor::inner::Mediator::insert")
+            .expect("Eventor::insert_listener")
             .insert(event_hash, listener);
     }
     // ========================================================================
@@ -104,15 +108,12 @@ impl Mediator {
     pub(crate) fn remove(&self, event_hash: u32, id: &Uuid) {
         self.0
             .lock()
-            .expect("eventor::inner::Mediator::remove")
+            .expect("Eventor::remove_listener")
             .remove(event_hash, id);
     }
     // ========================================================================
     /// apply
     pub(crate) fn apply(&self, map: &RwLock<ListenerMap>) {
-        self.0
-            .lock()
-            .expect("eventor::inner::Mediator::apply")
-            .apply(map);
+        self.0.lock().expect("Eventor::dispatch: apply").apply(map);
     }
 }

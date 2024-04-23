@@ -94,12 +94,16 @@ impl Eventor {
     pub fn dispatch(&self) -> bool {
         self.mediator.apply(&self.listener_map);
 
-        let event = self.queue.lock().expect("Eventor::dispatch").pop();
+        let event = self
+            .queue
+            .lock()
+            .expect("Eventor::dispatch: event queue")
+            .pop();
 
         let Some(e) = event else {
             self.queue
                 .lock()
-                .expect("Eventor::dispatch")
+                .expect("Eventor::dispatch: event queue shrink")
                 .shrink_to_fit();
             return false;
         };
@@ -107,7 +111,7 @@ impl Eventor {
         let opt = self
             .listener_map
             .read()
-            .expect("Eventor::dispatch")
+            .expect("Eventor::dispatch: listener_map")
             .get(&(e.peek_type().peek_hash()));
 
         let Some(list) = opt else {
@@ -117,10 +121,14 @@ impl Eventor {
             return true;
         };
 
-        for (_, listener) in list.read().expect("Eventor::dispatch").iter() {
+        for (_, listener) in list
+            .read()
+            .expect("Eventor::dispatch: listener_map list")
+            .iter()
+        {
             if let RetOnEvent::Complete = listener
                 .read()
-                .expect("Eventor::dispatch")
+                .expect("Eventor::dispatch: listener")
                 .on_event(&e, self)
             {
                 break;
