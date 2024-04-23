@@ -105,25 +105,29 @@ impl Eventor {
             return false;
         };
 
-        if let Some(list) = self
+        let opt = self
             .listener_map
             .lock()
             .expect("Eventor::dispatch")
-            .get(&(e.peek_type().peek_hash()))
-        {
-            for (_, listener) in list.read().expect("Eventor::dispatch").iter()
-            {
-                if let RetOnEvent::Complete = listener
-                    .read()
-                    .expect("Eventor::dispatch")
-                    .on_event(&e, self)
-                {
-                    break;
-                }
+            .get(&(e.peek_type().peek_hash()));
+
+        let Some(list) = opt else {
+            if cfg!(debug_assertions) {
+                info!("Eventor::dispatch: no listener: {:?}", e);
             }
-        } else if cfg!(debug_assertions) {
-            info!("Eventor::dispatch: no listener: {:?}", e);
+            return true;
+        };
+
+        for (_, listener) in list.read().expect("Eventor::dispatch").iter() {
+            if let RetOnEvent::Complete = listener
+                .read()
+                .expect("Eventor::dispatch")
+                .on_event(&e, self)
+            {
+                break;
+            }
         }
+
         true
     }
 }

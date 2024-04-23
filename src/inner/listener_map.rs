@@ -12,14 +12,14 @@
 // use  =======================================================================
 use std::{
     collections::BTreeMap,
-    sync::{RwLock, TryLockError},
+    sync::{Arc, RwLock, TryLockError},
 };
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-type MapUUIDAelicit = RwLock<BTreeMap<Uuid, EventListenerAelicit>>;
+type MapUUIDAelicit = Arc<RwLock<BTreeMap<Uuid, EventListenerAelicit>>>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct ListenerMap
@@ -70,11 +70,11 @@ impl ListenerMap {
     }
     // ========================================================================
     /// get
-    pub(crate) fn get<Q>(&mut self, key: &Q) -> Option<&MapUUIDAelicit>
+    pub(crate) fn get<Q>(&mut self, key: &Q) -> Option<MapUUIDAelicit>
     where
         Q: ?Sized + Ord,
         u32: std::borrow::Borrow<Q>,
     {
-        self.0.get(key)
+        self.0.get(key).map(MapUUIDAelicit::clone)
     }
 }
