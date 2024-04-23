@@ -34,7 +34,7 @@ pub struct Eventor {
     /// event queue
     queue: Mutex<EventQueue>,
     /// event listener map
-    listener_map: Mutex<ListenerMap>,
+    listener_map: RwLock<ListenerMap>,
     /// mediator
     mediator: Mediator,
 }
@@ -93,7 +93,7 @@ impl Eventor {
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
         self.mediator
-            .apply(&mut self.listener_map.lock().expect("Eventor::dispatch"));
+            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
 
         let event = self.queue.lock().expect("Eventor::dispatch").pop();
 
@@ -107,7 +107,7 @@ impl Eventor {
 
         let opt = self
             .listener_map
-            .lock()
+            .read()
             .expect("Eventor::dispatch")
             .get(&(e.peek_type().peek_hash()));
 

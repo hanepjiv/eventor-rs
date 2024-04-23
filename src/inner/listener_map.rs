@@ -70,7 +70,7 @@ impl ListenerMap {
     }
     // ========================================================================
     /// get
-    pub(crate) fn get<Q>(&mut self, key: &Q) -> Option<MapUUIDAelicit>
+    pub(crate) fn get<Q>(&self, key: &Q) -> Option<MapUUIDAelicit>
     where
         Q: ?Sized + Ord,
         u32: std::borrow::Borrow<Q>,
