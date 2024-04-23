@@ -35,10 +35,10 @@ impl ListenerMap {
         id: &Uuid,
         listener: EventListenerAelicit,
     ) -> bool {
-        let map = self.0.entry(hash).or_default();
-        match map.try_write() {
-            Ok(mut x) => {
-                let _ = x.entry(*id).or_insert(listener);
+        let x = self.0.entry(hash).or_default();
+        match x.try_write() {
+            Ok(mut y) => {
+                let _ = y.entry(*id).or_insert(listener);
                 return true;
             }
             Err(e) => match e {
@@ -51,13 +51,13 @@ impl ListenerMap {
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&mut self, hash: u32, id: &Uuid) -> bool {
-        let Some(map) = self.0.get(&hash) else {
+    pub(crate) fn remove(&self, hash: u32, id: &Uuid) -> bool {
+        let Some(x) = self.0.get(&hash) else {
             return true;
         };
-        match map.try_write() {
-            Ok(mut x) => {
-                drop(x.remove(id));
+        match x.try_write() {
+            Ok(mut y) => {
+                drop(y.remove(id));
                 return true;
             }
             Err(e) => match e {

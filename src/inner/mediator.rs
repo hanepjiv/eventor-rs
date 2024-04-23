@@ -14,7 +14,7 @@
 // use  =======================================================================
 use std::{
     collections::{btree_map::Entry, BTreeMap, BTreeSet},
-    sync::Mutex,
+    sync::{Mutex, RwLock},
 };
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
@@ -61,17 +61,22 @@ impl MediatorInner {
     }
     // ========================================================================
     /// apply
-    pub(crate) fn apply(
-        &mut self,
-        map: &mut impl std::ops::DerefMut<Target = ListenerMap>,
-    ) {
+    pub(crate) fn apply(&mut self, map: &RwLock<ListenerMap>) {
         for (hash, btree) in self.newface.iter_mut() {
             btree.retain(|id, listener| {
-                !map.insert(*hash, id, listener.clone())
+                !map.write().expect("Eventor::dispatch apply insert").insert(
+                    *hash,
+                    id,
+                    listener.clone(),
+                )
             });
         }
         for (hash, bset) in self.retiree.iter_mut() {
-            bset.retain(|id| !map.remove(*hash, id));
+            bset.retain(|id| {
+                !map.read()
+                    .expect("Eventor::dispatch apply remove")
+                    .remove(*hash, id)
+            });
         }
     }
 }
@@ -104,10 +109,7 @@ impl Mediator {
     }
     // ========================================================================
     /// apply
-    pub(crate) fn apply(
-        &self,
-        map: &mut impl std::ops::DerefMut<Target = ListenerMap>,
-    ) {
+    pub(crate) fn apply(&self, map: &RwLock<ListenerMap>) {
         self.0
             .lock()
             .expect("eventor::inner::Mediator::apply")

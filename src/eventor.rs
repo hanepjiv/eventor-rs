@@ -92,8 +92,7 @@ impl Eventor {
     /// fn dispatch
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
-        self.mediator
-            .apply(&mut self.listener_map.write().expect("Eventor::dispatch"));
+        self.mediator.apply(&self.listener_map);
 
         let event = self.queue.lock().expect("Eventor::dispatch").pop();
 
