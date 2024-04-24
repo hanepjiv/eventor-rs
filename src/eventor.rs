@@ -10,9 +10,8 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::sync::{Mutex, RwLock};
-// ----------------------------------------------------------------------------
 use log::info;
+use parking_lot::{Mutex, RwLock};
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use super::{
@@ -53,10 +52,7 @@ impl Eventor {
     where
         T: AsRef<str>,
     {
-        self.type_map
-            .write()
-            .expect("Eventor::new_type")
-            .new_type(name.as_ref())
+        self.type_map.write().new_type(name.as_ref())
     }
     // ------------------------------------------------------------------------
     /// fn peek_typs
@@ -64,10 +60,7 @@ impl Eventor {
     where
         T: AsRef<str>,
     {
-        self.type_map
-            .read()
-            .expect("Eventor::peek_type")
-            .peek_type(name.as_ref())
+        self.type_map.read().peek_type(name.as_ref())
     }
     // ========================================================================
     /// fn insert_listener
@@ -86,7 +79,7 @@ impl Eventor {
     // ========================================================================
     /// fn push_event
     pub fn push_event(&self, event: Event) {
-        self.queue.lock().expect("Eventor::push_event").push(event)
+        self.queue.lock().push(event)
     }
     // ------------------------------------------------------------------------
     /// fn dispatch
@@ -94,25 +87,15 @@ impl Eventor {
     pub fn dispatch(&self) -> bool {
         self.mediator.apply(&self.listener_map);
 
-        let event = self
-            .queue
-            .lock()
-            .expect("Eventor::dispatch: event queue")
-            .pop();
+        let event = self.queue.lock().pop();
 
         let Some(eve) = event else {
-            self.queue
-                .lock()
-                .expect("Eventor::dispatch: event queue shrink")
-                .shrink_to_fit();
+            self.queue.lock().shrink_to_fit();
             return false;
         };
 
-        let Some(list) = self
-            .listener_map
-            .read()
-            .expect("Eventor::dispatch: listener_map")
-            .get(&(eve.peek_type().peek_hash()))
+        let Some(list) =
+            self.listener_map.read().get(&(eve.peek_type().peek_hash()))
         else {
             if cfg!(debug_assertions) {
                 info!("Eventor::dispatch: no listener: {eve:?}");
@@ -120,8 +103,8 @@ impl Eventor {
             return true;
         };
 
-        match list.try_read() {
-            Ok(x) => {
+        'outer: loop {
+            if let Some(x) = list.try_read() {
                 for (_, listener) in x.iter() {
                     if let RetOnEvent::Complete = listener
                         .read()
@@ -131,37 +114,11 @@ impl Eventor {
                         break;
                     }
                 }
+                break 'outer;
             }
-            Err(e) => match e {
-                std::sync::TryLockError::WouldBlock => {
-                    self.queue
-                        .lock()
-                        .expect("Eventor::dispatch: event queue return")
-                        .push_front(eve);
-                    return true;
-                }
-                _ => {
-                    // poisoned
-                    panic!("Eventor::dispatch: listener_map list");
-                }
-            },
+            std::thread::yield_now();
+            std::thread::sleep(std::time::Duration::from_millis(200));
         }
-        /*
-            for (_, listener) in list
-            .read()
-            .expect("Eventor::dispatch: listener_map list")
-            .iter()
-            {
-            if let RetOnEvent::Complete = listener
-            .read()
-            .expect("Eventor::dispatch: listener")
-            .on_event(&e, self)
-            {
-            break;
-        }
-        }
-         */
-
         true
     }
 }

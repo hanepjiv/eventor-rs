@@ -43,7 +43,7 @@ pub(crate) struct Listener {
 }
 // ============================================================================
 impl Listener {
-    pub fn new(uuid: Uuid) -> EventListenerAelicit {
+    pub fn new_aelicit(uuid: Uuid) -> EventListenerAelicit {
         EventListenerAelicit::new(Listener {
             uuid,
             ..Self::default()
@@ -68,6 +68,7 @@ impl EventListener for Listener {
                         Ok(())
                     })
                     .expect("on 00");
+
                 const E01: &str = "event_type_01";
                 eventor.push_event(Event::new(
                     eventor.peek_type(E01).unwrap_or_else(|| {
@@ -76,6 +77,7 @@ impl EventListener for Listener {
                     EventDataBox::new(99u64),
                 ));
                 eventor.remove_listener(4201860248, self.peek_id());
+
                 RetOnEvent::Next
             }
             4201860249 => {
@@ -123,20 +125,22 @@ fn main() -> Result<()> {
     println!("{:?}", event_type_01);
 
     for _ in 0..1 {
-        let listener = Listener::new(Uuid::now_v7());
+        let listener = Listener::new_aelicit(Uuid::now_v7());
         eventor.insert_listener(4201860248, listener.clone());
         eventor.insert_listener(4201860249, listener);
     }
 
-    for i in 0..2 {
+    for i in 0..num_cpu {
         let a = alive.clone();
         let e = eventor.clone();
         threads.push(spawn(move || {
             while a.load(Ordering::Acquire) {
                 while e.dispatch() {
                     yield_now();
+                    std::thread::sleep(std::time::Duration::from_millis(5));
                 }
                 yield_now();
+                std::thread::sleep(std::time::Duration::from_millis(5));
             }
             format!("dispatcher thread({i})")
         }));

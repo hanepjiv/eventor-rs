@@ -6,14 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/23
-//  @date 2024/04/23
+//  @date 2024/04/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use std::{
-    collections::BTreeMap,
-    sync::{Arc, RwLock, TryLockError},
-};
+use parking_lot::RwLock;
+use std::{collections::BTreeMap, sync::Arc};
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
@@ -34,38 +32,30 @@ impl ListenerMap {
         hash: u32,
         id: &Uuid,
         listener: EventListenerAelicit,
-    ) -> bool {
-        let x = self.0.entry(hash).or_default();
-        match x.try_write() {
-            Ok(mut y) => {
-                let _ = y.entry(*id).or_insert(listener);
-                return true;
+    ) {
+        let list = self.0.entry(hash).or_default();
+        'outer: loop {
+            if let Some(mut x) = list.try_write() {
+                let _ = x.entry(*id).or_insert(listener);
+                break 'outer;
             }
-            Err(e) => match e {
-                TryLockError::WouldBlock => {
-                    return false;
-                }
-                _ => panic!("Eventer::dispatch: apply listener insert"),
-            },
+            std::thread::yield_now();
+            std::thread::sleep(std::time::Duration::from_millis(200))
         }
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&self, hash: u32, id: &Uuid) -> bool {
-        let Some(x) = self.0.get(&hash) else {
-            return true;
+    pub(crate) fn remove(&self, hash: u32, id: &Uuid) {
+        let Some(list) = self.0.get(&hash) else {
+            return;
         };
-        match x.try_write() {
-            Ok(mut y) => {
-                drop(y.remove(id));
-                return true;
+        'outer: loop {
+            if let Some(mut x) = list.try_write() {
+                drop(x.remove(id));
+                break 'outer;
             }
-            Err(e) => match e {
-                TryLockError::WouldBlock => {
-                    return false;
-                }
-                _ => panic!("Eventor::dispatch apply listener remove"),
-            },
+            std::thread::yield_now();
+            std::thread::sleep(std::time::Duration::from_millis(200))
         }
     }
     // ========================================================================
@@ -75,6 +65,6 @@ impl ListenerMap {
         Q: ?Sized + Ord,
         u32: std::borrow::Borrow<Q>,
     {
-        self.0.get(key).map(MapUUIDAelicit::clone)
+        self.0.get(key).cloned()
     }
 }

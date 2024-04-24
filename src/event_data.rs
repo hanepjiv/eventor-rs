@@ -6,15 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/21
+//  @date 2024/04/24
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::{
-    any::Any,
-    fmt::Debug,
-    sync::{Arc, RwLock},
-};
+use std::{any::Any, fmt::Debug, sync::Arc};
+// ----------------------------------------------------------------------------
+use parking_lot::RwLock;
 // ----------------------------------------------------------------------------
 use super::error::Error;
 // ============================================================================
@@ -44,14 +42,9 @@ impl EventDataBox {
         D: 'static,
         E: From<Error>,
     {
-        f(self
-            .0
-            .read()
-            .map_err(|_| Error::Eventor("EventDataBox::with".to_string()))?
-            .downcast_ref()
-            .ok_or_else(|| {
-                Error::Downcast("EventDataBox::with".to_string())
-            })?)
+        f(self.0.read().downcast_ref().ok_or_else(|| {
+            Error::Downcast("EventDataBox::with".to_string())
+        })?)
     }
     // ========================================================================
     #[allow(box_pointers)]
@@ -64,13 +57,8 @@ impl EventDataBox {
         D: 'static,
         E: From<Error>,
     {
-        f(self
-            .0
-            .write()
-            .map_err(|_| Error::Eventor("EventDataBox::with_mut".to_string()))?
-            .downcast_mut()
-            .ok_or_else(|| {
-                Error::Downcast("EventDataBox::with_mut".to_string())
-            })?)
+        f(self.0.write().downcast_mut().ok_or_else(|| {
+            Error::Downcast("EventDataBox::with_mut".to_string())
+        })?)
     }
 }

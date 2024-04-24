@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "eventor"
-version                 = "0.11.0-alpha.4"
+version                 = "0.11.0-alpha.5"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["subsystem", "event"]
@@ -17,6 +17,7 @@ publish                 = false
 [dependencies]
 hash_combine            = { default-features = false, version = "^0.3" }
 log                     = { default-features = false, version = "^0.4" }
+parking_lot             = { default-features = false, version = "^0.12" }
 uuid                    = { default-features = false, version = "^1" }
 # -----------------------------------------------------------------------------
 [dependencies.elicit]
