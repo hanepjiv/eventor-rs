@@ -108,19 +108,16 @@ impl Eventor {
             return false;
         };
 
-        let list = {
-            let Some(list) = self
-                .listener_map
-                .read()
-                .expect("Eventor::dispatch: listener_map")
-                .get(&(eve.peek_type().peek_hash()))
-            else {
-                if cfg!(debug_assertions) {
-                    info!("Eventor::dispatch: no listener: {eve:?}");
-                }
-                return true;
-            };
-            list
+        let Some(list) = self
+            .listener_map
+            .read()
+            .expect("Eventor::dispatch: listener_map")
+            .get(&(eve.peek_type().peek_hash()))
+        else {
+            if cfg!(debug_assertions) {
+                info!("Eventor::dispatch: no listener: {eve:?}");
+            }
+            return true;
         };
 
         match list.try_read() {
