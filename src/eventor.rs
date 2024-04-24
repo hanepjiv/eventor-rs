@@ -41,7 +41,7 @@ pub struct Eventor {
 // ============================================================================
 impl Eventor {
     // ========================================================================
-    /// fn new
+    /// new
     pub fn new() -> Self {
         Self::default()
     }
@@ -55,7 +55,7 @@ impl Eventor {
         self.type_map.write().new_type(name.as_ref())
     }
     // ------------------------------------------------------------------------
-    /// fn peek_typs
+    /// peek_typs
     pub fn peek_type<T>(&self, name: T) -> Option<EventType>
     where
         T: AsRef<str>,
@@ -63,26 +63,27 @@ impl Eventor {
         self.type_map.read().peek_type(name.as_ref())
     }
     // ========================================================================
-    /// fn insert_listener
-    pub fn insert_listener(
-        &self,
-        event_hash: u32,
-        listener: EventListenerAelicit,
-    ) {
-        self.mediator.insert(event_hash, listener)
+    /// insert_listener
+    pub fn insert_listener(&self, hash: u32, listener: EventListenerAelicit) {
+        self.mediator.insert(hash, listener)
     }
     // ------------------------------------------------------------------------
     /// remove_listener
-    pub fn remove_listener(&self, event_hash: u32, id: &Uuid) {
-        self.mediator.remove(event_hash, id)
+    pub fn remove_listener(&self, hash: u32, id: &Uuid) {
+        self.mediator.remove(hash, id)
     }
     // ========================================================================
-    /// fn push_event
+    /// push_event
     pub fn push_event(&self, event: Event) {
         self.queue.lock().push(event)
     }
     // ------------------------------------------------------------------------
-    /// fn dispatch
+    /// dispatch
+    ///
+    /// return: bool
+    ///         true    = dispatch event
+    ///         false   = no event
+    ///
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
         self.mediator.apply(self.listener_map.write());
@@ -103,6 +104,13 @@ impl Eventor {
             }
             return true;
         };
+
+        if list.is_empty() {
+            if cfg!(debug_assertions) {
+                info!("Eventor::dispatch: no listener: {eve:?}");
+            }
+            return true;
+        }
 
         for (_, listener) in list.iter() {
             if let RetOnEvent::Complete = listener
