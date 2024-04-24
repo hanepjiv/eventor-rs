@@ -85,40 +85,35 @@ impl Eventor {
     /// fn dispatch
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
-        self.mediator.apply(&self.listener_map);
+        self.mediator.apply(self.listener_map.write());
 
-        let event = self.queue.lock().pop();
-
-        let Some(eve) = event else {
+        let Some(eve) = self.queue.lock().pop() else {
             self.queue.lock().shrink_to_fit();
             return false;
         };
 
-        let Some(list) =
-            self.listener_map.read().get(&(eve.peek_type().peek_hash()))
-        else {
+        let Some(map) = self.listener_map.try_read() else {
+            self.queue.lock().push_front(eve);
+            return true;
+        };
+
+        let Some(list) = map.get(&(eve.peek_type().peek_hash())) else {
             if cfg!(debug_assertions) {
                 info!("Eventor::dispatch: no listener: {eve:?}");
             }
             return true;
         };
 
-        'outer: loop {
-            if let Some(x) = list.try_read() {
-                for (_, listener) in x.iter() {
-                    if let RetOnEvent::Complete = listener
-                        .read()
-                        .expect("Eventor::dispatch: listener")
-                        .on_event(&eve, self)
-                    {
-                        break;
-                    }
-                }
-                break 'outer;
+        for (_, listener) in list.iter() {
+            if let RetOnEvent::Complete = listener
+                .read()
+                .expect("Eventor::dispatch: listener")
+                .on_event(&eve, self)
+            {
+                break;
             }
-            std::thread::yield_now();
-            std::thread::sleep(std::time::Duration::from_millis(200));
         }
+
         true
     }
 }

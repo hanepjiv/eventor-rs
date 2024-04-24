@@ -136,11 +136,11 @@ fn main() -> Result<()> {
         threads.push(spawn(move || {
             while a.load(Ordering::Acquire) {
                 while e.dispatch() {
-                    yield_now();
-                    std::thread::sleep(std::time::Duration::from_millis(5));
+                    // yield_now();
+                    std::thread::sleep(std::time::Duration::from_millis(1));
                 }
                 yield_now();
-                std::thread::sleep(std::time::Duration::from_millis(5));
+                std::thread::sleep(std::time::Duration::from_millis(1));
             }
             format!("dispatcher thread({i})")
         }));

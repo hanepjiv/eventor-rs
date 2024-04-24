@@ -12,7 +12,7 @@
 // attributes  ================================================================
 #![allow(box_pointers)]
 // use  =======================================================================
-use parking_lot::{Mutex, RwLock};
+use parking_lot::Mutex;
 use std::collections::{btree_map::Entry, BTreeMap, BTreeSet};
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
@@ -33,58 +33,49 @@ impl MediatorInner {
     /// insert
     pub(crate) fn insert(
         &mut self,
-        event_hash: u32,
+        hash: u32,
         listener: EventListenerAelicit,
     ) {
         let id = *listener
             .read()
             .expect("Eventor::insert: listener")
             .peek_id();
-        if let Entry::Occupied(mut x) = self.retiree.entry(event_hash) {
+        if let Entry::Occupied(mut x) = self.retiree.entry(hash) {
             let _ = x.get_mut().remove(&id);
         }
         let _ = self
             .newface
-            .entry(event_hash)
+            .entry(hash)
             .or_default()
             .entry(id)
             .or_insert(listener);
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&mut self, event_hash: u32, id: &Uuid) {
-        if let Entry::Occupied(mut x) = self.newface.entry(event_hash) {
+    pub(crate) fn remove(&mut self, hash: u32, id: &Uuid) {
+        if let Entry::Occupied(mut x) = self.newface.entry(hash) {
             drop(x.get_mut().remove(id));
         }
-        let _ = self.retiree.entry(event_hash).or_default().insert(*id);
+        let _ = self.retiree.entry(hash).or_default().insert(*id);
     }
     // ========================================================================
     /// apply
-    pub(crate) fn apply(&mut self, map: &RwLock<ListenerMap>) {
+    pub(crate) fn apply<T>(&mut self, mut map: T)
+    where
+        T: std::ops::DerefMut<Target = ListenerMap>,
+    {
         for (hash, tree) in self.newface.iter_mut() {
             for (id, listener) in tree.iter() {
-                'outer: loop {
-                    if let Some(mut m) = map.try_write() {
-                        m.insert(*hash, id, listener.clone());
-                        break 'outer;
-                    }
-                    std::thread::yield_now();
-                    std::thread::sleep(std::time::Duration::from_millis(200));
-                }
+                map.insert(*hash, id, listener.clone());
             }
             tree.clear();
         }
+
         for (hash, set) in self.retiree.iter_mut() {
             for id in set.iter() {
-                'outer: loop {
-                    if let Some(m) = map.try_read() {
-                        m.remove(*hash, id);
-                        break 'outer;
-                    }
-                    std::thread::yield_now();
-                    std::thread::sleep(std::time::Duration::from_millis(200));
-                }
+                map.remove(*hash, id);
             }
+            set.clear();
         }
     }
 }
@@ -97,21 +88,20 @@ pub(crate) struct Mediator(Mutex<MediatorInner>);
 impl Mediator {
     // ========================================================================
     /// insert
-    pub(crate) fn insert(
-        &self,
-        event_hash: u32,
-        listener: EventListenerAelicit,
-    ) {
-        self.0.lock().insert(event_hash, listener);
+    pub(crate) fn insert(&self, hash: u32, listener: EventListenerAelicit) {
+        self.0.lock().insert(hash, listener);
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&self, event_hash: u32, id: &Uuid) {
-        self.0.lock().remove(event_hash, id);
+    pub(crate) fn remove(&self, hash: u32, id: &Uuid) {
+        self.0.lock().remove(hash, id);
     }
     // ========================================================================
     /// apply
-    pub(crate) fn apply(&self, map: &RwLock<ListenerMap>) {
+    pub(crate) fn apply<T>(&self, map: T)
+    where
+        T: std::ops::DerefMut<Target = ListenerMap>,
+    {
         self.0.lock().apply(map);
     }
 }

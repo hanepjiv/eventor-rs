@@ -10,19 +10,18 @@
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use parking_lot::RwLock;
-use std::{collections::BTreeMap, sync::Arc};
+use std::collections::BTreeMap;
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-type MapUUIDAelicit = Arc<RwLock<BTreeMap<Uuid, EventListenerAelicit>>>;
+type UUIDAelicit = BTreeMap<Uuid, EventListenerAelicit>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct ListenerMap
 #[derive(Debug, Default)]
-pub(crate) struct ListenerMap(BTreeMap<u32, MapUUIDAelicit>);
+pub(crate) struct ListenerMap(BTreeMap<u32, UUIDAelicit>);
 // ============================================================================
 impl ListenerMap {
     // ========================================================================
@@ -33,38 +32,28 @@ impl ListenerMap {
         id: &Uuid,
         listener: EventListenerAelicit,
     ) {
-        let list = self.0.entry(hash).or_default();
-        'outer: loop {
-            if let Some(mut x) = list.try_write() {
-                let _ = x.entry(*id).or_insert(listener);
-                break 'outer;
-            }
-            std::thread::yield_now();
-            std::thread::sleep(std::time::Duration::from_millis(200))
-        }
+        let _ = self
+            .0
+            .entry(hash)
+            .or_default()
+            .entry(*id)
+            .or_insert(listener);
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&self, hash: u32, id: &Uuid) {
-        let Some(list) = self.0.get(&hash) else {
+    pub(crate) fn remove(&mut self, hash: u32, id: &Uuid) {
+        let Some(list) = self.0.get_mut(&hash) else {
             return;
         };
-        'outer: loop {
-            if let Some(mut x) = list.try_write() {
-                drop(x.remove(id));
-                break 'outer;
-            }
-            std::thread::yield_now();
-            std::thread::sleep(std::time::Duration::from_millis(200))
-        }
+        drop(list.remove(id));
     }
     // ========================================================================
     /// get
-    pub(crate) fn get<Q>(&self, key: &Q) -> Option<MapUUIDAelicit>
+    pub(crate) fn get<Q>(&self, key: &Q) -> Option<&UUIDAelicit>
     where
         Q: ?Sized + Ord,
         u32: std::borrow::Borrow<Q>,
     {
-        self.0.get(key).cloned()
+        self.0.get(key)
     }
 }

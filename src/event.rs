@@ -73,12 +73,10 @@ impl EventQueue {
         self.0.push_back(event)
     }
     // ========================================================================
-    /*
-        /// push_front
-        pub(crate) fn push_front(&mut self, event: Event) {
+    /// push_front
+    pub(crate) fn push_front(&mut self, event: Event) {
         self.0.push_front(event)
     }
-        */
     // ========================================================================
     /// pop
     pub(crate) fn pop(&mut self) -> Option<Event> {
