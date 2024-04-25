@@ -64,32 +64,38 @@ impl Event {
 // ============================================================================
 /// struct EventQueue
 #[derive(Debug)]
-pub(crate) struct EventQueue(VecDeque<Event>);
+pub(crate) struct EventQueue {
+    queue: VecDeque<Event>,
+    min_capacity: usize,
+}
 // ============================================================================
 impl EventQueue {
     // ////////////////////////////////////////////////////////////////////////
     // ========================================================================
-    pub(crate) fn with_capacity(capacity: usize) -> Self {
-        Self(VecDeque::<Event>::with_capacity(capacity))
+    pub(crate) fn with_capacity(min_capacity: usize) -> Self {
+        Self {
+            queue: VecDeque::<Event>::with_capacity(min_capacity),
+            min_capacity,
+        }
     }
     // ========================================================================
     /// push
     pub(crate) fn push(&mut self, event: Event) {
-        self.0.push_back(event)
+        self.queue.push_back(event)
     }
     // ========================================================================
     /// push_front
     pub(crate) fn push_front(&mut self, event: Event) {
-        self.0.push_front(event)
+        self.queue.push_front(event)
     }
     // ========================================================================
     /// pop
     pub(crate) fn pop(&mut self) -> Option<Event> {
-        self.0.pop_front()
+        self.queue.pop_front()
     }
     // ========================================================================
-    /// shrink_to
-    pub(crate) fn shrink_to(&mut self, capacity: usize) {
-        self.0.shrink_to(capacity)
+    /// shrink
+    pub(crate) fn shrink(&mut self) {
+        self.queue.shrink_to(self.min_capacity)
     }
 }

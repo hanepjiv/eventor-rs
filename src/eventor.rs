@@ -30,8 +30,6 @@ use crate::inner::{ListenerMap, Mediator, TypeMap};
 pub struct Eventor {
     /// event type map
     type_map: RwLock<TypeMap>,
-    /// event queue min capacity
-    queue_capacity: usize,
     /// event queue
     queue: Mutex<EventQueue>,
     /// event listener map
@@ -42,11 +40,9 @@ pub struct Eventor {
 // ============================================================================
 impl Default for Eventor {
     fn default() -> Self {
-        let queue_capacity = 64usize;
         Self {
             type_map: RwLock::<TypeMap>::default(),
-            queue_capacity,
-            queue: Mutex::new(EventQueue::with_capacity(queue_capacity)),
+            queue: Mutex::new(EventQueue::with_capacity(64usize)),
             listener_map: RwLock::<ListenerMap>::default(),
             mediator: Mediator::default(),
         }
@@ -63,7 +59,6 @@ impl Eventor {
     /// with_capacity
     pub fn with_capacity(queue_capacity: usize) -> Self {
         Self {
-            queue_capacity,
             queue: Mutex::new(EventQueue::with_capacity(queue_capacity)),
             ..Self::default()
         }
@@ -117,7 +112,7 @@ impl Eventor {
         self.mediator.apply(self.listener_map.write());
 
         let Some(eve) = self.queue.lock().pop() else {
-            self.queue.lock().shrink_to(self.queue_capacity);
+            self.queue.lock().shrink();
             return false;
         };
 
