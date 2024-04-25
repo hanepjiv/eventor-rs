@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/24
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -63,10 +63,15 @@ impl Event {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventQueue
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub(crate) struct EventQueue(VecDeque<Event>);
 // ============================================================================
 impl EventQueue {
+    // ////////////////////////////////////////////////////////////////////////
+    // ========================================================================
+    pub(crate) fn with_capacity(capacity: usize) -> Self {
+        Self(VecDeque::<Event>::with_capacity(capacity))
+    }
     // ========================================================================
     /// push
     pub(crate) fn push(&mut self, event: Event) {
@@ -83,8 +88,8 @@ impl EventQueue {
         self.0.pop_front()
     }
     // ========================================================================
-    /// shrink_to_fit
-    pub(crate) fn shrink_to_fit(&mut self) {
-        self.0.shrink_to_fit()
+    /// shrink_to
+    pub(crate) fn shrink_to(&mut self, capacity: usize) {
+        self.0.shrink_to(capacity)
     }
 }

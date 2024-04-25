@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/04/24
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -136,11 +136,9 @@ fn main() -> Result<()> {
         threads.push(spawn(move || {
             while a.load(Ordering::Acquire) {
                 while e.dispatch() {
-                    // yield_now();
-                    std::thread::sleep(std::time::Duration::from_millis(1));
+                    yield_now();
                 }
                 yield_now();
-                std::thread::sleep(std::time::Duration::from_millis(1));
             }
             format!("dispatcher thread({i})")
         }));

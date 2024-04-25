@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/24
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -20,16 +20,18 @@ use super::{
     event_listener::{
         aelicit_user::Aelicit as EventListenerAelicit, RetOnEvent,
     },
-    event_type::{EventType, EventTypeMap},
+    event_type::EventType,
 };
-use crate::inner::{ListenerMap, Mediator};
+use crate::inner::{ListenerMap, Mediator, TypeMap};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Eventor
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Eventor {
     /// event type map
-    type_map: RwLock<EventTypeMap>,
+    type_map: RwLock<TypeMap>,
+    /// event queue min capacity
+    queue_capacity: usize,
     /// event queue
     queue: Mutex<EventQueue>,
     /// event listener map
@@ -37,13 +39,34 @@ pub struct Eventor {
     /// mediator
     mediator: Mediator,
 }
-
+// ============================================================================
+impl Default for Eventor {
+    fn default() -> Self {
+        let queue_capacity = 64usize;
+        Self {
+            type_map: RwLock::<TypeMap>::default(),
+            queue_capacity,
+            queue: Mutex::new(EventQueue::with_capacity(queue_capacity)),
+            listener_map: RwLock::<ListenerMap>::default(),
+            mediator: Mediator::default(),
+        }
+    }
+}
 // ============================================================================
 impl Eventor {
     // ========================================================================
     /// new
     pub fn new() -> Self {
         Self::default()
+    }
+    // ========================================================================
+    /// with_capacity
+    pub fn with_capacity(queue_capacity: usize) -> Self {
+        Self {
+            queue_capacity,
+            queue: Mutex::new(EventQueue::with_capacity(queue_capacity)),
+            ..Self::default()
+        }
     }
     // ========================================================================
     // ------------------------------------------------------------------------
@@ -78,27 +101,32 @@ impl Eventor {
         self.queue.lock().push(event)
     }
     // ------------------------------------------------------------------------
-    /// dispatch
     ///
-    /// return: bool
-    ///         true    = dispatch event
-    ///         false   = no event
+    /// # dispatch
+    ///
+    /// Process one event.
+    ///
+    /// ## return: bool
+    ///         true    = There is or was an event.
+    ///         false   = No event.
     ///
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
+        // Locking of the ListenerMap writer must be done
+        // before locking of the Mediator.
         self.mediator.apply(self.listener_map.write());
 
         let Some(eve) = self.queue.lock().pop() else {
-            self.queue.lock().shrink_to_fit();
+            self.queue.lock().shrink_to(self.queue_capacity);
             return false;
         };
 
-        let Some(map) = self.listener_map.try_read() else {
+        let Some(m) = self.listener_map.try_read() else {
             self.queue.lock().push_front(eve);
             return true;
         };
 
-        let Some(list) = map.get(&(eve.peek_type().peek_hash())) else {
+        let Some(list) = m.get(&(eve.peek_type().peek_hash())) else {
             if cfg!(debug_assertions) {
                 info!("Eventor::dispatch: no listener: {eve:?}");
             }

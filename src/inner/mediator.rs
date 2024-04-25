@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2024/04/24
+//  @date 2024/04/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -70,7 +70,6 @@ impl MediatorInner {
             }
             tree.clear();
         }
-
         for (hash, set) in self.retiree.iter_mut() {
             for id in set.iter() {
                 map.remove(*hash, id);
