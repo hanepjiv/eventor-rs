@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/25
+//  @date 2024/04/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -136,11 +136,16 @@ impl Eventor {
         }
 
         for (_, listener) in list.iter() {
-            if let RetOnEvent::Complete = listener
+            #[cfg(feature = "elicit-parking_lot")]
+            let ret = listener.read().on_event(&eve, self);
+
+            #[cfg(not(any(feature = "elicit-parking_lot"),))]
+            let ret = listener
                 .read()
-                .expect("Eventor::dispatch: listener")
-                .on_event(&eve, self)
-            {
+                .expect("Eventor::dispatch")
+                .on_event(&eve, self);
+
+            if let RetOnEvent::Complete = ret {
                 break;
             }
         }

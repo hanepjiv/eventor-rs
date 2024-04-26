@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2024/04/25
+//  @date 2024/04/26
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -30,16 +30,17 @@ struct MediatorInner {
 // ============================================================================
 impl MediatorInner {
     // ========================================================================
-    /// insert
     pub(crate) fn insert(
         &mut self,
         hash: u32,
         listener: EventListenerAelicit,
     ) {
-        let id = *listener
-            .read()
-            .expect("Eventor::insert: listener")
-            .peek_id();
+        #[cfg(feature = "elicit-parking_lot")]
+        let id = *listener.read().peek_id();
+
+        #[cfg(not(any(feature = "elicit-parking_lot"),))]
+        let id = *listener.read().expect("Eventor::insert_listener").peek_id();
+
         if let Entry::Occupied(mut x) = self.retiree.entry(hash) {
             let _ = x.get_mut().remove(&id);
         }
