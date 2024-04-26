@@ -15,7 +15,8 @@ repository              = "https://github.com/hanepjiv/eventor-rs.git"
 publish                 = false
 # =============================================================================
 [workspace]
-exclude                 = [ "examples/"
+exclude                 = [ "target/",
+                            "examples/"
                             ]
 members                 = []
 # =============================================================================
