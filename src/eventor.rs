@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/26
+//  @date 2024/04/28
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -102,8 +102,8 @@ impl Eventor {
     /// Process one event.
     ///
     /// ## return: bool
-    ///         true    = There is or was an event.
-    ///         false   = No event.
+    /// true    = There is or was an event.
+    /// false   = No event.
     ///
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
