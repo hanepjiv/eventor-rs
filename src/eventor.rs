@@ -11,7 +11,7 @@
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use log::info;
-use parking_lot::{Mutex, RwLock};
+use parking_lot::{Condvar, Mutex, RwLock};
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use super::{
@@ -32,6 +32,8 @@ pub struct Eventor {
     type_map: RwLock<TypeMap>,
     /// event queue
     queue: Mutex<EventQueue>,
+    /// condvar queue
+    condvar_queue: Condvar,
     /// event listener map
     listener_map: RwLock<ListenerMap>,
     /// mediator
@@ -41,10 +43,11 @@ pub struct Eventor {
 impl Default for Eventor {
     fn default() -> Self {
         Self {
-            type_map: RwLock::<TypeMap>::default(),
+            type_map: Default::default(),
             queue: Mutex::new(EventQueue::with_capacity(64usize)),
-            listener_map: RwLock::<ListenerMap>::default(),
-            mediator: Mediator::default(),
+            condvar_queue: Default::default(),
+            listener_map: Default::default(),
+            mediator: Default::default(),
         }
     }
 }
@@ -93,9 +96,27 @@ impl Eventor {
     // ========================================================================
     /// push_event
     pub fn push_event(&self, event: Event) {
-        self.queue.lock().push(event)
+        let mut guard = self.queue.lock();
+        guard.push(event);
+        let _ = self.condvar_queue.notify_one();
     }
     // ------------------------------------------------------------------------
+    /// push_event_front
+    #[inline]
+    fn push_event_front(&self, event: Event) {
+        let mut guard = self.queue.lock();
+        guard.push_front(event);
+        let _ = self.condvar_queue.notify_one();
+    }
+    // ------------------------------------------------------------------------
+    /*
+        /// pop_event_wait
+        #[inline]
+        fn pop_event_wait(&self) -> Event {
+
+    }
+        */
+    // ========================================================================
     ///
     /// # dispatch
     ///
@@ -105,51 +126,89 @@ impl Eventor {
     /// true    = There is or was an event.
     /// false   = No event.
     ///
-    #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
-        let Some(eve) = self.queue.lock().pop() else {
-            self.queue.lock().shrink();
-            return false;
+        let event = {
+            let mut guard = self.queue.lock();
+            let Some(event) = guard.pop() else {
+                guard.shrink();
+                return false;
+            };
+            event
+            // unlock event quere here.
         };
-
+        self.dispatch_impl(event);
+        true
+    }
+    // ------------------------------------------------------------------------
+    /// dispatch_while
+    pub fn dispatch_while<F>(&self, mut condition: F)
+    where
+        F: FnMut() -> bool,
+    {
+        'outer: while condition() {
+            let event = {
+                let mut guard = self.queue.lock();
+                'inner: loop {
+                    let Some(event) = guard.pop() else {
+                        guard.shrink();
+                        if self
+                            .condvar_queue
+                            .wait_for(
+                                &mut guard,
+                                std::time::Duration::from_millis(20),
+                            )
+                            .timed_out()
+                        {
+                            continue 'outer;
+                        };
+                        continue 'inner;
+                    };
+                    break event;
+                }
+                // unlock event quere here.
+            };
+            self.dispatch_impl(event);
+        }
+    }
+    // ------------------------------------------------------------------------
+    #[allow(box_pointers)]
+    fn dispatch_impl(&self, event: Event) {
         // Locking of the ListenerMap writer must be done
         // before locking of the Mediator.
         self.mediator.apply(self.listener_map.write());
 
         let Some(m) = self.listener_map.try_read() else {
-            self.queue.lock().push_front(eve);
-            return true;
+            self.push_event_front(event);
+            return;
         };
 
         let Some(list) =
-            (if let Some(x) = m.get(&(eve.peek_type().peek_hash())) {
+            (if let Some(x) = m.get(&(event.peek_type().peek_hash())) {
                 (!x.is_empty()).then_some(x)
             } else {
                 None
             })
         else {
             if cfg!(debug_assertions) {
-                info!("Eventor::dispatch: no listener: {eve:?}");
+                info!("Eventor::dispatch: no listener: {event:?}");
             }
-            return true;
+            return;
         };
 
         for (_, listener) in list.iter() {
             #[cfg(feature = "elicit-parking_lot")]
-            let ret = listener.read().on_event(&eve, self);
+            let ret = listener.read().on_event(&event, self);
 
             #[cfg(not(any(feature = "elicit-parking_lot"),))]
             let ret = listener
                 .read()
                 .expect("Eventor::dispatch")
-                .on_event(&eve, self);
+                .on_event(&event, self);
 
             if let RetOnEvent::Complete = ret {
                 break;
             }
         }
-
-        true
     }
 }
 // ////////////////////////////////////////////////////////////////////////////

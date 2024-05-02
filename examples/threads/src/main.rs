@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/04/25
+//  @date 2024/05/02
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -134,12 +134,15 @@ fn main() -> Result<()> {
         let a = alive.clone();
         let e = eventor.clone();
         threads.push(spawn(move || {
-            while a.load(Ordering::Acquire) {
+            /*
+                while a.load(Ordering::Acquire) {
                 while e.dispatch() {
                     yield_now();
                 }
                 yield_now();
             }
+                 */
+            e.dispatch_while(|| a.load(Ordering::Acquire));
             format!("dispatcher thread({i})")
         }));
     }
