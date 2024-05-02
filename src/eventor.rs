@@ -108,14 +108,6 @@ impl Eventor {
         guard.push_front(event);
         let _ = self.condvar_queue.notify_one();
     }
-    // ------------------------------------------------------------------------
-    /*
-        /// pop_event_wait
-        #[inline]
-        fn pop_event_wait(&self) -> Event {
-
-    }
-        */
     // ========================================================================
     ///
     /// # dispatch
@@ -177,17 +169,14 @@ impl Eventor {
         // before locking of the Mediator.
         self.mediator.apply(self.listener_map.write());
 
-        let Some(m) = self.listener_map.try_read() else {
+        let Some(listener_map) = self.listener_map.try_read() else {
             self.push_event_front(event);
             return;
         };
 
-        let Some(list) =
-            (if let Some(x) = m.get(&(event.peek_type().peek_hash())) {
-                (!x.is_empty()).then_some(x)
-            } else {
-                None
-            })
+        let Some(listener_list) = listener_map
+            .get(&(event.peek_type().peek_hash()))
+            .filter(|x| !x.is_empty())
         else {
             if cfg!(debug_assertions) {
                 info!("Eventor::dispatch: no listener: {event:?}");
@@ -195,7 +184,7 @@ impl Eventor {
             return;
         };
 
-        for (_, listener) in list.iter() {
+        for (_, listener) in listener_list.iter() {
             #[cfg(feature = "elicit-parking_lot")]
             let ret = listener.read().on_event(&event, self);
 

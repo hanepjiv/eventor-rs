@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/23
-//  @date 2024/04/25
+//  @date 2024/05/02
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -17,12 +17,12 @@ use uuid::Uuid;
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-type UUIDAelicit = BTreeMap<Uuid, EventListenerAelicit>;
+type MapUUIDAelicit = BTreeMap<Uuid, EventListenerAelicit>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct ListenerMap
 #[derive(Debug, Default)]
-pub(crate) struct ListenerMap(BTreeMap<u32, UUIDAelicit>);
+pub(crate) struct ListenerMap(BTreeMap<u32, MapUUIDAelicit>);
 // ============================================================================
 impl ListenerMap {
     // ========================================================================
@@ -50,7 +50,7 @@ impl ListenerMap {
     }
     // ========================================================================
     /// get
-    pub(crate) fn get<Q>(&self, key: &Q) -> Option<&UUIDAelicit>
+    pub(crate) fn get<Q>(&self, key: &Q) -> Option<&MapUUIDAelicit>
     where
         Q: ?Sized + Ord,
         u32: std::borrow::Borrow<Q>,

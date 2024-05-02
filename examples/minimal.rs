@@ -1,12 +1,12 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! error.rs
+//! minimal.rs
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/04/23
+//  @date 2024/05/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -19,8 +19,8 @@ use eventor::{
 };
 use uuid::Uuid;
 // mod  =======================================================================
-mod error;
-use error::Result;
+mod inner;
+use inner::Result;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Listener
@@ -38,7 +38,7 @@ impl EventListener for Listener {
         match event.peek_type().peek_hash() {
             4201860248 => {
                 event
-                    .with(|x: &i32| -> error::Result<()> {
+                    .with(|x: &i32| -> Result<()> {
                         println!(
                             "Listener::on_event({}): 00 {x}",
                             self.peek_id()
@@ -50,7 +50,7 @@ impl EventListener for Listener {
             }
             4201860249 => {
                 event
-                    .with(|x: &i32| -> error::Result<()> {
+                    .with(|x: &i32| -> Result<()> {
                         println!(
                             "Listener::on_event({}): 01 {x}",
                             self.peek_id()

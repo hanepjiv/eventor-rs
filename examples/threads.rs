@@ -1,12 +1,12 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! error.rs
+//! threads.rs
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/05/02
+//  @date 2024/05/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -29,8 +29,8 @@ use eventor::{
 };
 use uuid::Uuid;
 // mod  =======================================================================
-mod error;
-use error::Result;
+mod inner;
+use inner::Result;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Listener
@@ -63,7 +63,7 @@ impl EventListener for Listener {
         match event.peek_type().peek_hash() {
             4201860248 => {
                 event
-                    .with(|x: &u64| -> error::Result<()> {
+                    .with(|x: &u64| -> Result<()> {
                         println!("{} event_00 data({x})", self.peek_id());
                         Ok(())
                     })
@@ -82,7 +82,7 @@ impl EventListener for Listener {
             }
             4201860249 => {
                 event
-                    .with(|x: &u64| -> error::Result<()> {
+                    .with(|x: &u64| -> Result<()> {
                         println!("{} event_01 data({x})", self.peek_id());
 
                         Ok(())
@@ -134,14 +134,6 @@ fn main() -> Result<()> {
         let a = alive.clone();
         let e = eventor.clone();
         threads.push(spawn(move || {
-            /*
-                while a.load(Ordering::Acquire) {
-                while e.dispatch() {
-                    yield_now();
-                }
-                yield_now();
-            }
-                 */
             e.dispatch_while(|| a.load(Ordering::Acquire));
             format!("dispatcher thread({i})")
         }));
