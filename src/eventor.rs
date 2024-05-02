@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/04/28
+//  @date 2024/05/02
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -107,33 +107,32 @@ impl Eventor {
     ///
     #[allow(box_pointers)]
     pub fn dispatch(&self) -> bool {
-        // Locking of the ListenerMap writer must be done
-        // before locking of the Mediator.
-        self.mediator.apply(self.listener_map.write());
-
         let Some(eve) = self.queue.lock().pop() else {
             self.queue.lock().shrink();
             return false;
         };
+
+        // Locking of the ListenerMap writer must be done
+        // before locking of the Mediator.
+        self.mediator.apply(self.listener_map.write());
 
         let Some(m) = self.listener_map.try_read() else {
             self.queue.lock().push_front(eve);
             return true;
         };
 
-        let Some(list) = m.get(&(eve.peek_type().peek_hash())) else {
+        let Some(list) =
+            (if let Some(x) = m.get(&(eve.peek_type().peek_hash())) {
+                (!x.is_empty()).then_some(x)
+            } else {
+                None
+            })
+        else {
             if cfg!(debug_assertions) {
                 info!("Eventor::dispatch: no listener: {eve:?}");
             }
             return true;
         };
-
-        if list.is_empty() {
-            if cfg!(debug_assertions) {
-                info!("Eventor::dispatch: no listener: {eve:?}");
-            }
-            return true;
-        }
 
         for (_, listener) in list.iter() {
             #[cfg(feature = "elicit-parking_lot")]
