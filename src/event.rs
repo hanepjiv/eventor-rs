@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/25
+//  @date 2024/05/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -63,21 +63,13 @@ impl Event {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct EventQueue
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub(crate) struct EventQueue {
     queue: VecDeque<Event>,
-    min_capacity: usize,
 }
 // ============================================================================
 impl EventQueue {
     // ////////////////////////////////////////////////////////////////////////
-    // ========================================================================
-    pub(crate) fn with_capacity(min_capacity: usize) -> Self {
-        Self {
-            queue: VecDeque::<Event>::with_capacity(min_capacity),
-            min_capacity,
-        }
-    }
     // ========================================================================
     /// push
     pub(crate) fn push(&mut self, event: Event) {
@@ -96,6 +88,12 @@ impl EventQueue {
     // ========================================================================
     /// shrink
     pub(crate) fn shrink(&mut self) {
-        self.queue.shrink_to(self.min_capacity)
+        self.queue.shrink_to((self.queue.capacity() / 2).max(64))
+    }
+    // ========================================================================
+    /// capacity
+    #[allow(dead_code)]
+    pub(crate) fn capacity(&self) -> usize {
+        self.queue.capacity()
     }
 }

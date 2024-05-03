@@ -26,7 +26,7 @@ use inner::Result;
 /// struct Listener
 #[derive(Debug, elicit::Aelicit)]
 #[aelicit_mod_author(event_listener_aelicit_author)]
-pub(crate) struct Listener(Uuid);
+struct Listener(Uuid);
 // ============================================================================
 impl EventListener for Listener {
     // ========================================================================

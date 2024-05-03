@@ -36,7 +36,7 @@ use inner::Result;
 /// struct Listener
 #[derive(Debug, Default, elicit::Aelicit)]
 #[aelicit_mod_author(event_listener_aelicit_author)]
-pub(crate) struct Listener {
+pub struct Listener {
     #[aelicit_from_self_field]
     _fsf: EventListenerAelicitFromSelfField,
     uuid: Uuid,
@@ -171,14 +171,16 @@ fn main() -> Result<()> {
         }));
     }
 
-    sleep(Duration::from_millis(50));
+    sleep(Duration::from_millis(100));
 
     alive.store(false, Ordering::Release); // stop all threads.
 
+    /*
     while threads.iter().any(|x| !x.is_finished()) {
         // waiting threads
         yield_now();
     }
+    */
 
     let results: Vec<_> = threads.into_iter().map(JoinHandle::join).collect();
     println!("{results:?}");

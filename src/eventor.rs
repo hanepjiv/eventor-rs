@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/05/02
+//  @date 2024/05/03
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -44,7 +44,7 @@ impl Default for Eventor {
     fn default() -> Self {
         Self {
             type_map: Default::default(),
-            queue: Mutex::new(EventQueue::with_capacity(64usize)),
+            queue: Mutex::new(EventQueue::default()),
             condvar_queue: Default::default(),
             listener_map: Default::default(),
             mediator: Default::default(),
@@ -57,14 +57,6 @@ impl Eventor {
     /// new
     pub fn new() -> Self {
         Self::default()
-    }
-    // ========================================================================
-    /// with_capacity
-    pub fn with_capacity(queue_capacity: usize) -> Self {
-        Self {
-            queue: Mutex::new(EventQueue::with_capacity(queue_capacity)),
-            ..Self::default()
-        }
     }
     // ========================================================================
     // ------------------------------------------------------------------------
@@ -147,7 +139,7 @@ impl Eventor {
                             .condvar_queue
                             .wait_for(
                                 &mut guard,
-                                std::time::Duration::from_millis(20),
+                                std::time::Duration::from_millis(200),
                             )
                             .timed_out()
                         {
