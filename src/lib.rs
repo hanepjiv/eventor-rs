@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/04/21
+//  @date 2024/05/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.77.2 (25ef9e3d8 2024-04-09)
+// rustc 1.78.0 (9b00956e5 2024-04-29)
 #![forbid(
     absolute_paths_not_starting_with_crate,
     deprecated_in_future,
@@ -24,7 +24,9 @@
     missing_abi,
     missing_copy_implementations,
     missing_debug_implementations,
+    missing_docs,
     non_ascii_idents,
+    non_local_definitions,
     rust_2021_incompatible_closure_captures,
     rust_2021_incompatible_or_patterns,
     rust_2021_prefixes_incompatible_syntax,
@@ -32,6 +34,7 @@
     single_use_lifetimes,
     trivial_numeric_casts,
     unit_bindings,
+    unreachable_pub,
     unsafe_code,
     unsafe_op_in_unsafe_fn,
     unstable_features,
@@ -84,7 +87,6 @@
     indirect_structural_match,
     inline_no_sanitize,
     internal_features,
-    invalid_doc_attributes,
     invalid_from_utf8,
     invalid_macro_export_arguments,
     invalid_nan_comparisons,
@@ -97,6 +99,7 @@
     mixed_script_confusables,
     named_arguments_used_positionally,
     non_camel_case_types,
+    non_contiguous_range_endpoints,
     non_fmt_panics,
     non_shorthand_field_patterns,
     non_snake_case,
@@ -129,6 +132,7 @@
     ungated_async_fn_track_caller,
     uninhabited_static,
     unknown_lints,
+    unknown_or_malformed_diagnostic_attributes,
     unnameable_test_items,
     unreachable_code,
     unreachable_patterns,
@@ -166,6 +170,7 @@
     incomplete_include,
     ineffective_unstable_trait_impl,
     invalid_atomic_ordering,
+    invalid_doc_attributes,
     invalid_from_utf8_unchecked,
     invalid_reference_casting,
     invalid_type_param_default,
@@ -188,20 +193,18 @@
     unconditional_panic,
     undropped_manually_drops,
     unknown_crate_types,
-    useless_deprecated,
-    unreachable_pub,
-    missing_docs
+    useless_deprecated
 )]
-#![deny(clippy::all, box_pointers, trivial_casts)]
+#![deny(clippy::all, box_pointers, dead_code, trivial_casts)]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
-mod inner;
 mod error;
 mod event;
 mod event_data;
 mod event_listener;
 mod event_type;
 mod eventor;
+mod inner;
 // use  =======================================================================
 pub use self::{
     error::{Error, Result},
