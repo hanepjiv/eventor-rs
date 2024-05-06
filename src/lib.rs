@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/05/04
+//  @date 2024/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
@@ -147,7 +147,6 @@
     unused_comparisons,
     unused_doc_comments,
     unused_features,
-    unused_imports,
     unused_labels,
     unused_macros,
     unused_must_use,
@@ -195,7 +194,7 @@
     unknown_crate_types,
     useless_deprecated
 )]
-#![deny(clippy::all, box_pointers, dead_code, trivial_casts)]
+#![deny(clippy::all, box_pointers, dead_code, trivial_casts, unused_imports)]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 mod error;
@@ -206,8 +205,8 @@ mod event_type;
 mod eventor;
 mod inner;
 // use  =======================================================================
-pub use self::{
-    error::{Error, Result},
+pub use {
+    error::{Error, Result, SyncError, SyncResult},
     event::Event,
     event_data::EventDataBox,
     event_listener::{
@@ -218,3 +217,6 @@ pub use self::{
     event_type::EventType,
     eventor::Eventor,
 };
+// ----------------------------------------------------------------------------
+#[cfg(not(any(feature = "parking_lot"),))]
+pub use event_data::{EventDataBoxReadError, EventDataBoxWriteError};

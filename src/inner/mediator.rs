@@ -6,13 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2024/04/26
+//  @date 2024/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
 #![allow(box_pointers)]
 // use  =======================================================================
-use parking_lot::Mutex;
+use crate::inner::sync::Mutex;
 use std::collections::{btree_map::Entry, BTreeMap, BTreeSet};
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
@@ -35,10 +35,10 @@ impl MediatorInner {
         hash: u32,
         listener: EventListenerAelicit,
     ) {
-        #[cfg(feature = "elicit-parking_lot")]
+        #[cfg(feature = "parking_lot")]
         let id = *listener.read().peek_id();
 
-        #[cfg(not(any(feature = "elicit-parking_lot"),))]
+        #[cfg(not(any(feature = "parking_lot"),))]
         let id = *listener.read().expect("Eventor::insert_listener").peek_id();
 
         if let Entry::Occupied(mut x) = self.retiree.entry(hash) {
@@ -89,12 +89,23 @@ impl Mediator {
     // ========================================================================
     /// insert
     pub(crate) fn insert(&self, hash: u32, listener: EventListenerAelicit) {
+        #[cfg(feature = "parking_lot")]
         self.0.lock().insert(hash, listener);
+
+        #[cfg(not(any(feature = "parking_lot"),))]
+        self.0
+            .lock()
+            .expect("Mediator::insert")
+            .insert(hash, listener);
     }
     // ========================================================================
     /// remove
     pub(crate) fn remove(&self, hash: u32, id: &Uuid) {
+        #[cfg(feature = "parking_lot")]
         self.0.lock().remove(hash, id);
+
+        #[cfg(not(any(feature = "parking_lot"),))]
+        self.0.lock().expect("Mediator::remove").remove(hash, id);
     }
     // ========================================================================
     /// apply
@@ -102,6 +113,10 @@ impl Mediator {
     where
         T: std::ops::DerefMut<Target = ListenerMap>,
     {
+        #[cfg(feature = "parking_lot")]
         self.0.lock().apply(map);
+
+        #[cfg(not(any(feature = "parking_lot"),))]
+        self.0.lock().expect("Mediator::apply").apply(map);
     }
 }

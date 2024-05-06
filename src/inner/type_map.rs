@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/25
-//  @date 2024/04/25
+//  @date 2024/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -15,7 +15,7 @@ use std::collections::BTreeMap;
 use hash_combine::hash_combine;
 use log::info;
 // ----------------------------------------------------------------------------
-use crate::{Error, EventType};
+use crate::{Error, EventType, Result};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// TypeMap
@@ -38,7 +38,7 @@ impl TypeMap {
     }
     // ------------------------------------------------------------------------
     /// new_type
-    pub(crate) fn new_type<T>(&mut self, name: T) -> Result<EventType, Error>
+    pub(crate) fn new_type<T>(&mut self, name: T) -> Result<EventType>
     where
         T: AsRef<str> + std::fmt::Display,
     {

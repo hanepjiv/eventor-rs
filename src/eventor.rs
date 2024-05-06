@@ -6,16 +6,16 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/05/03
+//  @date 2024/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+use crate::inner::sync::*;
 use log::info;
-use parking_lot::{Condvar, Mutex, RwLock};
 use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use super::{
-    error::Error,
+    error::Result,
     event::{Event, EventQueue},
     event_listener::{
         aelicit_user::Aelicit as EventListenerAelicit, RetOnEvent,
@@ -61,11 +61,19 @@ impl Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
     /// new_type
-    pub fn new_type<T>(&self, name: T) -> Result<EventType, Error>
+    pub fn new_type<T>(&self, name: T) -> Result<EventType>
     where
         T: AsRef<str>,
     {
-        self.type_map.write().new_type(name.as_ref())
+        #[cfg(feature = "parking_lot")]
+        return self.type_map.write().new_type(name.as_ref());
+
+        #[cfg(not(any(feature = "parking_lot"),))]
+        return self
+            .type_map
+            .write()
+            .expect("Eventor::new_type")
+            .new_type(name.as_ref());
     }
     // ------------------------------------------------------------------------
     /// peek_typs
@@ -73,7 +81,15 @@ impl Eventor {
     where
         T: AsRef<str>,
     {
-        self.type_map.read().peek_type(name.as_ref())
+        #[cfg(feature = "parking_lot")]
+        return self.type_map.read().peek_type(name.as_ref());
+
+        #[cfg(not(any(feature = "parking_lot"),))]
+        return self
+            .type_map
+            .read()
+            .expect("Eventor::peek_type")
+            .peek_type(name.as_ref());
     }
     // ========================================================================
     /// insert_listener
@@ -88,17 +104,33 @@ impl Eventor {
     // ========================================================================
     /// push_event
     pub fn push_event(&self, event: Event) {
+        #[cfg(feature = "parking_lot")]
         let mut guard = self.queue.lock();
+        #[cfg(not(any(feature = "parking_lot"),))]
+        let mut guard = self.queue.lock().expect("Eventor::push_event");
+
         guard.push(event);
+
+        #[cfg(feature = "parking_lot")]
         let _ = self.condvar_queue.notify_one();
+        #[cfg(not(any(feature = "parking_lot"),))]
+        self.condvar_queue.notify_one();
     }
     // ------------------------------------------------------------------------
     /// push_event_front
     #[inline]
     fn push_event_front(&self, event: Event) {
+        #[cfg(feature = "parking_lot")]
         let mut guard = self.queue.lock();
+        #[cfg(not(any(feature = "parking_lot"),))]
+        let mut guard = self.queue.lock().expect("Eventor::push_event_front");
+
         guard.push_front(event);
+
+        #[cfg(feature = "parking_lot")]
         let _ = self.condvar_queue.notify_one();
+        #[cfg(not(any(feature = "parking_lot"),))]
+        self.condvar_queue.notify_one();
     }
     // ========================================================================
     ///
@@ -112,7 +144,12 @@ impl Eventor {
     ///
     pub fn dispatch(&self) -> bool {
         let event = {
+            #[cfg(feature = "parking_lot")]
             let mut guard = self.queue.lock();
+
+            #[cfg(not(any(feature = "parking_lot"),))]
+            let mut guard = self.queue.lock().expect("Eventor::dispatch");
+
             let Some(event) = guard.pop() else {
                 guard.shrink();
                 return false;
@@ -124,6 +161,29 @@ impl Eventor {
         true
     }
     // ------------------------------------------------------------------------
+    #[cfg(feature = "parking_lot")]
+    fn wait_for<'a>(
+        &self,
+        mut guard: MutexGuard<'a, EventQueue>,
+    ) -> (MutexGuard<'a, EventQueue>, bool) {
+        let res = self
+            .condvar_queue
+            .wait_for(&mut guard, std::time::Duration::from_millis(200));
+        (guard, res.timed_out())
+    }
+
+    #[cfg(not(any(feature = "parking_lot"),))]
+    fn wait_for<'a>(
+        &self,
+        guard: MutexGuard<'a, EventQueue>,
+    ) -> (MutexGuard<'a, EventQueue>, bool) {
+        let (grd, res) = self
+            .condvar_queue
+            .wait_timeout(guard, std::time::Duration::from_millis(200))
+            .expect("Eventor::dispatch_while");
+        (grd, res.timed_out())
+    }
+    // ------------------------------------------------------------------------
     /// dispatch_while
     pub fn dispatch_while<F>(&self, mut condition: F)
     where
@@ -131,20 +191,21 @@ impl Eventor {
     {
         'outer: while condition() {
             let event = {
+                #[cfg(feature = "parking_lot")]
                 let mut guard = self.queue.lock();
+
+                #[cfg(not(any(feature = "parking_lot"),))]
+                let mut guard =
+                    self.queue.lock().expect("Eventor::dispatch_while");
+
                 'inner: loop {
                     let Some(event) = guard.pop() else {
                         guard.shrink();
-                        if self
-                            .condvar_queue
-                            .wait_for(
-                                &mut guard,
-                                std::time::Duration::from_millis(200),
-                            )
-                            .timed_out()
-                        {
+                        let (grd, timed_out) = self.wait_for(guard);
+                        if timed_out {
                             continue 'outer;
                         };
+                        guard = grd;
                         continue 'inner;
                     };
                     break event;
@@ -159,11 +220,29 @@ impl Eventor {
     fn dispatch_impl(&self, event: Event) {
         // Locking of the ListenerMap writer must be done
         // before locking of the Mediator.
+        #[cfg(feature = "parking_lot")]
         self.mediator.apply(self.listener_map.write());
+        #[cfg(not(any(feature = "parking_lot"),))]
+        self.mediator
+            .apply(self.listener_map.write().expect("Eventor::dispatch_impl"));
 
+        #[cfg(feature = "parking_lot")]
         let Some(listener_map) = self.listener_map.try_read() else {
             self.push_event_front(event);
             return;
+        };
+        #[cfg(not(any(feature = "parking_lot"),))]
+        let listener_map = match self.listener_map.try_read() {
+            Ok(x) => x,
+            Err(TryLockReadError::WouldBlock) => {
+                self.push_event_front(event);
+                return;
+            }
+            Err(TryLockReadError::Poisoned(_)) => {
+                panic!(
+                    "Eventor::dispatch_impl: listener_map.read() poisoned."
+                );
+            }
         };
 
         let Some(listener_list) = listener_map
@@ -177,10 +256,10 @@ impl Eventor {
         };
 
         for (_, listener) in listener_list.iter() {
-            #[cfg(feature = "elicit-parking_lot")]
+            #[cfg(feature = "parking_lot")]
             let ret = listener.read().on_event(&event, self);
 
-            #[cfg(not(any(feature = "elicit-parking_lot"),))]
+            #[cfg(not(any(feature = "parking_lot"),))]
             let ret = listener
                 .read()
                 .expect("Eventor::dispatch")

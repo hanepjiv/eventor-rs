@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/05/03
+//  @date 2024/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -25,7 +25,7 @@ use eventor::{
         Aelicit as EventListenerAelicit, AelicitFromSelf,
         AelicitFromSelfField as EventListenerAelicitFromSelfField,
     },
-    Event, EventDataBox, EventListener, Eventor, RetOnEvent,
+    Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
 };
 use uuid::Uuid;
 // mod  =======================================================================
@@ -63,7 +63,7 @@ impl EventListener for Listener {
         match event.peek_type().peek_hash() {
             4201860248 => {
                 event
-                    .with(|x: &u64| -> Result<()> {
+                    .with(|x: &u64| -> SyncResult<'_, ()> {
                         println!("{} event_00 data({x})", self.peek_id());
                         Ok(())
                     })
@@ -82,7 +82,7 @@ impl EventListener for Listener {
             }
             4201860249 => {
                 event
-                    .with(|x: &u64| -> Result<()> {
+                    .with(|x: &u64| -> SyncResult<'_, ()> {
                         println!("{} event_01 data({x})", self.peek_id());
 
                         Ok(())
@@ -177,8 +177,8 @@ fn main() -> Result<()> {
 
     /*
     while threads.iter().any(|x| !x.is_finished()) {
-        // waiting threads
-        yield_now();
+    // waiting threads
+    yield_now();
     }
     */
 

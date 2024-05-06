@@ -6,13 +6,16 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/05/03
+//  @date 2024/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::{collections::VecDeque, result::Result as StdResult};
 // ----------------------------------------------------------------------------
 use super::{error::Error, event_data::EventDataBox, event_type::EventType};
+// ----------------------------------------------------------------------------
+#[cfg(not(any(feature = "parking_lot"),))]
+use super::event_data::{EventDataBoxReadError, EventDataBoxWriteError};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Event
@@ -36,26 +39,48 @@ impl Event {
         &self.type_
     }
     // ========================================================================
+    #[cfg(feature = "parking_lot")]
     /// with
-    pub fn with<D, T, E>(
-        &self,
-        f: impl FnOnce(&D) -> StdResult<T, E>,
-    ) -> StdResult<T, E>
+    pub fn with<D, F, T, E>(&self, f: F) -> StdResult<T, E>
     where
         D: 'static,
-        E: From<Error> + From<elicit::Error>,
+        F: FnOnce(&D) -> StdResult<T, E>,
+        E: From<Error>,
+    {
+        self.data.with(f)
+    }
+    // ------------------------------------------------------------------------
+    #[cfg(not(any(feature = "parking_lot"),))]
+    /// with
+    pub fn with<'s, 'a, D, F, T, E>(&'s self, f: F) -> StdResult<T, E>
+    where
+        's: 'a,
+        D: 'static,
+        F: FnOnce(&D) -> StdResult<T, E>,
+        E: From<Error> + From<EventDataBoxReadError<'a>>,
     {
         self.data.with(f)
     }
     // ========================================================================
+    #[cfg(feature = "parking_lot")]
     /// with_mut
-    pub fn with_mut<D, T, E>(
-        &self,
-        f: impl FnOnce(&mut D) -> StdResult<T, E>,
-    ) -> StdResult<T, E>
+    pub fn with_mut<D, F, T, E>(&self, f: F) -> StdResult<T, E>
     where
         D: 'static,
-        E: From<Error> + From<elicit::Error>,
+        F: FnOnce(&mut D) -> StdResult<T, E>,
+        E: From<Error>,
+    {
+        self.data.with_mut(f)
+    }
+    // ------------------------------------------------------------------------
+    #[cfg(not(any(feature = "parking_lot"),))]
+    /// with_mut
+    pub fn with_mut<'s, 'a, D, F, T, E>(&'s self, f: F) -> StdResult<T, E>
+    where
+        's: 'a,
+        D: 'static,
+        F: FnOnce(&mut D) -> StdResult<T, E>,
+        E: From<Error> + From<EventDataBoxWriteError<'a>>,
     {
         self.data.with_mut(f)
     }

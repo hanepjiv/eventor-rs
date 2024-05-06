@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/05/03
+//  @date 2024/05/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -15,7 +15,7 @@ use std::thread::yield_now;
 use eventor::{
     event_listener_aelicit_author,
     event_listener_aelicit_author::Aelicit as EventListenerAelicit, Event,
-    EventDataBox, EventListener, Eventor, RetOnEvent,
+    EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
 };
 use uuid::Uuid;
 // mod  =======================================================================
@@ -38,7 +38,7 @@ impl EventListener for Listener {
         match event.peek_type().peek_hash() {
             4201860248 => {
                 event
-                    .with(|x: &i32| -> Result<()> {
+                    .with(|x: &i32| -> SyncResult<()> {
                         println!(
                             "Listener::on_event({}): 00 {x}",
                             self.peek_id()
@@ -50,7 +50,7 @@ impl EventListener for Listener {
             }
             4201860249 => {
                 event
-                    .with(|x: &i32| -> Result<()> {
+                    .with(|x: &i32| -> SyncResult<()> {
                         println!(
                             "Listener::on_event({}): 01 {x}",
                             self.peek_id()
