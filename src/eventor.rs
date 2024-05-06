@@ -6,13 +6,12 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/05/06
+//  @date 2024/05/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use crate::inner::sync::*;
 use log::info;
-use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use super::{
     error::Result,
@@ -98,7 +97,7 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     /// remove_listener
-    pub fn remove_listener(&self, hash: u32, id: &Uuid) {
+    pub fn remove_listener(&self, hash: u32, id: usize) {
         self.mediator.remove(hash, id)
     }
     // ========================================================================
@@ -146,7 +145,6 @@ impl Eventor {
         let event = {
             #[cfg(feature = "parking_lot")]
             let mut guard = self.queue.lock();
-
             #[cfg(not(any(feature = "parking_lot"),))]
             let mut guard = self.queue.lock().expect("Eventor::dispatch");
 
@@ -193,7 +191,6 @@ impl Eventor {
             let event = {
                 #[cfg(feature = "parking_lot")]
                 let mut guard = self.queue.lock();
-
                 #[cfg(not(any(feature = "parking_lot"),))]
                 let mut guard =
                     self.queue.lock().expect("Eventor::dispatch_while");
@@ -258,7 +255,6 @@ impl Eventor {
         for (_, listener) in listener_list.iter() {
             #[cfg(feature = "parking_lot")]
             let ret = listener.read().on_event(&event, self);
-
             #[cfg(not(any(feature = "parking_lot"),))]
             let ret = listener
                 .read()

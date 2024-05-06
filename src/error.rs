@@ -147,7 +147,7 @@ impl StdError for SyncError<'_> {
             #[cfg(not(any(feature = "parking_lot",)))]
             SyncError::EventDataBoxWrite(_) => None,
 
-            #[cfg(any(feature = "parking_lot",))]
+            #[cfg(feature = "parking_lot")]
             SyncError::Phantom(_) => None,
         }
     }

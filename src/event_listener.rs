@@ -6,14 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2024/04/23
+//  @date 2024/05/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::fmt::Debug;
 // ----------------------------------------------------------------------------
 use elicit::aelicit_define;
-use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use super::{event::Event, eventor::Eventor};
 // ////////////////////////////////////////////////////////////////////////////
@@ -31,9 +30,6 @@ pub enum RetOnEvent {
 /// trait EventListener
 #[aelicit_define(event_listener_aelicit)]
 pub trait EventListener: Debug + Sync + Send {
-    // ========================================================================
-    /// peek_id
-    fn peek_id(&self) -> &Uuid;
     // ========================================================================
     /// on_event
     fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent;

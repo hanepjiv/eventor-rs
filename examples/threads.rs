@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/05/06
+//  @date 2024/05/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -22,12 +22,11 @@ use std::{
 use eventor::{
     event_listener_aelicit_author,
     event_listener_aelicit_author::{
-        Aelicit as EventListenerAelicit, AelicitFromSelf,
+        Aelicit as EventListenerAelicit, AelicitBase, AelicitFromSelf,
         AelicitFromSelfField as EventListenerAelicitFromSelfField,
     },
     Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
 };
-use uuid::Uuid;
 // mod  =======================================================================
 mod inner;
 use inner::Result;
@@ -39,32 +38,23 @@ use inner::Result;
 pub struct Listener {
     #[aelicit_from_self_field]
     _fsf: EventListenerAelicitFromSelfField,
-    uuid: Uuid,
 }
 // ============================================================================
 impl Listener {
-    pub fn new_aelicit(uuid: Uuid) -> EventListenerAelicit {
-        EventListenerAelicit::new(Listener {
-            uuid,
-            ..Self::default()
-        })
-        .expect("Listener::new")
+    pub fn new_aelicit() -> EventListenerAelicit {
+        EventListenerAelicit::new(Listener { ..Self::default() })
+            .expect("Listener::new")
     }
 }
 // ============================================================================
 impl EventListener for Listener {
-    // ========================================================================
-    // ========================================================================
-    fn peek_id(&self) -> &Uuid {
-        &self.uuid
-    }
     // ========================================================================
     fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
             4201860248 => {
                 event
                     .with(|x: &u64| -> SyncResult<'_, ()> {
-                        println!("{} event_00 data({x})", self.peek_id());
+                        println!("0x{:x} event_00 data({x})", self.usizeptr());
                         Ok(())
                     })
                     .expect("on 00");
@@ -76,15 +66,14 @@ impl EventListener for Listener {
                     }),
                     EventDataBox::new(99u64),
                 ));
-                eventor.remove_listener(4201860248, self.peek_id());
+                eventor.remove_listener(4201860248, self.usizeptr());
 
                 RetOnEvent::Next
             }
             4201860249 => {
                 event
                     .with(|x: &u64| -> SyncResult<'_, ()> {
-                        println!("{} event_01 data({x})", self.peek_id());
-
+                        println!("0x{:x} event_01 data({x})", self.usizeptr());
                         Ok(())
                     })
                     .expect("on 01");
@@ -124,8 +113,8 @@ fn main() -> Result<()> {
     let event_type_01 = eventor.new_type("event_type_01")?;
     println!("{:?}", event_type_01);
 
-    for _ in 0..1 {
-        let listener = Listener::new_aelicit(Uuid::now_v7());
+    for _ in 0..num_cpu {
+        let listener = Listener::new_aelicit();
         eventor.insert_listener(4201860248, listener.clone());
         eventor.insert_listener(4201860249, listener);
     }
@@ -147,9 +136,12 @@ fn main() -> Result<()> {
             let mut times = 0usize;
             while a.load(Ordering::Acquire) {
                 println!("push event_00 thread({i}) times={times}");
-                e.push_event(Event::new(e00.clone(), EventDataBox::new(i)));
+                e.push_event(Event::new(
+                    e00.clone(),
+                    EventDataBox::new(i as u64),
+                ));
                 times += 1;
-                sleep(Duration::from_millis(10));
+                sleep(Duration::from_millis(100));
             }
             format!("pusher {} thread({i})", e00.peek_name())
         }));
@@ -163,24 +155,25 @@ fn main() -> Result<()> {
             let mut times = 0usize;
             while a.load(Ordering::Acquire) {
                 println!("push event_01 thread({i}) times={times}");
-                e.push_event(Event::new(e01.clone(), EventDataBox::new(i)));
+                e.push_event(Event::new(
+                    e01.clone(),
+                    EventDataBox::new(i as u64),
+                ));
                 times += 1;
-                sleep(Duration::from_millis(20));
+                sleep(Duration::from_millis(200));
             }
             format!("pusher {} thread({i})", e01.peek_name())
         }));
     }
 
-    sleep(Duration::from_millis(100));
+    sleep(Duration::from_millis(1000));
 
     alive.store(false, Ordering::Release); // stop all threads.
 
-    /*
     while threads.iter().any(|x| !x.is_finished()) {
-    // waiting threads
-    yield_now();
+        // waiting threads
+        yield_now();
     }
-    */
 
     let results: Vec<_> = threads.into_iter().map(JoinHandle::join).collect();
     println!("{results:?}");

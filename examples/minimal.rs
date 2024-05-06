@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/05/06
+//  @date 2024/05/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -14,10 +14,11 @@ use std::thread::yield_now;
 // ----------------------------------------------------------------------------
 use eventor::{
     event_listener_aelicit_author,
-    event_listener_aelicit_author::Aelicit as EventListenerAelicit, Event,
-    EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
+    event_listener_aelicit_author::{
+        Aelicit as EventListenerAelicit, AelicitBase,
+    },
+    Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
 };
-use uuid::Uuid;
 // mod  =======================================================================
 mod inner;
 use inner::Result;
@@ -26,13 +27,9 @@ use inner::Result;
 /// struct Listener
 #[derive(Debug, elicit::Aelicit)]
 #[aelicit_mod_author(event_listener_aelicit_author)]
-struct Listener(Uuid);
+struct Listener;
 // ============================================================================
 impl EventListener for Listener {
-    // ========================================================================
-    fn peek_id(&self) -> &Uuid {
-        &self.0
-    }
     // ========================================================================
     fn on_event(&self, event: &Event, _eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
@@ -41,7 +38,7 @@ impl EventListener for Listener {
                     .with(|x: &i32| -> SyncResult<()> {
                         println!(
                             "Listener::on_event({}): 00 {x}",
-                            self.peek_id()
+                            self.usizeptr()
                         );
                         Ok(())
                     })
@@ -53,7 +50,7 @@ impl EventListener for Listener {
                     .with(|x: &i32| -> SyncResult<()> {
                         println!(
                             "Listener::on_event({}): 01 {x}",
-                            self.peek_id()
+                            self.usizeptr()
                         );
                         Ok(())
                     })
@@ -78,23 +75,9 @@ fn main() -> Result<()> {
     let event_type_01 = eventor.new_type("event_type_01")?;
     println!("event_type_00: {:?}", event_type_01);
 
-    {
-        let listener_id = Uuid::now_v7();
-        eventor.insert_listener(
-            4201860248,
-            EventListenerAelicit::new(Listener(listener_id))?,
-        );
-        println!("listener: {listener_id}");
-    }
+    eventor.insert_listener(4201860248, EventListenerAelicit::new(Listener)?);
 
-    {
-        let listener_id = Uuid::now_v7();
-        eventor.insert_listener(
-            4201860249,
-            EventListenerAelicit::new(Listener(listener_id))?,
-        );
-        println!("listener: {listener_id}");
-    }
+    eventor.insert_listener(4201860249, EventListenerAelicit::new(Listener)?);
 
     for i in 0..2 {
         eventor.push_event(Event::new(

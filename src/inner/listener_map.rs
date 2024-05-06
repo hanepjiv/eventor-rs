@@ -6,18 +6,17 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/23
-//  @date 2024/05/02
+//  @date 2024/05/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use std::collections::BTreeMap;
 // ----------------------------------------------------------------------------
-use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-type MapUUIDAelicit = BTreeMap<Uuid, EventListenerAelicit>;
+type MapUUIDAelicit = BTreeMap<usize, EventListenerAelicit>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct ListenerMap
@@ -30,23 +29,23 @@ impl ListenerMap {
     pub(crate) fn insert(
         &mut self,
         hash: u32,
-        id: &Uuid,
+        id: usize,
         listener: EventListenerAelicit,
     ) {
         let _ = self
             .0
             .entry(hash)
             .or_default()
-            .entry(*id)
+            .entry(id)
             .or_insert(listener);
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&mut self, hash: u32, id: &Uuid) {
+    pub(crate) fn remove(&mut self, hash: u32, id: usize) {
         let Some(list) = self.0.get_mut(&hash) else {
             return;
         };
-        drop(list.remove(id));
+        drop(list.remove(&id));
     }
     // ========================================================================
     /// get

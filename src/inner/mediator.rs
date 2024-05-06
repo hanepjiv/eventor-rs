@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2024/05/06
+//  @date 2024/05/25
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -14,7 +14,6 @@
 // use  =======================================================================
 use crate::inner::sync::Mutex;
 use std::collections::{btree_map::Entry, BTreeMap, BTreeSet};
-use uuid::Uuid;
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 // ----------------------------------------------------------------------------
@@ -24,8 +23,8 @@ use super::ListenerMap;
 /// struct MediatorInner
 #[derive(Debug, Default)]
 struct MediatorInner {
-    newface: BTreeMap<u32, BTreeMap<Uuid, EventListenerAelicit>>,
-    retiree: BTreeMap<u32, BTreeSet<Uuid>>,
+    newface: BTreeMap<u32, BTreeMap<usize, EventListenerAelicit>>,
+    retiree: BTreeMap<u32, BTreeSet<usize>>,
 }
 // ============================================================================
 impl MediatorInner {
@@ -36,10 +35,13 @@ impl MediatorInner {
         listener: EventListenerAelicit,
     ) {
         #[cfg(feature = "parking_lot")]
-        let id = *listener.read().peek_id();
+        let id = listener.read().usizeptr();
 
         #[cfg(not(any(feature = "parking_lot"),))]
-        let id = *listener.read().expect("Eventor::insert_listener").peek_id();
+        let id = listener
+            .read()
+            .expect("Eventor::insert_listener")
+            .usizeptr();
 
         if let Entry::Occupied(mut x) = self.retiree.entry(hash) {
             let _ = x.get_mut().remove(&id);
@@ -53,11 +55,11 @@ impl MediatorInner {
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&mut self, hash: u32, id: &Uuid) {
+    pub(crate) fn remove(&mut self, hash: u32, id: usize) {
         if let Entry::Occupied(mut x) = self.newface.entry(hash) {
-            drop(x.get_mut().remove(id));
+            drop(x.get_mut().remove(&id));
         }
-        let _ = self.retiree.entry(hash).or_default().insert(*id);
+        let _ = self.retiree.entry(hash).or_default().insert(id);
     }
     // ========================================================================
     /// apply
@@ -67,13 +69,13 @@ impl MediatorInner {
     {
         for (hash, tree) in self.newface.iter_mut() {
             for (id, listener) in tree.iter() {
-                map.insert(*hash, id, listener.clone());
+                map.insert(*hash, *id, listener.clone());
             }
             tree.clear();
         }
         for (hash, set) in self.retiree.iter_mut() {
             for id in set.iter() {
-                map.remove(*hash, id);
+                map.remove(*hash, *id);
             }
             set.clear();
         }
@@ -100,7 +102,7 @@ impl Mediator {
     }
     // ========================================================================
     /// remove
-    pub(crate) fn remove(&self, hash: u32, id: &Uuid) {
+    pub(crate) fn remove(&self, hash: u32, id: usize) {
         #[cfg(feature = "parking_lot")]
         self.0.lock().remove(hash, id);
 
