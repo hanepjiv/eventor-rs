@@ -45,7 +45,7 @@ default-features        = false
 version                 = "^0.12"
 # =============================================================================
 # dev-dependencies
-[dev-dependencies.uuid]
-default-features        = false
-version                 = "^1"
-features                = [ "std", "fast-rng", "v7" ]
+#[dev-dependencies.uuid]
+#default-features        = false
+#version                 = "^1"
+#features                = [ "std", "fast-rng", "v7" ]
