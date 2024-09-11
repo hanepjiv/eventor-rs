@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2024/05/06
+//  @date 2024/09/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -114,7 +114,6 @@ impl From<Error> for SyncError<'_> {
 }
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
-#[allow(box_pointers)]
 impl<'a> From<crate::EventDataBoxReadError<'a>> for SyncError<'a> {
     fn from(e: crate::EventDataBoxReadError<'a>) -> SyncError<'a> {
         SyncError::EventDataBoxRead(e)
@@ -122,7 +121,6 @@ impl<'a> From<crate::EventDataBoxReadError<'a>> for SyncError<'a> {
 }
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
-#[allow(box_pointers)]
 impl<'a> From<crate::EventDataBoxWriteError<'a>> for SyncError<'a> {
     fn from(e: crate::EventDataBoxWriteError<'a>) -> SyncError<'a> {
         SyncError::EventDataBoxWrite(e)

@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/05/25
+//  @date 2024/09/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -213,7 +213,6 @@ impl Eventor {
         }
     }
     // ------------------------------------------------------------------------
-    #[allow(box_pointers)]
     fn dispatch_impl(&self, event: Event) {
         // Locking of the ListenerMap writer must be done
         // before locking of the Mediator.

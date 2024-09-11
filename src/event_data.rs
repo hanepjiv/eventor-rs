@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/05/06
+//  @date 2024/09/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -14,31 +14,27 @@ use std::{any::Any, fmt::Debug, sync::Arc};
 // ----------------------------------------------------------------------------
 use super::{error::Error, inner::sync::*};
 // ============================================================================
-pub trait DataTerms: 'static + Debug + Send + Sync {}
+trait DataTerms: 'static + Debug + Send + Sync {}
 impl<T> DataTerms for T where T: 'static + Debug + Send + Sync {}
 // ============================================================================
-#[allow(box_pointers)]
 type DataBox = Box<dyn Any + Send + Sync>;
 // ============================================================================
 #[cfg(not(any(feature = "parking_lot"),))]
 /// EventDataBoxReadError
-#[allow(box_pointers)]
 pub type EventDataBoxReadError<'a> = TryLockReadError<'a, DataBox>;
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot"),))]
 /// EventDataBoxWriteError
-#[allow(box_pointers)]
 pub type EventDataBoxWriteError<'a> = TryLockWriteError<'a, DataBox>;
 // ============================================================================
 /// EventDataBox
-#[allow(box_pointers)]
 #[derive(Debug)]
 pub struct EventDataBox(Arc<RwLock<DataBox>>);
 // ----------------------------------------------------------------------------
+#[allow(private_bounds)]
 impl EventDataBox {
     // ========================================================================
     /// new
-    #[allow(box_pointers)]
     pub fn new<D>(data: D) -> Self
     where
         D: DataTerms,
@@ -47,7 +43,6 @@ impl EventDataBox {
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
-    #[allow(box_pointers)]
     /// with
     pub(crate) fn with<D, F, T, E>(&self, f: F) -> Result<T, E>
     where
@@ -61,7 +56,6 @@ impl EventDataBox {
     }
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
-    #[allow(box_pointers)]
     /// with
     pub(crate) fn with<'s, 'a, D, F, T, E>(&'s self, f: F) -> Result<T, E>
     where
@@ -81,7 +75,6 @@ impl EventDataBox {
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
-    #[allow(box_pointers)]
     /// with_mut
     pub(crate) fn with_mut<D, F, T, E>(&self, f: F) -> Result<T, E>
     where
@@ -95,7 +88,6 @@ impl EventDataBox {
     }
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
-    #[allow(box_pointers)]
     /// with_mut
     pub(crate) fn with_mut<'s, 'a, D, F, T, E>(&'s self, f: F) -> Result<T, E>
     where

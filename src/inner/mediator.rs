@@ -6,11 +6,10 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2024/05/25
+//  @date 2024/09/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
-#![allow(box_pointers)]
 // use  =======================================================================
 use crate::inner::sync::Mutex;
 use std::collections::{btree_map::Entry, BTreeMap, BTreeSet};
