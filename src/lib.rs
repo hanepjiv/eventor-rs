@@ -6,20 +6,21 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/09/11
+//  @date 2024/10/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-// rustc 1.81.0 (eeb90cda1 2024-09-04)
+// rustc 1.82.0 (f6e511eec 2024-10-15)
 #![forbid(
-    clippy::all,
     absolute_paths_not_starting_with_crate,
+    ambiguous_negative_literals,
     deprecated_in_future,
-    deprecated_safe,
+    deprecated_safe_2024,
     edition_2024_expr_fragment_specifier,
     elided_lifetimes_in_paths,
     explicit_outlives_requirements,
     ffi_unwind_calls,
+    impl_trait_overcaptures,
     keyword_idents_2018,
     keyword_idents_2024,
     let_underscore_drop,
@@ -32,12 +33,16 @@
     missing_unsafe_on_extern,
     non_ascii_idents,
     non_local_definitions,
+    redundant_imports,
     redundant_lifetimes,
     rust_2021_incompatible_closure_captures,
     rust_2021_incompatible_or_patterns,
     rust_2021_prefixes_incompatible_syntax,
     rust_2021_prelude_collisions,
+    rust_2024_prelude_collisions,
     single_use_lifetimes,
+    tail_expr_drop_order,
+    trivial_numeric_casts,
     unit_bindings,
     unnameable_types,
     unreachable_pub,
@@ -64,7 +69,6 @@
     bare_trait_objects,
     boxed_slice_into_iter,
     break_with_label_and_loop,
-    byte_slice_in_packed_struct_with_derive,
     clashing_extern_declarations,
     coherence_leak_check,
     confusable_idents,
@@ -89,6 +93,7 @@
     for_loops_over_fallibles,
     function_item_references,
     hidden_glob_reexports,
+    impl_trait_redundant_captures,
     improper_ctypes,
     improper_ctypes_definitions,
     incomplete_features,
@@ -168,9 +173,7 @@
     unused_unsafe,
     unused_variables,
     useless_ptr_null_checks,
-    wasm_c_abi,
     while_true,
-    writes_through_immutable_pointer,
     ambiguous_associated_items,
     arithmetic_overflow,
     binary_asm_labels,
@@ -180,6 +183,7 @@
     deprecated_cfg_attr_crate_type_name,
     elided_lifetimes_in_associated_constant,
     enum_intrinsics_non_enums,
+    explicit_builtin_cfgs_in_flags,
     ill_formed_attribute_input,
     incomplete_include,
     ineffective_unstable_trait_impl,
@@ -206,7 +210,8 @@
     unconditional_panic,
     undropped_manually_drops,
     unknown_crate_types,
-    useless_deprecated
+    useless_deprecated,
+    wasm_c_abi
 )]
 #![deny(dead_code, trivial_casts, private_bounds)]
 // ////////////////////////////////////////////////////////////////////////////
