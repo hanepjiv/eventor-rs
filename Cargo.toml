@@ -3,7 +3,7 @@
 [package]
 edition                 = "2021"
 name                    = "eventor"
-version                 = "0.11.0-alpha.15"
+version                 = "0.11.0-alpha.16"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 keywords                = ["subsystem", "event"]
@@ -26,12 +26,12 @@ parking_lot             = [ "dep:parking_lot", "elicit/parking_lot", ]
 # =============================================================================
 # dependencies
 [dependencies]
-hash_combine            = { default-features = false, version = "^0.3" }
-log                     = { default-features = false, version = "^0.4" }
+hash_combine            = { default-features = false, version = "0.3.9" }
+log                     = { default-features = false, version = "0.4.22" }
 # -----------------------------------------------------------------------------
 [dependencies.elicit]
 default-features        = false
-version                 = "^0.12"
+version                 = "0.12.1"
 
 #git                    = "ssh://git@github.com/hanepjiv/elicit-rs.git"
 #branch                 = "main"
@@ -42,10 +42,4 @@ version                 = "^0.12"
 [dependencies.parking_lot]
 optional                = true
 default-features        = false
-version                 = "^0.12"
-# =============================================================================
-# dev-dependencies
-#[dev-dependencies.uuid]
-#default-features        = false
-#version                 = "^1"
-#features                = [ "std", "fast-rng", "v7" ]
+version                 = "0.12.3"
