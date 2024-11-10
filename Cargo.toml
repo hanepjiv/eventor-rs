@@ -1,19 +1,31 @@
 # -*- mode:toml; coding:utf-8-unix; -*-
 # =============================================================================
 [package]
-edition                 = "2021"
 name                    = "eventor"
 version                 = "0.11.0-alpha.16"
-authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
-license                 = "MIT OR Apache-2.0"
+publish                 = false
+
 keywords                = ["subsystem", "event"]
 description             = "Event library"
 readme                  = "README.md"
-documentation           = "https://github.com/hanepjiv/eventor-rs/wiki"
+
+edition.workspace       = true
+rust-version.workspace  = true
+authors.workspace       = true
+license.workspace       = true
+documentation.workspace = true
+homepage.workspace      = true
+repository.workspace    = true
+# =============================================================================
+[workspace.package]
+edition                 = "2021"
+rust-version            = "1.82.0"
+authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
+license                 = "MIT OR Apache-2.0"
+documentation           = "https://docs.rs/eventor/"
 homepage                = "https://github.com/hanepjiv/eventor-rs"
 repository              = "https://github.com/hanepjiv/eventor-rs.git"
-publish                 = false
-# =============================================================================
+# -----------------------------------------------------------------------------
 [workspace]
 exclude                 = [ "target/",
                             "examples/"
@@ -31,7 +43,7 @@ log                     = { default-features = false, version = "0.4.22" }
 # -----------------------------------------------------------------------------
 [dependencies.elicit]
 default-features        = false
-version                 = "0.12.1"
+version                 = "0.12.2"
 
 #git                    = "ssh://git@github.com/hanepjiv/elicit-rs.git"
 #branch                 = "main"
