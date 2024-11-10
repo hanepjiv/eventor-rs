@@ -1,0 +1,17 @@
+name: CI Rust
+
+on:
+  schedule:
+    - cron: "0 11 */3 * *"
+
+  push:
+    branches: [ "main" ]
+
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  call:
+    permissions:
+      issues: write
+    uses: hanepjiv/ghact-rust/.github/workflows/ci-rust.yml@main
