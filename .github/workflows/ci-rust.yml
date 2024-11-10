@@ -13,5 +13,6 @@ on:
 jobs:
   call:
     permissions:
+      contents: read
       issues: write
     uses: hanepjiv/ghact-rust/.github/workflows/ci-rust.yml@main
