@@ -1,7 +1,8 @@
 # eventor-rs
 
 ## build status
-- master: [![Build Status](https://travis-ci.org/hanepjiv/eventor-rs.svg?branch=master)](https://travis-ci.org/hanepjiv/eventor-rs)
+
+- main: [![CI Rust](https://github.com/hanepjiv/eventor-rs/actions/workflows/ci-rust.yml/badge.svg)](https://github.com/hanepjiv/eventor-rs/actions/workflows/ci-rust.yml)
 
 ## License
 
