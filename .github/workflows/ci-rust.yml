@@ -1,8 +1,16 @@
+# -*-coding:utf-8-unix;mode:yml-*-
+
+#  Copyright 2024 hanepjiv
+#  @author hanepjiv <hanepjiv@gmail.com>
+#  @copyright The MIT License (MIT) / Apache License Version 2.0
+#  @since 2024/11/10
+#  @date 2024/11/23
+
 name: CI Rust
 
 on:
   schedule:
-    - cron: "0 11 */3 * *"
+    - cron: "0 11 * * 2"
 
   push:
     branches: [ "main" ]
