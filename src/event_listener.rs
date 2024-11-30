@@ -1,6 +1,6 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! event_listener.rs
+//! `event_listener.rs`
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -17,7 +17,7 @@ use elicit::aelicit_define;
 use super::{event::Event, eventor::Eventor};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// enum RetOnEvent
+/// enum `RetOnEvent`
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RetOnEvent {
     /// Next

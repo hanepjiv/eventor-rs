@@ -70,10 +70,10 @@ fn main() -> Result<()> {
     let eventor = Eventor::new();
 
     let event_type_00 = eventor.new_type("event_type_00")?;
-    println!("event_type_00: {:?}", event_type_00);
+    println!("event_type_00: {event_type_00:?}");
 
     let event_type_01 = eventor.new_type("event_type_01")?;
-    println!("event_type_00: {:?}", event_type_01);
+    println!("event_type_00: {event_type_01:?}");
 
     eventor.insert_listener(4201860248, EventListenerAelicit::new(Listener)?);
 

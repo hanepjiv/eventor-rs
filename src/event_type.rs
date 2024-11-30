@@ -1,6 +1,6 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! event_type.rs
+//! `event_type.rs`
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -14,7 +14,7 @@ use std::sync::Arc;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[derive(Debug, Clone)]
-/// EventType
+/// `EventType`
 pub struct EventType(Arc<(String, u32)>);
 // ============================================================================
 impl EventType {
@@ -27,13 +27,13 @@ impl EventType {
         Self(Arc::new((name.into(), hash)))
     }
     // ========================================================================
-    /// peek_name
-    pub fn peek_name(&self) -> &str {
+    /// `peek_name`
+    #[must_use] pub fn peek_name(&self) -> &str {
         self.0 .0.as_ref()
     }
     // ========================================================================
-    /// peek_hash
-    pub fn peek_hash(&self) -> u32 {
+    /// `peek_hash`
+    #[must_use] pub fn peek_hash(&self) -> u32 {
         self.0 .1
     }
 }

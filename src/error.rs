@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2024/09/11
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -25,7 +25,7 @@ pub enum Error {
     /// Downcast
     Downcast(String),
 
-    /// HashConflict
+    /// `HashConflict`
     HashConflict {
         /// already
         already: String,
@@ -36,7 +36,7 @@ pub enum Error {
 // ============================================================================
 impl From<elicit::Error> for Error {
     fn from(e: elicit::Error) -> Self {
-        Error::Elicit(e)
+        Self::Elicit(e)
     }
 }
 // ============================================================================
@@ -50,10 +50,10 @@ impl StdError for Error {
     // ========================================================================
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match *self {
-            Error::Elicit(ref e) => Some(e),
-            Error::Eventor(_) => None,
-            Error::HashConflict { .. } => None,
-            Error::Downcast(_) => None,
+            Self::Elicit(ref e) => Some(e),
+            Self::Eventor(_)
+            | Self::HashConflict { .. }
+            | Self::Downcast(_) => None,
         }
     }
 }
@@ -82,18 +82,19 @@ mod tests {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// enum SyncError
+/// enum `SyncError`
 #[derive(Debug)]
+#[allow(clippy::module_name_repetitions)]
 pub enum SyncError<'a> {
     /// Eventor
     Eventor(Error),
 
     #[cfg(not(any(feature = "parking_lot",)))]
-    /// EventDataBoxRead
+    /// `EventDataBoxRead`
     EventDataBoxRead(crate::EventDataBoxReadError<'a>),
 
     #[cfg(not(any(feature = "parking_lot",)))]
-    /// EventDataBoxWrite
+    /// `EventDataBoxWrite`
     EventDataBoxWrite(crate::EventDataBoxWriteError<'a>),
 
     #[cfg(feature = "parking_lot")]
@@ -115,15 +116,15 @@ impl From<Error> for SyncError<'_> {
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
 impl<'a> From<crate::EventDataBoxReadError<'a>> for SyncError<'a> {
-    fn from(e: crate::EventDataBoxReadError<'a>) -> SyncError<'a> {
-        SyncError::EventDataBoxRead(e)
+    fn from(e: crate::EventDataBoxReadError<'a>) -> Self {
+        Self::EventDataBoxRead(e)
     }
 }
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
 impl<'a> From<crate::EventDataBoxWriteError<'a>> for SyncError<'a> {
-    fn from(e: crate::EventDataBoxWriteError<'a>) -> SyncError<'a> {
-        SyncError::EventDataBoxWrite(e)
+    fn from(e: crate::EventDataBoxWriteError<'a>) -> Self {
+        Self::EventDataBoxWrite(e)
     }
 }
 // ============================================================================
@@ -152,6 +153,6 @@ impl StdError for SyncError<'_> {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// type SyncResult
+/// type `SyncResult`
 #[allow(dead_code)]
 pub type SyncResult<'a, T> = std::result::Result<T, SyncError<'a>>;

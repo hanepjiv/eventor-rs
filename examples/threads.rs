@@ -41,7 +41,7 @@ pub struct Listener {
 }
 // ============================================================================
 impl Listener {
-    pub fn new_aelicit() -> EventListenerAelicit {
+    #[must_use] pub fn new_aelicit() -> EventListenerAelicit {
         EventListenerAelicit::new(Listener { ..Self::default() })
             .expect("Listener::new")
     }
@@ -108,10 +108,10 @@ fn main() -> Result<()> {
     let eventor = Arc::new(Eventor::new());
 
     let event_type_00 = eventor.new_type("event_type_00")?;
-    println!("{:?}", event_type_00);
+    println!("{event_type_00:?}");
 
     let event_type_01 = eventor.new_type("event_type_01")?;
-    println!("{:?}", event_type_01);
+    println!("{event_type_01:?}");
 
     for _ in 0..num_cpu {
         let listener = Listener::new_aelicit();
@@ -138,7 +138,7 @@ fn main() -> Result<()> {
                 println!("push event_00 thread({i}) times={times}");
                 e.push_event(Event::new(
                     e00.clone(),
-                    EventDataBox::new(i as u64),
+                    EventDataBox::new(i),
                 ));
                 times += 1;
                 sleep(Duration::from_millis(100));
@@ -157,7 +157,7 @@ fn main() -> Result<()> {
                 println!("push event_01 thread({i}) times={times}");
                 e.push_event(Event::new(
                     e01.clone(),
-                    EventDataBox::new(i as u64),
+                    EventDataBox::new(i),
                 ));
                 times += 1;
                 sleep(Duration::from_millis(200));

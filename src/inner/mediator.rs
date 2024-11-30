@@ -19,7 +19,7 @@ use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 use super::ListenerMap;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct MediatorInner
+/// struct `MediatorInner`
 #[derive(Debug, Default)]
 struct MediatorInner {
     newface: BTreeMap<u32, BTreeMap<usize, EventListenerAelicit>>,
@@ -66,13 +66,13 @@ impl MediatorInner {
     where
         T: std::ops::DerefMut<Target = ListenerMap>,
     {
-        for (hash, tree) in self.newface.iter_mut() {
+        for (hash, tree) in &mut self.newface {
             for (id, listener) in tree.iter() {
                 map.insert(*hash, *id, listener.clone());
             }
             tree.clear();
         }
-        for (hash, set) in self.retiree.iter_mut() {
+        for (hash, set) in &mut self.retiree {
             for id in set.iter() {
                 map.remove(*hash, *id);
             }

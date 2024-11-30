@@ -6,10 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/09/11
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+#[allow(clippy::wildcard_imports)]
 use crate::inner::sync::*;
 use log::info;
 // ----------------------------------------------------------------------------
@@ -42,11 +43,11 @@ pub struct Eventor {
 impl Default for Eventor {
     fn default() -> Self {
         Self {
-            type_map: Default::default(),
+            type_map: RwLock::default(),
             queue: Mutex::new(EventQueue::default()),
-            condvar_queue: Default::default(),
-            listener_map: Default::default(),
-            mediator: Default::default(),
+            condvar_queue: Condvar::default(),
+            listener_map: RwLock::default(),
+            mediator: Mediator::default(),
         }
     }
 }
@@ -54,12 +55,21 @@ impl Default for Eventor {
 impl Eventor {
     // ========================================================================
     /// new
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
     // ========================================================================
     // ------------------------------------------------------------------------
-    /// new_type
+    /// `new_type`
+    ///
+    /// # Panics
+    ///
+    /// `expect("Eventor::new_type")`
+    ///
+    /// # Errors
+    ///
+    /// `eventor::Error`
     pub fn new_type<T>(&self, name: T) -> Result<EventType>
     where
         T: AsRef<str>,
@@ -75,7 +85,12 @@ impl Eventor {
             .new_type(name.as_ref());
     }
     // ------------------------------------------------------------------------
-    /// peek_typs
+    /// `peek_typs`
+    ///
+    /// # Panics
+    ///
+    /// `expect("Eventor::peek_type")`
+    ///
     pub fn peek_type<T>(&self, name: T) -> Option<EventType>
     where
         T: AsRef<str>,
@@ -91,24 +106,26 @@ impl Eventor {
             .peek_type(name.as_ref());
     }
     // ========================================================================
-    /// insert_listener
+    /// `insert_listener`
     pub fn insert_listener(&self, hash: u32, listener: EventListenerAelicit) {
-        self.mediator.insert(hash, listener)
+        self.mediator.insert(hash, listener);
     }
     // ------------------------------------------------------------------------
-    /// remove_listener
+    /// `remove_listener`
     pub fn remove_listener(&self, hash: u32, id: usize) {
-        self.mediator.remove(hash, id)
+        self.mediator.remove(hash, id);
     }
     // ========================================================================
-    /// push_event
+    /// `push_event`
+    /// # Panics
+    ///
+    /// `expect("Eventor::push_event")`
+    ///
     pub fn push_event(&self, event: Event) {
         #[cfg(feature = "parking_lot")]
-        let mut guard = self.queue.lock();
+        self.queue.lock().push(event);
         #[cfg(not(any(feature = "parking_lot"),))]
-        let mut guard = self.queue.lock().expect("Eventor::push_event");
-
-        guard.push(event);
+        self.queue.lock().expect("Eventor::push_event").push(event);
 
         #[cfg(feature = "parking_lot")]
         let _ = self.condvar_queue.notify_one();
@@ -116,15 +133,16 @@ impl Eventor {
         self.condvar_queue.notify_one();
     }
     // ------------------------------------------------------------------------
-    /// push_event_front
+    /// `push_event_front`
     #[inline]
     fn push_event_front(&self, event: Event) {
         #[cfg(feature = "parking_lot")]
-        let mut guard = self.queue.lock();
+        self.queue.lock().push_front(event);
         #[cfg(not(any(feature = "parking_lot"),))]
-        let mut guard = self.queue.lock().expect("Eventor::push_event_front");
-
-        guard.push_front(event);
+        self.queue
+            .lock()
+            .expect("Eventor::push_event_front")
+            .push_front(event);
 
         #[cfg(feature = "parking_lot")]
         let _ = self.condvar_queue.notify_one();
@@ -141,6 +159,10 @@ impl Eventor {
     /// true    = There is or was an event.
     /// false   = No event.
     ///
+    /// # Panics
+    ///
+    /// `expect("Eventor::dispatch")`
+    ///
     pub fn dispatch(&self) -> bool {
         let event = {
             #[cfg(feature = "parking_lot")]
@@ -150,6 +172,7 @@ impl Eventor {
 
             let Some(event) = guard.pop() else {
                 guard.shrink();
+                drop(guard);
                 return false;
             };
             event
@@ -182,7 +205,12 @@ impl Eventor {
         (grd, res.timed_out())
     }
     // ------------------------------------------------------------------------
-    /// dispatch_while
+    /// `dispatch_while`
+    ///
+    /// # Panics
+    ///
+    /// `expect("Eventor::dispatch_while")`
+    ///
     pub fn dispatch_while<F>(&self, mut condition: F)
     where
         F: FnMut() -> bool,
@@ -251,7 +279,7 @@ impl Eventor {
             return;
         };
 
-        for (_, listener) in listener_list.iter() {
+        for listener in listener_list.values() {
             #[cfg(feature = "parking_lot")]
             let ret = listener.read().on_event(&event, self);
             #[cfg(not(any(feature = "parking_lot"),))]

@@ -1,6 +1,6 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! type_map.rs
+//! `type_map.rs`
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -18,14 +18,14 @@ use log::info;
 use crate::{Error, EventType, Result};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// TypeMap
+/// `TypeMap`
 #[derive(Debug, Default)]
 pub(crate) struct TypeMap(BTreeMap<u32, EventType>);
 // ============================================================================
 impl TypeMap {
     // ========================================================================
     // ------------------------------------------------------------------------
-    /// check_type
+    /// `check_type`
     fn check_type<T>(&self, name: T) -> (u32, Option<EventType>)
     where
         T: AsRef<[u8]>,
@@ -37,7 +37,7 @@ impl TypeMap {
         }
     }
     // ------------------------------------------------------------------------
-    /// new_type
+    /// `new_type`
     pub(crate) fn new_type<T>(&mut self, name: T) -> Result<EventType>
     where
         T: AsRef<str> + std::fmt::Display,
@@ -60,8 +60,7 @@ impl TypeMap {
             if self.0.insert(hash, event_type.clone()).is_some() {
                 Err(Error::Eventor(format!(
                     "Eventor::new_type: \
-                     Unknown insert error. \"{}\"",
-                    name
+                     Unknown insert error. \"{name}\""
                 )))
             } else {
                 info!("Eventor::new_type: \"{}\" = {:#x}", l_name, hash);
@@ -70,7 +69,7 @@ impl TypeMap {
         }
     }
     // ------------------------------------------------------------------------
-    /// peek_type
+    /// `peek_type`
     pub(crate) fn peek_type<T>(&self, name: T) -> Option<EventType>
     where
         T: AsRef<str>,

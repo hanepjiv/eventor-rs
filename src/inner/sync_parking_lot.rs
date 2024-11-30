@@ -1,6 +1,6 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! sync_parking_lot.rs
+//! `sync_parking_lot.rs`
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>

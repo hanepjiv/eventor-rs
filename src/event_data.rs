@@ -1,18 +1,20 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! event_data.rs
+//! `event_data.rs`
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/09/11
+//  @date 2024/11/30
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 use std::{any::Any, fmt::Debug, sync::Arc};
 // ----------------------------------------------------------------------------
-use super::{error::Error, inner::sync::*};
+use super::error::Error;
+#[allow(clippy::wildcard_imports)]
+use super::inner::sync::*;
 // ============================================================================
 trait DataTerms: 'static + Debug + Send + Sync {}
 impl<T> DataTerms for T where T: 'static + Debug + Send + Sync {}
@@ -20,14 +22,17 @@ impl<T> DataTerms for T where T: 'static + Debug + Send + Sync {}
 type DataBox = Box<dyn Any + Send + Sync>;
 // ============================================================================
 #[cfg(not(any(feature = "parking_lot"),))]
-/// EventDataBoxReadError
+#[allow(clippy::module_name_repetitions)]
+/// `EventDataBoxReadError`
 pub type EventDataBoxReadError<'a> = TryLockReadError<'a, DataBox>;
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot"),))]
-/// EventDataBoxWriteError
+#[allow(clippy::module_name_repetitions)]
+/// `EventDataBoxWriteError`
 pub type EventDataBoxWriteError<'a> = TryLockWriteError<'a, DataBox>;
 // ============================================================================
-/// EventDataBox
+#[allow(clippy::module_name_repetitions)]
+/// `EventDataBox`
 #[derive(Debug)]
 pub struct EventDataBox(Arc<RwLock<DataBox>>);
 // ----------------------------------------------------------------------------
@@ -75,7 +80,7 @@ impl EventDataBox {
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
-    /// with_mut
+    /// `with_mut`
     pub(crate) fn with_mut<D, F, T, E>(&self, f: F) -> Result<T, E>
     where
         D: 'static,
@@ -88,7 +93,7 @@ impl EventDataBox {
     }
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// with_mut
+    /// `with_mut`
     pub(crate) fn with_mut<'s, 'a, D, F, T, E>(&'s self, f: F) -> Result<T, E>
     where
         's: 'a,

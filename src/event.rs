@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/05/06
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -30,17 +30,23 @@ pub struct Event {
 impl Event {
     // ========================================================================
     /// new
-    pub fn new(type_: EventType, data: EventDataBox) -> Self {
+    #[must_use]
+    pub const fn new(type_: EventType, data: EventDataBox) -> Self {
         Self { type_, data }
     }
     // ========================================================================
-    /// peek_type
-    pub fn peek_type(&self) -> &EventType {
+    /// `peek_type`
+    #[must_use]
+    pub const fn peek_type(&self) -> &EventType {
         &self.type_
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
     /// with
+    ///
+    /// # Errors
+    ///
+    /// `E: From<Error>`
     pub fn with<D, F, T, E>(&self, f: F) -> StdResult<T, E>
     where
         D: 'static,
@@ -52,6 +58,10 @@ impl Event {
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
     /// with
+    ///
+    /// # Errors
+    ///
+    /// `E: From<Error> + From<EventDataBoxReadError<'a>>`
     pub fn with<'s, 'a, D, F, T, E>(&'s self, f: F) -> StdResult<T, E>
     where
         's: 'a,
@@ -63,7 +73,11 @@ impl Event {
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
-    /// with_mut
+    /// `with_mut`
+    ///
+    /// # Errors
+    ///
+    /// `E: From<Error>`
     pub fn with_mut<D, F, T, E>(&self, f: F) -> StdResult<T, E>
     where
         D: 'static,
@@ -74,7 +88,11 @@ impl Event {
     }
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// with_mut
+    /// `with_mut`
+    ///
+    /// # Errors
+    ///
+    /// `E: From<Error> + From<EventDataBoxWriteError<'a>>`
     pub fn with_mut<'s, 'a, D, F, T, E>(&'s self, f: F) -> StdResult<T, E>
     where
         's: 'a,
@@ -87,9 +105,10 @@ impl Event {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct EventQueue
+/// struct `EventQueue`
 #[derive(Debug, Default)]
-pub(crate) struct EventQueue {
+#[allow(clippy::module_name_repetitions)]
+pub struct EventQueue {
     queue: VecDeque<Event>,
 }
 // ============================================================================
@@ -98,12 +117,12 @@ impl EventQueue {
     // ========================================================================
     /// push
     pub(crate) fn push(&mut self, event: Event) {
-        self.queue.push_back(event)
+        self.queue.push_back(event);
     }
     // ========================================================================
-    /// push_front
+    /// `push_front`
     pub(crate) fn push_front(&mut self, event: Event) {
-        self.queue.push_front(event)
+        self.queue.push_front(event);
     }
     // ========================================================================
     /// pop
@@ -113,7 +132,7 @@ impl EventQueue {
     // ========================================================================
     /// shrink
     pub(crate) fn shrink(&mut self) {
-        self.queue.shrink_to((self.queue.capacity() / 2).max(64))
+        self.queue.shrink_to((self.queue.capacity() / 2).max(64));
     }
     // ========================================================================
     /// capacity

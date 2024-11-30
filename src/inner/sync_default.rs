@@ -1,6 +1,6 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! sync_default.rs
+//! `sync_default.rs`
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>

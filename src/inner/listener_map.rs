@@ -1,6 +1,6 @@
 // -*- mode:rust; coding:utf-8-unix; -*-
 
-//! listener_map.rs
+//! `listener_map.rs`
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -19,7 +19,7 @@ use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 type MapUUIDAelicit = BTreeMap<usize, EventListenerAelicit>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct ListenerMap
+/// struct `ListenerMap`
 #[derive(Debug, Default)]
 pub(crate) struct ListenerMap(BTreeMap<u32, MapUUIDAelicit>);
 // ============================================================================
