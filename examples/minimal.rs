@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/06/18
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -31,9 +31,11 @@ struct Listener;
 // ============================================================================
 impl EventListener for Listener {
     // ========================================================================
+    /// `on_event`
+    #[allow(clippy::missing_panics_doc)]
     fn on_event(&self, event: &Event, _eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
-            4201860248 => {
+            4_201_860_248 => {
                 event
                     .with(|x: &i32| -> SyncResult<()> {
                         println!(
@@ -45,7 +47,7 @@ impl EventListener for Listener {
                     .expect("on 00");
                 RetOnEvent::Complete
             }
-            4201860249 => {
+            4_201_860_249 => {
                 event
                     .with(|x: &i32| -> SyncResult<()> {
                         println!(
@@ -75,9 +77,11 @@ fn main() -> Result<()> {
     let event_type_01 = eventor.new_type("event_type_01")?;
     println!("event_type_00: {event_type_01:?}");
 
-    eventor.insert_listener(4201860248, EventListenerAelicit::new(Listener)?);
+    eventor
+        .insert_listener(4_201_860_248, EventListenerAelicit::new(Listener)?);
 
-    eventor.insert_listener(4201860249, EventListenerAelicit::new(Listener)?);
+    eventor
+        .insert_listener(4_201_860_249, EventListenerAelicit::new(Listener)?);
 
     for i in 0..2 {
         eventor.push_event(Event::new(

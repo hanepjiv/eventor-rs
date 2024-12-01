@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/06/18
+//  @date 2024/12/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -32,6 +32,9 @@ mod inner;
 use inner::Result;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+static E01: &str = "event_type_01";
+// ////////////////////////////////////////////////////////////////////////////
+// ============================================================================
 /// struct Listener
 #[derive(Debug, Default, elicit::Aelicit)]
 #[aelicit_mod_author(event_listener_aelicit_author)]
@@ -41,7 +44,9 @@ pub struct Listener {
 }
 // ============================================================================
 impl Listener {
-    #[must_use] pub fn new_aelicit() -> EventListenerAelicit {
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn new_aelicit() -> EventListenerAelicit {
         EventListenerAelicit::new(Listener { ..Self::default() })
             .expect("Listener::new")
     }
@@ -51,7 +56,7 @@ impl EventListener for Listener {
     // ========================================================================
     fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
-            4201860248 => {
+            4_201_860_248 => {
                 event
                     .with(|x: &u64| -> SyncResult<'_, ()> {
                         println!("0x{:x} event_00 data({x})", self.usizeptr());
@@ -59,18 +64,17 @@ impl EventListener for Listener {
                     })
                     .expect("on 00");
 
-                const E01: &str = "event_type_01";
                 eventor.push_event(Event::new(
                     eventor.peek_type(E01).unwrap_or_else(|| {
                         panic!(r#"Listener::on_event: peek_type("{E01}")"#)
                     }),
                     EventDataBox::new(99u64),
                 ));
-                eventor.remove_listener(4201860248, self.usizeptr());
+                eventor.remove_listener(4_201_860_248, self.usizeptr());
 
                 RetOnEvent::Next
             }
-            4201860249 => {
+            4_201_860_249 => {
                 event
                     .with(|x: &u64| -> SyncResult<'_, ()> {
                         println!("0x{:x} event_01 data({x})", self.usizeptr());
@@ -78,7 +82,7 @@ impl EventListener for Listener {
                     })
                     .expect("on 01");
                 eventor.insert_listener(
-                    4201860248,
+                    4_201_860_248,
                     self.aelicit_from_self()
                         .expect("Listener::on_event: aelicit_from_self"),
                 );
@@ -115,8 +119,8 @@ fn main() -> Result<()> {
 
     for _ in 0..num_cpu {
         let listener = Listener::new_aelicit();
-        eventor.insert_listener(4201860248, listener.clone());
-        eventor.insert_listener(4201860249, listener);
+        eventor.insert_listener(4_201_860_248, listener.clone());
+        eventor.insert_listener(4_201_860_249, listener);
     }
 
     for i in 0..num_cpu {
@@ -136,10 +140,7 @@ fn main() -> Result<()> {
             let mut times = 0usize;
             while a.load(Ordering::Acquire) {
                 println!("push event_00 thread({i}) times={times}");
-                e.push_event(Event::new(
-                    e00.clone(),
-                    EventDataBox::new(i),
-                ));
+                e.push_event(Event::new(e00.clone(), EventDataBox::new(i)));
                 times += 1;
                 sleep(Duration::from_millis(100));
             }
@@ -155,10 +156,7 @@ fn main() -> Result<()> {
             let mut times = 0usize;
             while a.load(Ordering::Acquire) {
                 println!("push event_01 thread({i}) times={times}");
-                e.push_event(Event::new(
-                    e01.clone(),
-                    EventDataBox::new(i),
-                ));
+                e.push_event(Event::new(e01.clone(), EventDataBox::new(i)));
                 times += 1;
                 sleep(Duration::from_millis(200));
             }
