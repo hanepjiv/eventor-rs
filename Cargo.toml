@@ -5,8 +5,9 @@ name                    = "eventor"
 version                 = "0.11.0-alpha.16"
 publish                 = false
 
-keywords                = ["subsystem", "event"]
 description             = "Event library"
+keywords                = ["subsystem", "event"]
+categories              = ["asynchronous"]
 readme                  = "README.md"
 
 edition.workspace       = true
@@ -18,8 +19,8 @@ homepage.workspace      = true
 repository.workspace    = true
 # =============================================================================
 [workspace.package]
+rust-version            = "1.83.0"
 edition                 = "2021"
-rust-version            = "1.82.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/eventor/"
