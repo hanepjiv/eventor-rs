@@ -46,10 +46,10 @@ log                     = { default-features = false, version = "0.4.22" }
 default-features        = false
 version                 = "0.12.2"
 
-#git                    = "ssh://git@github.com/hanepjiv/elicit-rs.git"
-#branch                 = "main"
+#git                     = "ssh://git@github.com/hanepjiv/elicit-rs.git"
+#branch                  = "main"
 
-#path                   = "../../elicit-rs/orig"
+#path                    = "../../elicit-rs/orig"
 # =============================================================================
 # optional dependencies
 [dependencies.parking_lot]
