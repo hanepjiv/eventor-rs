@@ -28,12 +28,14 @@ impl EventType {
     }
     // ========================================================================
     /// `peek_name`
-    #[must_use] pub fn peek_name(&self) -> &str {
+    #[must_use]
+    pub fn peek_name(&self) -> &str {
         self.0 .0.as_ref()
     }
     // ========================================================================
     /// `peek_hash`
-    #[must_use] pub fn peek_hash(&self) -> u32 {
+    #[must_use]
+    pub fn peek_hash(&self) -> u32 {
         self.0 .1
     }
 }
