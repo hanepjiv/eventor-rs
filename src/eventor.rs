@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/12/01
+//  @date 2024/12/16
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -250,36 +250,40 @@ impl Eventor {
         self.mediator
             .apply(self.listener_map.write().expect("Eventor::dispatch_impl"));
 
-        #[cfg(feature = "parking_lot")]
-        let Some(listener_map) = self.listener_map.try_read() else {
-            self.push_event_front(event);
-            return;
-        };
-        #[cfg(not(any(feature = "parking_lot"),))]
-        let listener_map = match self.listener_map.try_read() {
-            Ok(x) => x,
-            Err(TryLockReadError::WouldBlock) => {
+        let listener_list_cloned = {
+            #[cfg(feature = "parking_lot")]
+            let Some(listener_map) = self.listener_map.try_read() else {
                 self.push_event_front(event);
                 return;
-            }
-            Err(TryLockReadError::Poisoned(_)) => {
-                panic!(
+            };
+            #[cfg(not(any(feature = "parking_lot"),))]
+            let listener_map = match self.listener_map.try_read() {
+                Ok(x) => x,
+                Err(TryLockReadError::WouldBlock) => {
+                    self.push_event_front(event);
+                    return;
+                }
+                Err(TryLockReadError::Poisoned(_)) => {
+                    panic!(
                     "Eventor::dispatch_impl: listener_map.read() poisoned."
                 );
-            }
+                }
+            };
+
+            let Some(listener_list) = listener_map
+                .get(&(event.peek_type().peek_hash()))
+                .filter(|x| !x.is_empty())
+            else {
+                if cfg!(debug_assertions) {
+                    info!("Eventor::dispatch: no listener: {event:?}");
+                }
+                return;
+            };
+
+            listener_list.clone()
         };
 
-        let Some(listener_list) = listener_map
-            .get(&(event.peek_type().peek_hash()))
-            .filter(|x| !x.is_empty())
-        else {
-            if cfg!(debug_assertions) {
-                info!("Eventor::dispatch: no listener: {event:?}");
-            }
-            return;
-        };
-
-        for listener in listener_list.values() {
+        for listener in listener_list_cloned.values() {
             #[cfg(feature = "parking_lot")]
             let ret = listener.read().on_event(&event, self);
             #[cfg(not(any(feature = "parking_lot"),))]
