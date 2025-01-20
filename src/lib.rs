@@ -6,12 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/12/01
+//  @date 2025/01/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // attribute  =================================================================
-
-#![deny(dead_code, trivial_casts, private_bounds)]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 // ////////////////////////////////////////////////////////////////////////////
 // mod  =======================================================================
 mod error;

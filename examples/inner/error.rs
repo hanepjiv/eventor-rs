@@ -6,13 +6,13 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/05/03
+//  @date 2025/01/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error
 #[derive(Debug)]
-pub enum Error {
+pub(crate) enum Error {
     /// Elicit
     Elicit(elicit::Error),
     /// Eventor

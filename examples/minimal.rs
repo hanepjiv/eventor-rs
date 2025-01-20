@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2024/12/01
+//  @date 2025/01/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -19,6 +19,11 @@ use eventor::{
     },
     Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
 };
+// ----------------------------------------------------------------------------
+use hash_combine as _;
+use log as _;
+#[cfg(feature = "parking_lot")]
+use parking_lot as _;
 // mod  =======================================================================
 mod inner;
 use inner::Result;
@@ -37,7 +42,7 @@ impl EventListener for Listener {
         match event.peek_type().peek_hash() {
             4_201_860_248 => {
                 event
-                    .with(|x: &i32| -> SyncResult<()> {
+                    .with(|x: &i32| -> SyncResult<'_, ()> {
                         println!(
                             "Listener::on_event({}): 00 {x}",
                             self.usizeptr()
@@ -49,7 +54,7 @@ impl EventListener for Listener {
             }
             4_201_860_249 => {
                 event
-                    .with(|x: &i32| -> SyncResult<()> {
+                    .with(|x: &i32| -> SyncResult<'_, ()> {
                         println!(
                             "Listener::on_event({}): 01 {x}",
                             self.usizeptr()

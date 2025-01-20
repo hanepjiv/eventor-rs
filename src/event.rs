@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/12/01
+//  @date 2025/01/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -108,7 +108,7 @@ impl Event {
 /// struct `EventQueue`
 #[derive(Debug, Default)]
 #[allow(clippy::module_name_repetitions)]
-pub struct EventQueue {
+pub(crate) struct EventQueue {
     queue: VecDeque<Event>,
 }
 // ============================================================================

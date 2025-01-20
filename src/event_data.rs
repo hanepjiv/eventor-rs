@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/11/30
+//  @date 2025/01/20
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -55,7 +55,8 @@ impl EventDataBox {
         F: FnOnce(&D) -> Result<T, E>,
         E: From<Error>,
     {
-        f(self.0.read().downcast_ref().ok_or_else(|| {
+        let r = self.0.read();
+        f(r.downcast_ref().ok_or_else(|| {
             Error::Downcast("EventDataBox::with".to_string())
         })?)
     }
@@ -69,14 +70,10 @@ impl EventDataBox {
         F: FnOnce(&D) -> Result<T, E>,
         E: From<Error> + From<EventDataBoxReadError<'a>>,
     {
-        f(self
-            .0
-            .read()
-            .map_err(EventDataBoxReadError::from)?
-            .downcast_ref()
-            .ok_or_else(|| {
-                Error::Downcast("EventDataBox::with".to_string())
-            })?)
+        let r = self.0.read().map_err(EventDataBoxReadError::from)?;
+        f(r.downcast_ref().ok_or_else(|| {
+            Error::Downcast("EventDataBox::with".to_string())
+        })?)
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
@@ -87,7 +84,8 @@ impl EventDataBox {
         F: FnOnce(&mut D) -> Result<T, E>,
         E: From<Error>,
     {
-        f(self.0.write().downcast_mut().ok_or_else(|| {
+        let mut w = self.0.write();
+        f(w.downcast_mut().ok_or_else(|| {
             Error::Downcast("EventDataBox::with_mut".to_string())
         })?)
     }
@@ -101,13 +99,9 @@ impl EventDataBox {
         F: FnOnce(&mut D) -> Result<T, E>,
         E: From<Error> + From<EventDataBoxWriteError<'a>>,
     {
-        f(self
-            .0
-            .write()
-            .map_err(EventDataBoxWriteError::from)?
-            .downcast_mut()
-            .ok_or_else(|| {
-                Error::Downcast("EventDataBox::with_mut".to_string())
-            })?)
+        let mut w = self.0.write().map_err(EventDataBoxWriteError::from)?;
+        f(w.downcast_mut().ok_or_else(|| {
+            Error::Downcast("EventDataBox::with_mut".to_string())
+        })?)
     }
 }
