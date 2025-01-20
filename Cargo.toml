@@ -19,7 +19,7 @@ homepage.workspace      = true
 repository.workspace    = true
 # =============================================================================
 [workspace.package]
-rust-version            = "1.83.0"
+rust-version            = "1.84.0"
 edition                 = "2021"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
