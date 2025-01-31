@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2024/12/16
+//  @date 2025/01/31
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -229,7 +229,7 @@ impl Eventor {
                         let (grd, timed_out) = self.wait_for(guard);
                         if timed_out {
                             continue 'outer;
-                        };
+                        }
                         guard = grd;
                         continue 'inner;
                     };
