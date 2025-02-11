@@ -18,7 +18,7 @@ use super::{
     error::Result,
     event::{Event, EventQueue},
     event_listener::{
-        aelicit_user::Aelicit as EventListenerAelicit, RetOnEvent,
+        RetOnEvent, aelicit_user::Aelicit as EventListenerAelicit,
     },
     event_type::EventType,
 };
@@ -265,8 +265,8 @@ impl Eventor {
                 }
                 Err(TryLockReadError::Poisoned(_)) => {
                     panic!(
-                    "Eventor::dispatch_impl: listener_map.read() poisoned."
-                );
+                        "Eventor::dispatch_impl: listener_map.read() poisoned."
+                    );
                 }
             };
 

@@ -12,20 +12,20 @@
 // use  =======================================================================
 use std::{
     sync::{
-        atomic::{AtomicBool, Ordering},
         Arc,
+        atomic::{AtomicBool, Ordering},
     },
-    thread::{available_parallelism, sleep, spawn, yield_now, JoinHandle},
+    thread::{JoinHandle, available_parallelism, sleep, spawn, yield_now},
     time::Duration,
 };
 // ----------------------------------------------------------------------------
 use eventor::{
+    Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
     event_listener_aelicit_author,
     event_listener_aelicit_author::{
         Aelicit as EventListenerAelicit, AelicitBase, AelicitFromSelf,
         AelicitFromSelfField as EventListenerAelicitFromSelfField,
     },
-    Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
 };
 // ----------------------------------------------------------------------------
 use hash_combine as _;

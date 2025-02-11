@@ -13,11 +13,11 @@
 use std::thread::yield_now;
 // ----------------------------------------------------------------------------
 use eventor::{
+    Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
     event_listener_aelicit_author,
     event_listener_aelicit_author::{
         Aelicit as EventListenerAelicit, AelicitBase,
     },
-    Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
 };
 // ----------------------------------------------------------------------------
 use hash_combine as _;

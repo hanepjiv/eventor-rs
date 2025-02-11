@@ -12,7 +12,7 @@
 // attributes  ================================================================
 // use  =======================================================================
 use crate::inner::sync::Mutex;
-use std::collections::{btree_map::Entry, BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, btree_map::Entry};
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 // ----------------------------------------------------------------------------

@@ -26,9 +26,9 @@ pub use {
     event::Event,
     event_data::EventDataBox,
     event_listener::{
+        EventListener, RetOnEvent,
         aelicit_author as event_listener_aelicit_author,
-        aelicit_user as event_listener_aelicit_user, EventListener,
-        RetOnEvent,
+        aelicit_user as event_listener_aelicit_user,
     },
     event_type::EventType,
     eventor::Eventor,
