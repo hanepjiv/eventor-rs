@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "eventor"
-version                 = "0.11.1-alpha.0"
+version                 = "0.11.1-alpha.1"
 publish                 = false
 
 description             = "Event library"
@@ -19,7 +19,7 @@ homepage.workspace      = true
 repository.workspace    = true
 # =============================================================================
 [workspace.package]
-rust-version            = "1.84.1"
+rust-version            = "1.85.0"
 edition                 = "2021"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
@@ -61,16 +61,19 @@ version                 = "0.12.3"
 workspace               = true
 # -----------------------------------------------------------------------------
 [workspace.lints.rust]
-# rustc 1.84.1 (e71f9a9a9 2025-01-27)
+# rustc 1.85.0 (4d91de4e4 2025-02-17)
 absolute_paths_not_starting_with_crate = "forbid"
 ambiguous_negative_literals = "forbid"
+closure_returning_async_block = "forbid"
 deprecated_in_future = "forbid"
 deprecated_safe_2024 = "forbid"
 edition_2024_expr_fragment_specifier = "forbid"
 elided_lifetimes_in_paths = "forbid"
 explicit_outlives_requirements = "forbid"
 ffi_unwind_calls = "forbid"
+if_let_rescope = "forbid"
 impl_trait_overcaptures = "forbid"
+impl_trait_redundant_captures = "forbid"
 keyword_idents_2018 = "forbid"
 keyword_idents_2024 = "forbid"
 let_underscore_drop = "forbid"
@@ -78,6 +81,7 @@ macro_use_extern_crate = "forbid"
 meta_variable_misuse = "forbid"
 missing_abi = "forbid"
 missing_copy_implementations = "forbid"
+missing_debug_implementations = "forbid"
 missing_docs = "forbid"
 missing_unsafe_on_extern = "forbid"
 non_ascii_idents = "forbid"
@@ -145,7 +149,6 @@ forgetting_references = "forbid"
 for_loops_over_fallibles = "forbid"
 function_item_references = "forbid"
 hidden_glob_reexports = "forbid"
-impl_trait_redundant_captures = "forbid"
 improper_ctypes = "forbid"
 improper_ctypes_definitions = "forbid"
 incomplete_features = "forbid"
@@ -202,6 +205,7 @@ ungated_async_fn_track_caller = "forbid"
 uninhabited_static = "forbid"
 unknown_or_malformed_diagnostic_attributes = "forbid"
 unnameable_test_items = "forbid"
+unpredictable_function_pointer_comparisons = "forbid"
 unreachable_code = "forbid"
 unreachable_patterns = "forbid"
 unstable_name_collisions = "forbid"
@@ -261,11 +265,9 @@ undropped_manually_drops = "forbid"
 unknown_crate_types = "forbid"
 useless_deprecated = "forbid"
 
-missing_debug_implementations = "deny"
 dead_code = "deny"
 private_bounds = "deny"
 trivial_casts = "deny"
 
-if_let_rescope = "warn"
 renamed_and_removed_lints = "warn"
 unknown_lints = "warn"
