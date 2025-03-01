@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/25
-//  @date 2024/05/06
+//  @date 2025/03/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -31,10 +31,9 @@ impl TypeMap {
         T: AsRef<[u8]>,
     {
         let hash = hash_combine(0u32, name.as_ref());
-        match self.0.get(&hash) {
-            Some(x) => (hash, Some(x.clone())),
-            None => (hash, None),
-        }
+        self.0
+            .get(&hash)
+            .map_or((hash, None), |x| (hash, Some(x.clone())))
     }
     // ------------------------------------------------------------------------
     /// `new_type`
@@ -52,7 +51,7 @@ impl TypeMap {
                 // Hash value are in conflict. Take a different name.
                 Err(Error::HashConflict {
                     already: r.peek_name().to_string(),
-                    new: l_name.to_string(),
+                    new: l_name,
                 })
             }
         } else {

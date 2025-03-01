@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2025/01/31
+//  @date 2025/03/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -211,6 +211,7 @@ impl Eventor {
     ///
     /// `expect("Eventor::dispatch_while")`
     ///
+    #[allow(clippy::significant_drop_tightening)]
     pub fn dispatch_while<F>(&self, mut condition: F)
     where
         F: FnMut() -> bool,
@@ -241,6 +242,7 @@ impl Eventor {
         }
     }
     // ------------------------------------------------------------------------
+    #[allow(clippy::significant_drop_tightening)]
     fn dispatch_impl(&self, event: Event) {
         // Locking of the ListenerMap writer must be done
         // before locking of the Mediator.
@@ -292,7 +294,7 @@ impl Eventor {
                 .expect("Eventor::dispatch")
                 .on_event(&event, self);
 
-            if let RetOnEvent::Complete = ret {
+            if ret == RetOnEvent::Complete {
                 break;
             }
         }
@@ -306,14 +308,14 @@ mod tests {
     use super::Eventor;
     // ========================================================================
     #[test]
-    fn test_send() {
-        fn assert_send<T: Send>() {}
+    const fn test_send() {
+        const fn assert_send<T: Send>() {}
         assert_send::<Eventor>();
     }
     // ------------------------------------------------------------------------
     #[test]
-    fn test_sync() {
-        fn assert_sync<T: Sync>() {}
+    const fn test_sync() {
+        const fn assert_sync<T: Sync>() {}
         assert_sync::<Eventor>();
     }
 }

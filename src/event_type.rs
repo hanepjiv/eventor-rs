@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2024/12/13
+//  @date 2025/03/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -35,6 +35,7 @@ impl EventType {
     // ========================================================================
     /// `peek_hash`
     #[must_use]
+    #[allow(clippy::missing_const_for_fn)]
     pub fn peek_hash(&self) -> u32 {
         self.0.1
     }

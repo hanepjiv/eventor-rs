@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2024/12/01
+//  @date 2025/03/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -69,14 +69,14 @@ mod tests {
     use super::Error;
     // ========================================================================
     #[test]
-    fn test_send() {
-        fn assert_send<T: Send>() {}
+    const fn test_send() {
+        const fn assert_send<T: Send>() {}
         assert_send::<Error>();
     }
     // ------------------------------------------------------------------------
     #[test]
-    fn test_sync() {
-        fn assert_sync<T: Sync>() {}
+    const fn test_sync() {
+        const fn assert_sync<T: Sync>() {}
         assert_sync::<Error>();
     }
 }

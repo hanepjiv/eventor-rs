@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/01/20
+//  @date 2025/03/01
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -21,13 +21,13 @@ pub(crate) enum Error {
 // ============================================================================
 impl From<elicit::Error> for Error {
     fn from(e: elicit::Error) -> Self {
-        Error::Elicit(e)
+        Self::Elicit(e)
     }
 }
 // ----------------------------------------------------------------------------
 impl From<eventor::Error> for Error {
     fn from(e: eventor::Error) -> Self {
-        Error::Eventor(e)
+        Self::Eventor(e)
     }
 }
 // ============================================================================
@@ -41,8 +41,8 @@ impl std::error::Error for Error {
     // ========================================================================
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match *self {
-            Error::Elicit(ref e) => Some(e),
-            Error::Eventor(ref e) => Some(e),
+            Self::Elicit(ref e) => Some(e),
+            Self::Eventor(ref e) => Some(e),
         }
     }
 }
