@@ -53,8 +53,7 @@ impl Listener {
     #[allow(clippy::missing_panics_doc)]
     /// fn `new_aelicit`
     pub fn new_aelicit() -> EventListenerAelicit {
-        EventListenerAelicit::new(Self::default())
-            .expect("Listener::new")
+        EventListenerAelicit::new(Self::default()).expect("Listener::new")
     }
 }
 // ============================================================================
