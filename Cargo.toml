@@ -40,7 +40,7 @@ parking_lot             = [ "dep:parking_lot", "elicit/parking_lot", ]
 # dependencies
 [dependencies]
 hash_combine            = { default-features = false, version = "0.3.9" }
-log                     = { default-features = false, version = "0.4.26" }
+log                     = { default-features = false, version = "0.4.27" }
 # -----------------------------------------------------------------------------
 [dependencies.elicit]
 default-features        = false

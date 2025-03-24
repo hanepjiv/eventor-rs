@@ -62,7 +62,7 @@ impl TypeMap {
                      Unknown insert error. \"{name}\""
                 )))
             } else {
-                info!("Eventor::new_type: \"{}\" = {:#x}", l_name, hash);
+                info!("Eventor::new_type: \"{l_name}\" = {hash:#x}");
                 Ok(event_type)
             }
         }
