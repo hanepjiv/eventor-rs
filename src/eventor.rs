@@ -6,12 +6,10 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2025/03/01
+//  @date 2025/04/07
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-#[allow(clippy::wildcard_imports)]
-use crate::inner::sync::*;
 use log::info;
 // ----------------------------------------------------------------------------
 use super::{
@@ -21,8 +19,16 @@ use super::{
         RetOnEvent, aelicit_user::Aelicit as EventListenerAelicit,
     },
     event_type::EventType,
+    inner::{ListenerMap, Mediator, TypeMap},
 };
-use crate::inner::{ListenerMap, Mediator, TypeMap};
+
+#[cfg(feature = "parking_lot")]
+use super::inner::sync::{Condvar, Mutex, MutexGuard, RwLock};
+
+#[cfg(not(any(feature = "parking_lot"),))]
+use super::inner::sync::{
+    Condvar, Mutex, MutexGuard, RwLock, TryLockReadError,
+};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// struct Eventor
@@ -41,6 +47,7 @@ pub struct Eventor {
 }
 // ============================================================================
 impl Default for Eventor {
+    #[inline]
     fn default() -> Self {
         Self {
             type_map: RwLock::default(),
@@ -56,11 +63,13 @@ impl Eventor {
     // ========================================================================
     /// new
     #[must_use]
+    #[inline]
     pub fn new() -> Self {
         Self::default()
     }
     // ========================================================================
     // ------------------------------------------------------------------------
+    #[cfg(feature = "parking_lot")]
     /// `new_type`
     ///
     /// # Panics
@@ -70,14 +79,34 @@ impl Eventor {
     /// # Errors
     ///
     /// `eventor::Error`
+    #[inline]
     pub fn new_type<T>(&self, name: T) -> Result<EventType>
     where
         T: AsRef<str>,
     {
-        #[cfg(feature = "parking_lot")]
         return self.type_map.write().new_type(name.as_ref());
+    }
 
-        #[cfg(not(any(feature = "parking_lot"),))]
+    #[cfg(not(any(feature = "parking_lot"),))]
+    /// `new_type`
+    ///
+    /// # Panics
+    ///
+    /// `expect("Eventor::new_type")`
+    ///
+    /// # Errors
+    ///
+    /// `eventor::Error`
+    #[expect(
+        clippy::unwrap_in_result,
+        clippy::expect_used,
+        reason = "checked"
+    )]
+    #[inline]
+    pub fn new_type<T>(&self, name: T) -> Result<EventType>
+    where
+        T: AsRef<str>,
+    {
         return self
             .type_map
             .write()
@@ -85,20 +114,36 @@ impl Eventor {
             .new_type(name.as_ref());
     }
     // ------------------------------------------------------------------------
+    #[cfg(feature = "parking_lot")]
     /// `peek_typs`
     ///
     /// # Panics
     ///
     /// `expect("Eventor::peek_type")`
-    ///
+    #[inline]
     pub fn peek_type<T>(&self, name: T) -> Option<EventType>
     where
         T: AsRef<str>,
     {
-        #[cfg(feature = "parking_lot")]
         return self.type_map.read().peek_type(name.as_ref());
+    }
 
-        #[cfg(not(any(feature = "parking_lot"),))]
+    #[cfg(not(any(feature = "parking_lot"),))]
+    /// `peek_typs`
+    ///
+    /// # Panics
+    ///
+    /// `expect("Eventor::peek_type")`
+    #[expect(
+        clippy::unwrap_in_result,
+        clippy::expect_used,
+        reason = "checked"
+    )]
+    #[inline]
+    pub fn peek_type<T>(&self, name: T) -> Option<EventType>
+    where
+        T: AsRef<str>,
+    {
         return self
             .type_map
             .read()
@@ -107,50 +152,71 @@ impl Eventor {
     }
     // ========================================================================
     /// `insert_listener`
+    #[inline]
     pub fn insert_listener(&self, hash: u32, listener: EventListenerAelicit) {
         self.mediator.insert(hash, listener);
     }
     // ------------------------------------------------------------------------
     /// `remove_listener`
+    #[inline]
     pub fn remove_listener(&self, hash: u32, id: usize) {
         self.mediator.remove(hash, id);
     }
     // ========================================================================
+    #[cfg(feature = "parking_lot")]
     /// `push_event`
     /// # Panics
     ///
     /// `expect("Eventor::push_event")`
-    ///
+    #[inline]
     pub fn push_event(&self, event: Event) {
-        #[cfg(feature = "parking_lot")]
         self.queue.lock().push(event);
-        #[cfg(not(any(feature = "parking_lot"),))]
-        self.queue.lock().expect("Eventor::push_event").push(event);
-
-        #[cfg(feature = "parking_lot")]
         let _ = self.condvar_queue.notify_one();
-        #[cfg(not(any(feature = "parking_lot"),))]
+    }
+
+    #[cfg(not(any(feature = "parking_lot"),))]
+    /// `push_event`
+    /// # Panics
+    ///
+    /// `expect("Eventor::push_event")`
+    #[expect(clippy::expect_used, reason = "checked")]
+    #[inline]
+    pub fn push_event(&self, event: Event) {
+        self.queue.lock().expect("Eventor::push_event").push(event);
         self.condvar_queue.notify_one();
     }
     // ------------------------------------------------------------------------
+    #[cfg(feature = "parking_lot")]
     /// `push_event_front`
     #[inline]
     fn push_event_front(&self, event: Event) {
-        #[cfg(feature = "parking_lot")]
         self.queue.lock().push_front(event);
-        #[cfg(not(any(feature = "parking_lot"),))]
+        let _ = self.condvar_queue.notify_one();
+    }
+
+    #[cfg(not(any(feature = "parking_lot"),))]
+    /// `push_event_front`
+    #[expect(clippy::expect_used, reason = "checked")]
+    #[inline]
+    fn push_event_front(&self, event: Event) {
         self.queue
             .lock()
             .expect("Eventor::push_event_front")
             .push_front(event);
-
-        #[cfg(feature = "parking_lot")]
-        let _ = self.condvar_queue.notify_one();
-        #[cfg(not(any(feature = "parking_lot"),))]
         self.condvar_queue.notify_one();
     }
     // ========================================================================
-    ///
+    #[cfg(feature = "parking_lot")]
+    fn lock_guard(&self) -> MutexGuard<'_, EventQueue> {
+        self.queue.lock()
+    }
+
+    #[cfg(not(any(feature = "parking_lot"),))]
+    #[expect(clippy::expect_used, reason = "checked")]
+    fn lock_guard(&self) -> MutexGuard<'_, EventQueue> {
+        self.queue.lock().expect("Eventor::lock_guard")
+    }
+    // ------------------------------------------------------------------------
     /// # dispatch
     ///
     /// Process one event.
@@ -162,14 +228,10 @@ impl Eventor {
     /// # Panics
     ///
     /// `expect("Eventor::dispatch")`
-    ///
+    #[inline]
     pub fn dispatch(&self) -> bool {
         let event = {
-            #[cfg(feature = "parking_lot")]
-            let mut guard = self.queue.lock();
-            #[cfg(not(any(feature = "parking_lot"),))]
-            let mut guard = self.queue.lock().expect("Eventor::dispatch");
-
+            let mut guard = self.lock_guard();
             let Some(event) = guard.pop() else {
                 guard.shrink();
                 drop(guard);
@@ -189,18 +251,19 @@ impl Eventor {
     ) -> (MutexGuard<'a, EventQueue>, bool) {
         let res = self
             .condvar_queue
-            .wait_for(&mut guard, std::time::Duration::from_millis(200));
+            .wait_for(&mut guard, core::time::Duration::from_millis(200));
         (guard, res.timed_out())
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
+    #[expect(clippy::expect_used, reason = "checked")]
     fn wait_for<'a>(
         &self,
         guard: MutexGuard<'a, EventQueue>,
     ) -> (MutexGuard<'a, EventQueue>, bool) {
         let (grd, res) = self
             .condvar_queue
-            .wait_timeout(guard, std::time::Duration::from_millis(200))
+            .wait_timeout(guard, core::time::Duration::from_millis(200))
             .expect("Eventor::dispatch_while");
         (grd, res.timed_out())
     }
@@ -210,19 +273,19 @@ impl Eventor {
     /// # Panics
     ///
     /// `expect("Eventor::dispatch_while")`
-    ///
-    #[allow(clippy::significant_drop_tightening)]
+    #[expect(
+        clippy::significant_drop_tightening,
+        clippy::mixed_read_write_in_expression,
+        reason = "checked"
+    )]
+    #[inline]
     pub fn dispatch_while<F>(&self, mut condition: F)
     where
         F: FnMut() -> bool,
     {
         'outer: while condition() {
             let event = {
-                #[cfg(feature = "parking_lot")]
-                let mut guard = self.queue.lock();
-                #[cfg(not(any(feature = "parking_lot"),))]
-                let mut guard =
-                    self.queue.lock().expect("Eventor::dispatch_while");
+                let mut guard = self.lock_guard();
 
                 'inner: loop {
                     let Some(event) = guard.pop() else {
@@ -242,23 +305,53 @@ impl Eventor {
         }
     }
     // ------------------------------------------------------------------------
-    #[allow(clippy::significant_drop_tightening)]
+    #[cfg(feature = "parking_lot")]
     fn dispatch_impl(&self, event: Event) {
         // Locking of the ListenerMap writer must be done
         // before locking of the Mediator.
-        #[cfg(feature = "parking_lot")]
         self.mediator.apply(self.listener_map.write());
-        #[cfg(not(any(feature = "parking_lot"),))]
-        self.mediator
-            .apply(self.listener_map.write().expect("Eventor::dispatch_impl"));
 
         let listener_list_cloned = {
-            #[cfg(feature = "parking_lot")]
             let Some(listener_map) = self.listener_map.try_read() else {
                 self.push_event_front(event);
                 return;
             };
-            #[cfg(not(any(feature = "parking_lot"),))]
+
+            let Some(listener_list) = listener_map
+                .get(&(event.peek_type().peek_hash()))
+                .filter(|x| !x.is_empty())
+            else {
+                if cfg!(debug_assertions) {
+                    info!("Eventor::dispatch: no listener: {event:?}");
+                }
+                return;
+            };
+
+            listener_list.clone()
+        };
+
+        for listener in listener_list_cloned.values() {
+            let ret = listener.read().on_event(&event, self);
+            if ret == RetOnEvent::Complete {
+                break;
+            }
+        }
+    }
+
+    #[cfg(not(any(feature = "parking_lot"),))]
+    #[expect(
+        clippy::significant_drop_tightening,
+        clippy::expect_used,
+        clippy::panic,
+        reason = "checked"
+    )]
+    fn dispatch_impl(&self, event: Event) {
+        // Locking of the ListenerMap writer must be done
+        // before locking of the Mediator.
+        self.mediator
+            .apply(self.listener_map.write().expect("Eventor::dispatch_impl"));
+
+        let listener_list_cloned = {
             let listener_map = match self.listener_map.try_read() {
                 Ok(x) => x,
                 Err(TryLockReadError::WouldBlock) => {
@@ -286,9 +379,6 @@ impl Eventor {
         };
 
         for listener in listener_list_cloned.values() {
-            #[cfg(feature = "parking_lot")]
-            let ret = listener.read().on_event(&event, self);
-            #[cfg(not(any(feature = "parking_lot"),))]
             let ret = listener
                 .read()
                 .expect("Eventor::dispatch")

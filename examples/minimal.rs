@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/01/20
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -16,7 +16,7 @@ use eventor::{
     Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
     event_listener_aelicit_author,
     event_listener_aelicit_author::{
-        Aelicit as EventListenerAelicit, AelicitBase,
+        Aelicit as EventListenerAelicit, AelicitBase as _,
     },
 };
 // ----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ struct Listener;
 impl EventListener for Listener {
     // ========================================================================
     /// `on_event`
-    #[allow(clippy::missing_panics_doc)]
+    #[expect(clippy::expect_used, reason = "cheked")]
     fn on_event(&self, event: &Event, _eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
             4_201_860_248 => {
@@ -88,7 +88,7 @@ fn main() -> Result<()> {
     eventor
         .insert_listener(4_201_860_249, EventListenerAelicit::new(Listener)?);
 
-    for i in 0..2 {
+    for i in 0_i32..2_i32 {
         eventor.push_event(Event::new(
             event_type_00.clone(),
             EventDataBox::new(i),

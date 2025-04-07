@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/23
-//  @date 2024/05/25
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use std::collections::BTreeMap;
+use alloc::collections::BTreeMap;
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
@@ -52,7 +52,7 @@ impl ListenerMap {
     pub(crate) fn get<Q>(&self, key: &Q) -> Option<&MapUUIDAelicit>
     where
         Q: ?Sized + Ord,
-        u32: std::borrow::Borrow<Q>,
+        u32: core::borrow::Borrow<Q>,
     {
         self.0.get(key)
     }

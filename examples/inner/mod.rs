@@ -16,4 +16,4 @@ mod error;
 pub(crate) use error::Error;
 // ----------------------------------------------------------------------------
 /// type Result
-pub(crate) type Result<T> = std::result::Result<T, Error>;
+pub(crate) type Result<T> = core::result::Result<T, Error>;

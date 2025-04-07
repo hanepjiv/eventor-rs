@@ -6,15 +6,20 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2025/01/20
+//  @date 2025/04/07
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-use std::{any::Any, fmt::Debug, sync::Arc};
+use alloc::sync::Arc;
+use core::{any::Any, fmt::Debug};
 // ----------------------------------------------------------------------------
 use super::error::Error;
-#[allow(clippy::wildcard_imports)]
-use super::inner::sync::*;
+
+#[cfg(feature = "parking_lot")]
+use super::inner::sync::RwLock;
+
+#[cfg(not(any(feature = "parking_lot"),))]
+use super::inner::sync::{RwLock, TryLockReadError, TryLockWriteError};
 // ============================================================================
 trait DataTerms: 'static + Debug + Send + Sync {}
 impl<T> DataTerms for T where T: 'static + Debug + Send + Sync {}
@@ -22,24 +27,22 @@ impl<T> DataTerms for T where T: 'static + Debug + Send + Sync {}
 type DataBox = Box<dyn Any + Send + Sync>;
 // ============================================================================
 #[cfg(not(any(feature = "parking_lot"),))]
-#[allow(clippy::module_name_repetitions)]
 /// `EventDataBoxReadError`
 pub type EventDataBoxReadError<'a> = TryLockReadError<'a, DataBox>;
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot"),))]
-#[allow(clippy::module_name_repetitions)]
 /// `EventDataBoxWriteError`
 pub type EventDataBoxWriteError<'a> = TryLockWriteError<'a, DataBox>;
 // ============================================================================
-#[allow(clippy::module_name_repetitions)]
 /// `EventDataBox`
 #[derive(Debug)]
 pub struct EventDataBox(Arc<RwLock<DataBox>>);
 // ----------------------------------------------------------------------------
-#[allow(private_bounds)]
+#[expect(private_bounds, reason = "allow")]
 impl EventDataBox {
     // ========================================================================
     /// new
+    #[inline]
     pub fn new<D>(data: D) -> Self
     where
         D: DataTerms,
@@ -56,9 +59,8 @@ impl EventDataBox {
         E: From<Error>,
     {
         let r = self.0.read();
-        f(r.downcast_ref().ok_or_else(|| {
-            Error::Downcast("EventDataBox::with".to_string())
-        })?)
+        f(r.downcast_ref()
+            .ok_or_else(|| Error::Downcast("EventDataBox::with".to_owned()))?)
     }
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
@@ -71,9 +73,8 @@ impl EventDataBox {
         E: From<Error> + From<EventDataBoxReadError<'a>>,
     {
         let r = self.0.read().map_err(EventDataBoxReadError::from)?;
-        f(r.downcast_ref().ok_or_else(|| {
-            Error::Downcast("EventDataBox::with".to_string())
-        })?)
+        f(r.downcast_ref()
+            .ok_or_else(|| Error::Downcast("EventDataBox::with".to_owned()))?)
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
@@ -86,7 +87,7 @@ impl EventDataBox {
     {
         let mut w = self.0.write();
         f(w.downcast_mut().ok_or_else(|| {
-            Error::Downcast("EventDataBox::with_mut".to_string())
+            Error::Downcast("EventDataBox::with_mut".to_owned())
         })?)
     }
     // ------------------------------------------------------------------------
@@ -101,7 +102,7 @@ impl EventDataBox {
     {
         let mut w = self.0.write().map_err(EventDataBoxWriteError::from)?;
         f(w.downcast_mut().ok_or_else(|| {
-            Error::Downcast("EventDataBox::with_mut".to_string())
+            Error::Downcast("EventDataBox::with_mut".to_owned())
         })?)
     }
 }

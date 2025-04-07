@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "eventor"
-version                 = "0.11.2-alpha.3"
+version                 = "0.11.2-alpha.4"
 publish                 = false
 
 description             = "Event library"
@@ -20,7 +20,7 @@ repository.workspace    = true
 # =============================================================================
 [workspace.package]
 edition                 = "2024"
-rust-version            = "1.85.0"
+rust-version            = "1.86.0"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/eventor/"
@@ -61,12 +61,17 @@ version                 = "0.12.3"
 workspace               = true
 # -----------------------------------------------------------------------------
 [workspace.lints.rust]
-# rustc 1.85.0 (4d91de4e4 2025-02-17)
+# rustc 1.86.0 (05f9846f8 2025-03-31)
+dead_code = "deny"
+private_bounds = "deny"
+trivial_casts = "deny"
+
 absolute_paths_not_starting_with_crate = "forbid"
 ambiguous_negative_literals = "forbid"
 closure_returning_async_block = "forbid"
 deprecated_in_future = "forbid"
 deprecated_safe_2024 = "forbid"
+deref_into_dyn_supertrait = "forbid"
 edition_2024_expr_fragment_specifier = "forbid"
 elided_lifetimes_in_paths = "forbid"
 explicit_outlives_requirements = "forbid"
@@ -77,9 +82,9 @@ impl_trait_redundant_captures = "forbid"
 keyword_idents_2018 = "forbid"
 keyword_idents_2024 = "forbid"
 let_underscore_drop = "forbid"
+linker_messages = "forbid"
 macro_use_extern_crate = "forbid"
 meta_variable_misuse = "forbid"
-missing_abi = "forbid"
 missing_copy_implementations = "forbid"
 missing_debug_implementations = "forbid"
 missing_docs = "forbid"
@@ -133,8 +138,8 @@ dangling_pointers_from_temporaries = "forbid"
 dependency_on_unit_never_type_fallback = "forbid"
 deprecated = "forbid"
 deprecated_where_clause_location = "forbid"
-deref_into_dyn_supertrait = "forbid"
 deref_nullptr = "forbid"
+double_negations = "forbid"
 dropping_copy_types = "forbid"
 dropping_references = "forbid"
 drop_bounds = "forbid"
@@ -163,6 +168,7 @@ large_assignments = "forbid"
 late_bound_lifetime_arguments = "forbid"
 legacy_derive_helpers = "forbid"
 map_unit_fn = "forbid"
+missing_abi = "forbid"
 mixed_script_confusables = "forbid"
 named_arguments_used_positionally = "forbid"
 never_type_fallback_flowing_into_unsafe = "forbid"
@@ -227,6 +233,7 @@ unused_parens = "forbid"
 unused_unsafe = "forbid"
 unused_variables = "forbid"
 useless_ptr_null_checks = "forbid"
+uses_power_alignment = "forbid"
 while_true = "forbid"
 ambiguous_associated_items = "forbid"
 arithmetic_overflow = "forbid"
@@ -262,10 +269,6 @@ unconditional_panic = "forbid"
 undropped_manually_drops = "forbid"
 unknown_crate_types = "forbid"
 useless_deprecated = "forbid"
-
-dead_code = "deny"
-private_bounds = "deny"
-trivial_casts = "deny"
 
 renamed_and_removed_lints = "warn"
 unknown_lints = "warn"

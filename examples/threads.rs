@@ -6,24 +6,27 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/01/20
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
+// extern  ====================================================================
+extern crate alloc;
 // use  =======================================================================
-use std::{
-    sync::{
-        Arc,
-        atomic::{AtomicBool, Ordering},
-    },
-    thread::{JoinHandle, available_parallelism, sleep, spawn, yield_now},
+use alloc::sync::Arc;
+use core::{
+    sync::atomic::{AtomicBool, Ordering},
     time::Duration,
+};
+use std::thread::{
+    JoinHandle, available_parallelism, sleep, spawn, yield_now,
 };
 // ----------------------------------------------------------------------------
 use eventor::{
     Event, EventDataBox, EventListener, Eventor, RetOnEvent, SyncResult,
     event_listener_aelicit_author,
     event_listener_aelicit_author::{
-        Aelicit as EventListenerAelicit, AelicitBase, AelicitFromSelf,
+        Aelicit as EventListenerAelicit, AelicitBase as _,
+        AelicitFromSelf as _,
         AelicitFromSelfField as EventListenerAelicitFromSelfField,
     },
 };
@@ -49,9 +52,13 @@ pub struct Listener {
 }
 // ============================================================================
 impl Listener {
-    #[must_use]
-    #[allow(clippy::missing_panics_doc)]
     /// fn `new_aelicit`
+    #[must_use]
+    #[expect(
+        clippy::missing_panics_doc,
+        clippy::expect_used,
+        reason = "checked"
+    )]
     pub fn new_aelicit() -> EventListenerAelicit {
         EventListenerAelicit::new(Self::default()).expect("Listener::new")
     }
@@ -59,6 +66,7 @@ impl Listener {
 // ============================================================================
 impl EventListener for Listener {
     // ========================================================================
+    #[expect(clippy::expect_used, clippy::panic, reason = "checked")]
     fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
             4_201_860_248 => {
@@ -73,7 +81,7 @@ impl EventListener for Listener {
                     eventor.peek_type(E01).unwrap_or_else(|| {
                         panic!(r#"Listener::on_event: peek_type("{E01}")"#)
                     }),
-                    EventDataBox::new(99u64),
+                    EventDataBox::new(99_u64),
                 ));
                 eventor.remove_listener(4_201_860_248, self.usizeptr());
 
@@ -102,6 +110,12 @@ impl EventListener for Listener {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+#[expect(
+    clippy::arithmetic_side_effects,
+    clippy::expect_used,
+    clippy::clone_on_ref_ptr,
+    reason = "checked"
+)]
 fn main() -> Result<()> {
     let num_cpu: u64 = <usize as TryInto<u64>>::try_into(
         available_parallelism()
@@ -142,7 +156,7 @@ fn main() -> Result<()> {
         let e = eventor.clone();
         let e00 = event_type_00.clone();
         threads.push(spawn(move || {
-            let mut times = 0usize;
+            let mut times = 0_usize;
             while a.load(Ordering::Acquire) {
                 println!("push event_00 thread({i}) times={times}");
                 e.push_event(Event::new(e00.clone(), EventDataBox::new(i)));
@@ -158,7 +172,7 @@ fn main() -> Result<()> {
         let e = eventor.clone();
         let e01 = event_type_01.clone();
         threads.push(spawn(move || {
-            let mut times = 0usize;
+            let mut times = 0_usize;
             while a.load(Ordering::Acquire) {
                 println!("push event_01 thread({i}) times={times}");
                 e.push_event(Event::new(e01.clone(), EventDataBox::new(i)));

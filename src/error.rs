@@ -6,15 +6,16 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2025/03/01
+//  @date 2025/04/07
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use std::error::Error as StdError;
+use core::error::Error as CoreError;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// enum Error
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// Elicit
     Elicit(elicit::Error),
@@ -35,20 +36,22 @@ pub enum Error {
 }
 // ============================================================================
 impl From<elicit::Error> for Error {
+    #[inline]
     fn from(e: elicit::Error) -> Self {
         Self::Elicit(e)
     }
 }
 // ============================================================================
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        <Self as std::fmt::Debug>::fmt(self, f)
+impl core::fmt::Display for Error {
+    #[inline]
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        <Self as core::fmt::Debug>::fmt(self, f)
     }
 }
 // ============================================================================
-impl StdError for Error {
-    // ========================================================================
-    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+impl CoreError for Error {
+    #[inline]
+    fn source(&self) -> Option<&(dyn CoreError + 'static)> {
         match *self {
             Self::Elicit(ref e) => Some(e),
             Self::Eventor(_)
@@ -60,7 +63,7 @@ impl StdError for Error {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// type Result
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = core::result::Result<T, Error>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[cfg(test)]
@@ -69,12 +72,14 @@ mod tests {
     use super::Error;
     // ========================================================================
     #[test]
+    #[inline]
     const fn test_send() {
         const fn assert_send<T: Send>() {}
         assert_send::<Error>();
     }
     // ------------------------------------------------------------------------
     #[test]
+    #[inline]
     const fn test_sync() {
         const fn assert_sync<T: Sync>() {}
         assert_sync::<Error>();
@@ -84,7 +89,7 @@ mod tests {
 // ============================================================================
 /// enum `SyncError`
 #[derive(Debug)]
-#[allow(clippy::module_name_repetitions)]
+#[non_exhaustive]
 pub enum SyncError<'a> {
     /// Eventor
     Eventor(Error),
@@ -99,16 +104,18 @@ pub enum SyncError<'a> {
 
     #[cfg(feature = "parking_lot")]
     /// Phantom
-    Phantom(std::marker::PhantomData<dyn FnOnce() -> &'a Self>),
+    Phantom(core::marker::PhantomData<dyn FnOnce() -> &'a Self>),
 }
 // ============================================================================
 impl From<elicit::Error> for SyncError<'_> {
+    #[inline]
     fn from(e: elicit::Error) -> Self {
         SyncError::from(Error::from(e))
     }
 }
 // ----------------------------------------------------------------------------
 impl From<Error> for SyncError<'_> {
+    #[inline]
     fn from(e: Error) -> Self {
         SyncError::Eventor(e)
     }
@@ -116,6 +123,7 @@ impl From<Error> for SyncError<'_> {
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
 impl<'a> From<crate::EventDataBoxReadError<'a>> for SyncError<'a> {
+    #[inline]
     fn from(e: crate::EventDataBoxReadError<'a>) -> Self {
         Self::EventDataBoxRead(e)
     }
@@ -123,20 +131,22 @@ impl<'a> From<crate::EventDataBoxReadError<'a>> for SyncError<'a> {
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot",)))]
 impl<'a> From<crate::EventDataBoxWriteError<'a>> for SyncError<'a> {
+    #[inline]
     fn from(e: crate::EventDataBoxWriteError<'a>) -> Self {
         Self::EventDataBoxWrite(e)
     }
 }
 // ============================================================================
-impl std::fmt::Display for SyncError<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        <Self as std::fmt::Debug>::fmt(self, f)
+impl core::fmt::Display for SyncError<'_> {
+    #[inline]
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        <Self as core::fmt::Debug>::fmt(self, f)
     }
 }
 // ============================================================================
-impl StdError for SyncError<'_> {
-    // ========================================================================
-    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+impl CoreError for SyncError<'_> {
+    #[inline]
+    fn source(&self) -> Option<&(dyn CoreError + 'static)> {
         match *self {
             SyncError::Eventor(ref e) => Some(e),
 
@@ -154,5 +164,4 @@ impl StdError for SyncError<'_> {
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 /// type `SyncResult`
-#[allow(dead_code)]
-pub type SyncResult<'a, T> = std::result::Result<T, SyncError<'a>>;
+pub type SyncResult<'a, T> = core::result::Result<T, SyncError<'a>>;

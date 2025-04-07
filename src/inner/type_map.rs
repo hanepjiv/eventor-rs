@@ -6,11 +6,11 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/25
-//  @date 2025/03/01
+//  @date 2025/04/06
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
-use std::collections::BTreeMap;
+use alloc::collections::BTreeMap;
 // ----------------------------------------------------------------------------
 use hash_combine::hash_combine;
 use log::info;
@@ -30,7 +30,7 @@ impl TypeMap {
     where
         T: AsRef<[u8]>,
     {
-        let hash = hash_combine(0u32, name.as_ref());
+        let hash = hash_combine(0_u32, name.as_ref());
         self.0
             .get(&hash)
             .map_or((hash, None), |x| (hash, Some(x.clone())))
@@ -39,7 +39,7 @@ impl TypeMap {
     /// `new_type`
     pub(crate) fn new_type<T>(&mut self, name: T) -> Result<EventType>
     where
-        T: AsRef<str> + std::fmt::Display,
+        T: AsRef<str> + core::fmt::Display,
     {
         let l_name = name.as_ref().to_lowercase();
         let (hash, ret) = self.check_type(l_name.as_str());
@@ -50,7 +50,7 @@ impl TypeMap {
             } else {
                 // Hash value are in conflict. Take a different name.
                 Err(Error::HashConflict {
-                    already: r.peek_name().to_string(),
+                    already: r.peek_name().to_owned(),
                     new: l_name,
                 })
             }
