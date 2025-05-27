@@ -61,7 +61,7 @@ version                 = "0.12.3"
 workspace               = true
 # -----------------------------------------------------------------------------
 [workspace.lints.rust]
-# rustc 1.86.0 (05f9846f8 2025-03-31)
+# rustc 1.87.0 (17067e9ac 2025-05-09)
 dead_code = "deny"
 private_bounds = "deny"
 trivial_casts = "deny"
@@ -232,6 +232,7 @@ unused_unsafe = "forbid"
 unused_variables = "forbid"
 useless_ptr_null_checks = "forbid"
 uses_power_alignment = "forbid"
+wasm_c_abi = "forbid"
 while_true = "forbid"
 ambiguous_associated_items = "forbid"
 arithmetic_overflow = "forbid"

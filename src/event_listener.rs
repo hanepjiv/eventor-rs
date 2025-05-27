@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/12
-//  @date 2025/04/06
+//  @date 2025/05/27
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -28,10 +28,10 @@ pub enum RetOnEvent {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// trait EventListener
+/// trait `EventListener`
 #[aelicit_define(event_listener_aelicit)]
 pub trait EventListener: Debug + Sync + Send {
-    /// on_event
+    /// `on_event`
     fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent;
 }
 // ============================================================================
