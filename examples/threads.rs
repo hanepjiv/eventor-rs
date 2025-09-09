@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/04/06
+//  @date 2025/09/09
 
 // ////////////////////////////////////////////////////////////////////////////
 // extern  ====================================================================
@@ -114,6 +114,7 @@ impl EventListener for Listener {
     clippy::arithmetic_side_effects,
     clippy::expect_used,
     clippy::clone_on_ref_ptr,
+    clippy::unwrap_in_result,
     reason = "checked"
 )]
 fn main() -> Result<()> {
