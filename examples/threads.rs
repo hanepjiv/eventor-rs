@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/09/09
+//  @date 2025/11/18
 
 // ////////////////////////////////////////////////////////////////////////////
 // extern  ====================================================================
@@ -59,6 +59,7 @@ impl Listener {
         clippy::expect_used,
         reason = "checked"
     )]
+    #[inline]
     pub fn new_aelicit() -> EventListenerAelicit {
         EventListenerAelicit::new(Self::default()).expect("Listener::new")
     }
@@ -67,6 +68,7 @@ impl Listener {
 impl EventListener for Listener {
     // ========================================================================
     #[expect(clippy::expect_used, clippy::panic, reason = "checked")]
+    #[inline]
     fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {
             4_201_860_248 => {

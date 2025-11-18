@@ -1,10 +1,10 @@
-# -*-coding:utf-8-unix;mode:yml-*-
+# -*-coding:utf-8-unix;mode:yaml-*-
 
 #  Copyright 2024 hanepjiv
 #  @author hanepjiv <hanepjiv@gmail.com>
 #  @copyright The MIT License (MIT) / Apache License Version 2.0
 #  @since 2024/11/10
-#  @date 2024/11/23
+#  @date 2025/09/21
 
 name: CI Rust
 
