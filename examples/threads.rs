@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/11/18
+//  @date 2026/01/27
 
 // ////////////////////////////////////////////////////////////////////////////
 // extern  ====================================================================
@@ -186,7 +186,7 @@ fn main() -> Result<()> {
         }));
     }
 
-    sleep(Duration::from_millis(1000));
+    sleep(Duration::from_secs(1));
 
     alive.store(false, Ordering::Release); // stop all threads.
 

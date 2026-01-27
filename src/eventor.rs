@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2025/04/28
+//  @date 2026/01/27
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -134,11 +134,7 @@ impl Eventor {
     /// # Panics
     ///
     /// `expect("Eventor::peek_type")`
-    #[expect(
-        clippy::unwrap_in_result,
-        clippy::expect_used,
-        reason = "checked"
-    )]
+    #[expect(clippy::expect_used, reason = "checked")]
     #[inline]
     pub fn peek_type<T>(&self, name: T) -> Option<EventType>
     where
