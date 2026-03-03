@@ -1,0 +1,5 @@
+#!/bin/env sh
+# -*- mode:sh; coding:utf-8-unix; -*-
+
+cargo fmt --all || exit $?
+cargo check || exit $?

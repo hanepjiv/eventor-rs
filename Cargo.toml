@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "eventor"
-version                 = "0.11.2-alpha.10"
+version                 = "0.11.2-alpha.11"
 publish                 = false
 
 description             = "Event library"
