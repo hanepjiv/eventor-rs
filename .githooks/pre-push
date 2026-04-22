@@ -3,3 +3,4 @@
 
 # https://gist.github.com/hanepjiv/dbf8aecb6a66ed2119a1107c35c54b32
 rust_allchecks || exit $?
+exit 0
