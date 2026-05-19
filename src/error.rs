@@ -1,4 +1,4 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
 //! error.rs
 
@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2025/04/28
+//  @date 2026/05/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -74,14 +74,22 @@ mod tests {
     #[test]
     #[inline]
     const fn send() {
-        const fn assert_send<T: Send>() {}
+        const fn assert_send<T>()
+        where
+            T: Send,
+        {
+        }
         assert_send::<Error>();
     }
     // ------------------------------------------------------------------------
     #[test]
     #[inline]
     const fn sync() {
-        const fn assert_sync<T: Sync>() {}
+        const fn assert_sync<T>()
+        where
+            T: Sync,
+        {
+        }
         assert_sync::<Error>();
     }
 }

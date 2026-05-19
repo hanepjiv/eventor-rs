@@ -9,7 +9,7 @@ OPTIONS="--all-targets --workspace"
 
 function main() {
     run_cargo $ACTIVE_TOOLCHAIN check $OPTIONS || return $?
-    run_cargo nightly fmt --check --all || return $?
+    run_cargo nightly fmt --check || return $?
     return 0
 }
 

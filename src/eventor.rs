@@ -1,4 +1,4 @@
-// -*- mode:rust; coding:utf-8-unix; -*-
+// -*- coding:utf-8-unix; -*-
 
 //! eventor.rs
 
@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2026/01/27
+//  @date 2026/05/19
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -395,13 +395,21 @@ mod tests {
     // ========================================================================
     #[test]
     const fn send() {
-        const fn assert_send<T: Send>() {}
+        const fn assert_send<T>()
+        where
+            T: Send,
+        {
+        }
         assert_send::<Eventor>();
     }
     // ------------------------------------------------------------------------
     #[test]
     const fn sync() {
-        const fn assert_sync<T: Sync>() {}
+        const fn assert_sync<T>()
+        where
+            T: Sync,
+        {
+        }
         assert_sync::<Eventor>();
     }
 }

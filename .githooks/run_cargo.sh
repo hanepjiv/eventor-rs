@@ -1,15 +1,42 @@
 #!/bin/env sh
 # -*- mode:sh; coding:utf-8-unix; -*-
 
-declare -A TERMINAL_COLOR=(
-        [RED]='\033[1;31m'
-        [GREEN]='\033[1;32m'
-        [YELLOW]='\033[1;33m'
-        [BLUE]='\033[1;34m'
-        [MAGENDA]='\033[1;35m'
-        [CYAN]='\033[1;36m'
-        [END]='\033[0m'
+declare -A TARGET_DIR=(
+    [stable]="target/stable"
+    [beta]="target/beta"
+    [nightly]="target/nightly"
 )
+
+declare -A TERMINAL_COLOR=(
+    [RED]='\033[1;31m'
+    [GREEN]='\033[1;32m'
+    [YELLOW]='\033[1;33m'
+    [BLUE]='\033[1;34m'
+    [MAGENDA]='\033[1;35m'
+    [CYAN]='\033[1;36m'
+    [END]='\033[0m'
+)
+
+#
+# Remove rustup from the dependencies.
+#
+# ACTIVE_TOOLCHAIN=$(rustup show active-toolchain | cut -d'-' -f1)
+#
+ACTIVE_TOOLCHAIN=
+function set_active_toolchain() {
+    local cargo_version_active=$(cargo -V)
+
+    if   [[ $cargo_version_active == $(cargo  +stable -V) ]]; then
+        ACTIVE_TOOLCHAIN="stable"
+    elif [[ $cargo_version_active == $(cargo    +beta -V) ]]; then
+        ACTIVE_TOOLCHAIN="beta"
+    elif [[ $cargo_version_active == $(cargo +nightly -V) ]]; then
+        ACTIVE_TOOLCHAIN="nightly"
+    fi
+
+    return $?
+}
+set_active_toolchain
 
 function log () {
     echo -e "$@"
@@ -37,14 +64,6 @@ function run_with_trace () {
 
     return 0
 }
-
-ACTIVE_TOOLCHAIN=$(rustup show active-toolchain | cut -d'-' -f1)
-
-declare -A TARGET_DIR=(
-    [stable]="target/stable"
-    [beta]="target/beta"
-    [nightly]="target/nightly"
-)
 
 function run_cargo() {
     local toolchain=$1
