@@ -6,7 +6,7 @@
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2026/01/27
+//  @date 2026/08/11
 
 // ////////////////////////////////////////////////////////////////////////////
 // extern  ====================================================================
@@ -86,8 +86,6 @@ impl EventListener for Listener {
                     EventDataBox::new(99_u64),
                 ));
                 eventor.remove_listener(4_201_860_248, self.usizeptr());
-
-                RetOnEvent::Next
             }
             4_201_860_249 => {
                 event
@@ -101,13 +99,12 @@ impl EventListener for Listener {
                     self.aelicit_from_self()
                         .expect("Listener::on_event: aelicit_from_self"),
                 );
-                RetOnEvent::Next
             }
             x => {
                 println!("Listener::on_event: unknown hash {x}");
-                RetOnEvent::Next
             }
         }
+        RetOnEvent::Next
     }
 }
 // ////////////////////////////////////////////////////////////////////////////
