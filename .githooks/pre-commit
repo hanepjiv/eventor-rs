@@ -1,4 +1,4 @@
-#!/bin/env sh
+#!/bin/env bash
 # -*- mode:sh; coding:utf-8-unix; -*-
 
 SCRIPT_DIR=$(realpath $(dirname $(readlink -f $0)))

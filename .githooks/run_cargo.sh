@@ -1,4 +1,4 @@
-#!/bin/env sh
+#!/bin/env bash
 # -*- mode:sh; coding:utf-8-unix; -*-
 
 declare -A TARGET_DIR=(
