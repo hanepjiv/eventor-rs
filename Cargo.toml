@@ -2,7 +2,7 @@
 # =============================================================================
 [package]
 name                    = "eventor"
-version                 = "0.11.2-alpha.16"
+version                 = "0.11.2-alpha.17"
 publish                 = false
 
 description             = "Event library"
@@ -15,7 +15,6 @@ rust-version.workspace  = true
 authors.workspace       = true
 license.workspace       = true
 documentation.workspace = true
-homepage.workspace      = true
 repository.workspace    = true
 # =============================================================================
 [workspace.package]
@@ -24,7 +23,6 @@ rust-version            = "1.85.1"
 authors                 = ["hanepjiv <hanepjiv@gmail.com>"]
 license                 = "MIT OR Apache-2.0"
 documentation           = "https://docs.rs/eventor/"
-homepage                = "https://github.com/hanepjiv/eventor-rs"
 repository              = "https://github.com/hanepjiv/eventor-rs.git"
 # -----------------------------------------------------------------------------
 [workspace]
@@ -43,13 +41,13 @@ hash_combine            = { default-features = false, version = "0.3.10" }
 log                     = { default-features = false, version = "0.4.33" }
 # -----------------------------------------------------------------------------
 [dependencies.elicit]
-default-features        = false
-version                 = "0.12.4"
+default-features         = false
+version                 = "0.13.0"
 
 #git                     = "ssh://git@github.com/hanepjiv/elicit-rs.git"
 #branch                  = "main"
 
-#path                    = "../../elicit-rs/orig"
+#path                   = "../../elicit-rs/orig"
 # =============================================================================
 # optional dependencies
 [dependencies.parking_lot]
@@ -61,7 +59,7 @@ version                 = "0.12.5"
 workspace               = true
 # -----------------------------------------------------------------------------
 [workspace.lints.rust]
-# rustc 1.98.1 (48a229cea 2026-09-01)
+# rustc 1.99.0 (b940084d7 2026-09-28)
 
 dead_code_pub_in_binary = "warn"
 
@@ -98,6 +96,7 @@ multiple_supertrait_upcastable = "forbid"
 must_not_suspend = "forbid"
 non_ascii_idents = "forbid"
 non_exhaustive_omitted_patterns = "forbid"
+raw_borrows_via_references = "forbid"
 redundant_imports = "forbid"
 redundant_lifetimes = "forbid"
 resolving_to_items_shadowing_supertrait_items = "forbid"
@@ -187,8 +186,10 @@ large_assignments = "forbid"
 late_bound_lifetime_arguments = "forbid"
 linker_messages = "forbid"
 malformed_diagnostic_attributes = "forbid"
+malformed_diagnostic_filters = "forbid"
 malformed_diagnostic_format_literals = "forbid"
 map_unit_fn = "forbid"
+method_call_on_diverging_infer_var = "forbid"
 mismatched_lifetime_syntaxes = "forbid"
 misplaced_diagnostic_attributes = "forbid"
 missing_abi = "forbid"
@@ -203,18 +204,19 @@ non_shorthand_field_patterns = "forbid"
 non_snake_case = "forbid"
 non_upper_case_globals = "forbid"
 noop_method_call = "forbid"
-no_mangle_generic_items = "forbid"
 opaque_hidden_inferred_bound = "forbid"
 overlapping_range_endpoints = "forbid"
 path_statements = "forbid"
 private_interfaces = "forbid"
 ptr_to_integer_transmute_in_consts = "forbid"
+recursion_depth_exceeding_limit = "forbid"
 redundant_semicolons = "forbid"
 refining_impl_trait_internal = "forbid"
 refining_impl_trait_reachable = "forbid"
 repr_c_enums_larger_than_int = "forbid"
 rtsan_nonblocking_async = "forbid"
 self_constructor_from_outer_item = "forbid"
+semicolon_in_expressions_from_non_local_macros = "forbid"
 special_module_name = "forbid"
 stable_features = "forbid"
 static_mut_refs = "forbid"
@@ -271,7 +273,7 @@ default_overrides_default_fields = "forbid"
 dependency_on_unit_never_type_fallback = "forbid"
 deref_nullptr = "forbid"
 duplicate_features = "forbid"
-elided_lifetimes_in_associated_constant = "forbid"
+duplicate_tools = "forbid"
 enum_intrinsics_non_enums = "forbid"
 explicit_builtin_cfgs_in_flags = "forbid"
 ill_formed_attribute_input = "forbid"

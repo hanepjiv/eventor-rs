@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `event_data.rs`
+//! `event_data.rs`.
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2025/04/07
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -21,27 +21,29 @@ use super::inner::sync::RwLock;
 #[cfg(not(any(feature = "parking_lot"),))]
 use super::inner::sync::{RwLock, TryLockReadError, TryLockWriteError};
 // ============================================================================
+/// trait `DataTerms`.
 trait DataTerms: 'static + Debug + Send + Sync {}
 impl<T> DataTerms for T where T: 'static + Debug + Send + Sync {}
 // ============================================================================
+/// type `DataBox`.
 type DataBox = Box<dyn Any + Send + Sync>;
 // ============================================================================
 #[cfg(not(any(feature = "parking_lot"),))]
-/// `EventDataBoxReadError`
+/// `EventDataBoxReadError`.
 pub type EventDataBoxReadError<'a> = TryLockReadError<'a, DataBox>;
 // ----------------------------------------------------------------------------
 #[cfg(not(any(feature = "parking_lot"),))]
-/// `EventDataBoxWriteError`
+/// `EventDataBoxWriteError`.
 pub type EventDataBoxWriteError<'a> = TryLockWriteError<'a, DataBox>;
 // ============================================================================
-/// `EventDataBox`
+/// `EventDataBox`.
 #[derive(Debug)]
 pub struct EventDataBox(Arc<RwLock<DataBox>>);
 // ----------------------------------------------------------------------------
 #[expect(private_bounds, reason = "allow")]
 impl EventDataBox {
     // ========================================================================
-    /// new
+    /// new.
     #[inline]
     pub fn new<D>(data: D) -> Self
     where
@@ -51,7 +53,7 @@ impl EventDataBox {
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
-    /// with
+    /// with.
     pub(crate) fn with<D, F, T, E>(&self, f: F) -> Result<T, E>
     where
         D: 'static,
@@ -64,7 +66,7 @@ impl EventDataBox {
     }
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// with
+    /// with.
     pub(crate) fn with<'s, 'a, D, F, T, E>(&'s self, f: F) -> Result<T, E>
     where
         's: 'a,
@@ -78,7 +80,7 @@ impl EventDataBox {
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
-    /// `with_mut`
+    /// `with_mut`.
     pub(crate) fn with_mut<D, F, T, E>(&self, f: F) -> Result<T, E>
     where
         D: 'static,
@@ -92,7 +94,7 @@ impl EventDataBox {
     }
     // ------------------------------------------------------------------------
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// `with_mut`
+    /// `with_mut`.
     pub(crate) fn with_mut<'s, 'a, D, F, T, E>(&'s self, f: F) -> Result<T, E>
     where
         's: 'a,

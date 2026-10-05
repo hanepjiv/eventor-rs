@@ -1,21 +1,21 @@
 // -*- coding:utf-8-unix; -*-
 
-//! error.rs
+//! error.rs.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/03/01
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// enum Error
+/// enum Error.
 #[derive(Debug)]
 pub(crate) enum Error {
-    /// Elicit
+    /// Elicit.
     Elicit(elicit::Error),
-    /// Eventor
+    /// Eventor.
     Eventor(eventor::Error),
 }
 // ============================================================================

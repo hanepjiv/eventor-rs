@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! eventor.rs
+//! eventor.rs.
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/03
-//  @date 2026/05/19
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -31,18 +31,18 @@ use super::inner::sync::{
 };
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct Eventor
+/// struct Eventor.
 #[derive(Debug)]
 pub struct Eventor {
-    /// event type map
+    /// event type map.
     type_map: RwLock<TypeMap>,
-    /// event queue
+    /// event queue.
     queue: Mutex<EventQueue>,
-    /// condvar queue
+    /// condvar queue.
     condvar_queue: Condvar,
-    /// event listener map
+    /// event listener map.
     listener_map: RwLock<ListenerMap>,
-    /// mediator
+    /// mediator.
     mediator: Mediator,
 }
 // ============================================================================
@@ -61,8 +61,8 @@ impl Default for Eventor {
 // ============================================================================
 impl Eventor {
     // ========================================================================
-    /// new
-    #[must_use]
+    /// new.
+    #[must_use = "Constructor."]
     #[inline]
     pub fn new() -> Self {
         Self::default()
@@ -70,15 +70,15 @@ impl Eventor {
     // ========================================================================
     // ------------------------------------------------------------------------
     #[cfg(feature = "parking_lot")]
-    /// `new_type`
+    /// `new_type`.
     ///
     /// # Panics
     ///
-    /// `expect("Eventor::new_type")`
+    /// - `expect("Eventor::new_type")`
     ///
     /// # Errors
     ///
-    /// `eventor::Error`
+    /// - `eventor::Error`
     #[inline]
     pub fn new_type<T>(&self, name: T) -> Result<EventType>
     where
@@ -88,15 +88,15 @@ impl Eventor {
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// `new_type`
+    /// `new_type`.
     ///
     /// # Panics
     ///
-    /// `expect("Eventor::new_type")`
+    /// - `expect("Eventor::new_type")`
     ///
     /// # Errors
     ///
-    /// `eventor::Error`
+    /// - `eventor::Error`
     #[expect(
         clippy::unwrap_in_result,
         clippy::expect_used,
@@ -115,11 +115,11 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     #[cfg(feature = "parking_lot")]
-    /// `peek_typs`
+    /// `peek_typs`.
     ///
     /// # Panics
     ///
-    /// `expect("Eventor::peek_type")`
+    /// - `expect("Eventor::peek_type")`
     #[inline]
     pub fn peek_type<T>(&self, name: T) -> Option<EventType>
     where
@@ -129,11 +129,11 @@ impl Eventor {
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// `peek_typs`
+    /// `peek_typs`.
     ///
     /// # Panics
     ///
-    /// `expect("Eventor::peek_type")`
+    /// - `expect("Eventor::peek_type")`
     #[expect(clippy::expect_used, reason = "checked")]
     #[inline]
     pub fn peek_type<T>(&self, name: T) -> Option<EventType>
@@ -147,23 +147,24 @@ impl Eventor {
             .peek_type(name.as_ref());
     }
     // ========================================================================
-    /// `insert_listener`
+    /// `insert_listener`.
     #[inline]
     pub fn insert_listener(&self, hash: u32, listener: EventListenerAelicit) {
         self.mediator.insert(hash, listener);
     }
     // ------------------------------------------------------------------------
-    /// `remove_listener`
+    /// `remove_listener`.
     #[inline]
     pub fn remove_listener(&self, hash: u32, id: usize) {
         self.mediator.remove(hash, id);
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
-    /// `push_event`
+    /// `push_event`.
+    ///
     /// # Panics
     ///
-    /// `expect("Eventor::push_event")`
+    /// - `expect("Eventor::push_event")`
     #[inline]
     pub fn push_event(&self, event: Event) {
         self.queue.lock().push(event);
@@ -171,10 +172,11 @@ impl Eventor {
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// `push_event`
+    /// `push_event`.
+    ///
     /// # Panics
     ///
-    /// `expect("Eventor::push_event")`
+    /// - `expect("Eventor::push_event")`
     #[expect(clippy::expect_used, reason = "checked")]
     #[inline]
     pub fn push_event(&self, event: Event) {
@@ -183,7 +185,7 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     #[cfg(feature = "parking_lot")]
-    /// `push_event_front`
+    /// `push_event_front`.
     #[inline]
     fn push_event_front(&self, event: Event) {
         self.queue.lock().push_front(event);
@@ -191,7 +193,7 @@ impl Eventor {
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
-    /// `push_event_front`
+    /// `push_event_front`.
     #[expect(clippy::expect_used, reason = "checked")]
     #[inline]
     fn push_event_front(&self, event: Event) {
@@ -203,27 +205,30 @@ impl Eventor {
     }
     // ========================================================================
     #[cfg(feature = "parking_lot")]
+    /// fn `lock_guard`.
     fn lock_guard(&self) -> MutexGuard<'_, EventQueue> {
         self.queue.lock()
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
     #[expect(clippy::expect_used, reason = "checked")]
+    /// fn `lock_guard`.
     fn lock_guard(&self) -> MutexGuard<'_, EventQueue> {
         self.queue.lock().expect("Eventor::lock_guard")
     }
     // ------------------------------------------------------------------------
-    /// # dispatch
+    /// # dispatch.
     ///
     /// Process one event.
     ///
     /// ## return: bool
-    /// true    = There is or was an event.
-    /// false   = No event.
+    ///
+    /// - true  = There is or was an event.
+    /// - false = No event.
     ///
     /// # Panics
     ///
-    /// `expect("Eventor::dispatch")`
+    /// - `expect("Eventor::dispatch")`
     #[inline]
     pub fn dispatch(&self) -> bool {
         let event = {
@@ -241,6 +246,7 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     #[cfg(feature = "parking_lot")]
+    /// fn `wait_for`.
     fn wait_for<'a>(
         &self,
         mut guard: MutexGuard<'a, EventQueue>,
@@ -252,6 +258,7 @@ impl Eventor {
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
+    /// fn `wait_for`.
     #[expect(clippy::expect_used, reason = "checked")]
     fn wait_for<'a>(
         &self,
@@ -264,11 +271,11 @@ impl Eventor {
         (grd, res.timed_out())
     }
     // ------------------------------------------------------------------------
-    /// `dispatch_while`
+    /// `dispatch_while`.
     ///
     /// # Panics
     ///
-    /// `expect("Eventor::dispatch_while")`
+    /// - `expect("Eventor::dispatch_while")`
     #[expect(
         clippy::significant_drop_tightening,
         clippy::mixed_read_write_in_expression,
@@ -302,6 +309,7 @@ impl Eventor {
     }
     // ------------------------------------------------------------------------
     #[cfg(feature = "parking_lot")]
+    /// fn `dispatch_impl`.
     fn dispatch_impl(&self, event: Event) {
         // Locking of the ListenerMap writer must be done
         // before locking of the Mediator.
@@ -335,6 +343,7 @@ impl Eventor {
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
+    /// fn `dispatch_impl`.
     #[expect(
         clippy::significant_drop_tightening,
         clippy::expect_used,

@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! minimal.rs
+//! minimal.rs.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2025/04/06
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -29,14 +29,14 @@ mod inner;
 use inner::Result;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct Listener
+/// struct Listener.
 #[derive(Debug, elicit::Aelicit)]
 #[aelicit_mod_author(event_listener_aelicit_author)]
 struct Listener;
 // ============================================================================
 impl EventListener for Listener {
     // ========================================================================
-    /// `on_event`
+    /// `on_event`.
     #[expect(clippy::expect_used, reason = "cheked")]
     fn on_event(&self, event: &Event, _eventor: &Eventor) -> RetOnEvent {
         match event.peek_type().peek_hash() {

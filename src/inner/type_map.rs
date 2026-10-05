@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `type_map.rs`
+//! `type_map.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/25
-//  @date 2025/04/06
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -18,14 +18,14 @@ use log::info;
 use crate::{Error, EventType, Result};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// `TypeMap`
+/// `TypeMap`.
 #[derive(Debug, Default)]
 pub(crate) struct TypeMap(BTreeMap<u32, EventType>);
 // ============================================================================
 impl TypeMap {
     // ========================================================================
     // ------------------------------------------------------------------------
-    /// `check_type`
+    /// `check_type`.
     fn check_type<T>(&self, name: T) -> (u32, Option<EventType>)
     where
         T: AsRef<[u8]>,
@@ -36,7 +36,7 @@ impl TypeMap {
             .map_or((hash, None), |x| (hash, Some(x.clone())))
     }
     // ------------------------------------------------------------------------
-    /// `new_type`
+    /// `new_type`.
     pub(crate) fn new_type<T>(&mut self, name: T) -> Result<EventType>
     where
         T: AsRef<str> + core::fmt::Display,
@@ -68,7 +68,7 @@ impl TypeMap {
         }
     }
     // ------------------------------------------------------------------------
-    /// `peek_type`
+    /// `peek_type`.
     pub(crate) fn peek_type<T>(&self, name: T) -> Option<EventType>
     where
         T: AsRef<str>,

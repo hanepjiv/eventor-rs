@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! mediator.rs
+//! mediator.rs.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2025/04/07
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // attributes  ================================================================
@@ -19,21 +19,25 @@ use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 use super::ListenerMap;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct `MediatorInner`
+/// struct `MediatorInner`.
 #[derive(Debug, Default)]
 struct MediatorInner {
+    /// newface.
     newface: BTreeMap<u32, BTreeMap<usize, EventListenerAelicit>>,
+    /// retiree.
     retiree: BTreeMap<u32, BTreeSet<usize>>,
 }
 // ============================================================================
 impl MediatorInner {
     // ========================================================================
     #[cfg(feature = "parking_lot")]
+    /// fn `get_id`.
     fn get_id(listener: &EventListenerAelicit) -> usize {
         listener.read().usizeptr()
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
+    /// fn `get_id`.
     #[expect(clippy::expect_used, reason = "checked")]
     fn get_id(listener: &EventListenerAelicit) -> usize {
         listener
@@ -42,6 +46,7 @@ impl MediatorInner {
             .usizeptr()
     }
     // ========================================================================
+    /// fn insert.
     pub(crate) fn insert(
         &mut self,
         hash: u32,
@@ -60,7 +65,7 @@ impl MediatorInner {
             .or_insert(listener);
     }
     // ========================================================================
-    /// remove
+    /// remove.
     pub(crate) fn remove(&mut self, hash: u32, id: usize) {
         if let Entry::Occupied(mut x) = self.newface.entry(hash) {
             drop(x.get_mut().remove(&id));
@@ -68,7 +73,7 @@ impl MediatorInner {
         let _ = self.retiree.entry(hash).or_default().insert(id);
     }
     // ========================================================================
-    /// apply
+    /// apply.
     pub(crate) fn apply<T>(&mut self, mut map: T)
     where
         T: core::ops::DerefMut<Target = ListenerMap>,
@@ -89,19 +94,20 @@ impl MediatorInner {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct Mediator
+/// struct Mediator.
 #[derive(Debug, Default)]
 pub(crate) struct Mediator(Mutex<MediatorInner>);
 // ============================================================================
 impl Mediator {
     // ========================================================================
-    /// insert
     #[cfg(feature = "parking_lot")]
+    /// fn `insert`.
     pub(crate) fn insert(&self, hash: u32, listener: EventListenerAelicit) {
         self.0.lock().insert(hash, listener);
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
+    /// fn `insert`.
     #[expect(clippy::expect_used, reason = "checked")]
     pub(crate) fn insert(&self, hash: u32, listener: EventListenerAelicit) {
         self.0
@@ -110,20 +116,21 @@ impl Mediator {
             .insert(hash, listener);
     }
     // ========================================================================
-    /// remove
     #[cfg(feature = "parking_lot")]
+    /// remove.
     pub(crate) fn remove(&self, hash: u32, id: usize) {
         self.0.lock().remove(hash, id);
     }
 
     #[cfg(not(any(feature = "parking_lot"),))]
+    /// remove.
     #[expect(clippy::expect_used, reason = "checked")]
     pub(crate) fn remove(&self, hash: u32, id: usize) {
         self.0.lock().expect("Mediator::remove").remove(hash, id);
     }
     // ========================================================================
-    /// apply
     #[cfg(feature = "parking_lot")]
+    /// fn apply.
     pub(crate) fn apply<T>(&self, map: T)
     where
         T: core::ops::DerefMut<Target = ListenerMap>,
@@ -131,8 +138,9 @@ impl Mediator {
         self.0.lock().apply(map);
     }
 
-    #[expect(clippy::expect_used, reason = "checked")]
     #[cfg(not(any(feature = "parking_lot"),))]
+    #[expect(clippy::expect_used, reason = "checked")]
+    /// fn apply.
     pub(crate) fn apply<T>(&self, map: T)
     where
         T: core::ops::DerefMut<Target = ListenerMap>,

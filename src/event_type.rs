@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `event_type.rs`
+//! `event_type.rs`.
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/03/07
-//  @date 2025/04/07
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
@@ -14,12 +14,12 @@ use alloc::sync::Arc;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
 #[derive(Debug, Clone)]
-/// `EventType`
+/// `EventType`.
 pub struct EventType(Arc<(String, u32)>);
 // ============================================================================
 impl EventType {
     // ========================================================================
-    /// new
+    /// new.
     pub(crate) fn new<T>(name: T, hash: u32) -> Self
     where
         T: Into<String>,
@@ -27,15 +27,15 @@ impl EventType {
         Self(Arc::new((name.into(), hash)))
     }
     // ========================================================================
-    /// `peek_name`
-    #[must_use]
+    /// `peek_name`.
+    #[must_use = "AsRef."]
     #[inline]
     pub fn peek_name(&self) -> &str {
         self.0.0.as_ref()
     }
     // ========================================================================
-    /// `peek_hash`
-    #[must_use]
+    /// `peek_hash`.
+    #[must_use = "AsRef."]
     #[inline]
     pub fn peek_hash(&self) -> u32 {
         self.0.1

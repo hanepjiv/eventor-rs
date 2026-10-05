@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! inner.rs
+//! inner.rs.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/21
-//  @date 2024/12/01
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
@@ -22,6 +22,7 @@ pub(crate) use mediator::Mediator;
 #[cfg(feature = "parking_lot")]
 mod sync_parking_lot;
 #[cfg(feature = "parking_lot")]
+/// mod sync.
 pub(crate) mod sync {
     pub(crate) use super::sync_parking_lot::*;
 }
@@ -29,6 +30,7 @@ pub(crate) mod sync {
 #[cfg(not(any(feature = "parking_lot"),))]
 mod sync_default;
 #[cfg(not(any(feature = "parking_lot"),))]
+/// mod sync.
 pub(crate) mod sync {
     pub(crate) use super::sync_default::*;
 }

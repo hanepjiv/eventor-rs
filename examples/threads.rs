@@ -1,12 +1,12 @@
 // -*- coding:utf-8-unix; -*-
 
-//! threads.rs
+//! threads.rs.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/19
-//  @date 2026/08/11
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // extern  ====================================================================
@@ -40,20 +40,22 @@ mod inner;
 use inner::Result;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-static E01: &str = "event_type_01";
+/// const E01.
+const E01: &str = "event_type_01";
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct Listener
+/// struct Listener.
 #[derive(Debug, Default, elicit::Aelicit)]
 #[aelicit_mod_author(event_listener_aelicit_author)]
 pub struct Listener {
+    /// _fsf.
     #[aelicit_from_self_field]
     _fsf: EventListenerAelicitFromSelfField,
 }
 // ============================================================================
 impl Listener {
-    /// fn `new_aelicit`
-    #[must_use]
+    /// fn `new_aelicit`.
+    #[must_use = "Constructor."]
     #[expect(
         clippy::missing_panics_doc,
         clippy::expect_used,

@@ -1,31 +1,32 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `listener_map.rs`
+//! `listener_map.rs`.
 
 //  Copyright 2024 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2024/04/23
-//  @date 2025/04/06
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
-// use  =======================================================================
+// use	=======================================================================
 use alloc::collections::BTreeMap;
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 use crate::event_listener_aelicit_user::Aelicit as EventListenerAelicit;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
+/// type `MapUUIDAelicit`.
 type MapUUIDAelicit = BTreeMap<usize, EventListenerAelicit>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// struct `ListenerMap`
+/// struct `ListenerMap`.
 #[derive(Debug, Default)]
 pub(crate) struct ListenerMap(BTreeMap<u32, MapUUIDAelicit>);
 // ============================================================================
 impl ListenerMap {
     // ========================================================================
-    /// insert
+    /// insert.
     pub(crate) fn insert(
         &mut self,
         hash: u32,
@@ -40,7 +41,7 @@ impl ListenerMap {
             .or_insert(listener);
     }
     // ========================================================================
-    /// remove
+    /// remove.
     pub(crate) fn remove(&mut self, hash: u32, id: usize) {
         let Some(list) = self.0.get_mut(&hash) else {
             return;
@@ -48,7 +49,7 @@ impl ListenerMap {
         drop(list.remove(&id));
     }
     // ========================================================================
-    /// get
+    /// get.
     pub(crate) fn get<Q>(&self, key: &Q) -> Option<&MapUUIDAelicit>
     where
         Q: ?Sized + Ord,

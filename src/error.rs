@@ -1,36 +1,36 @@
 // -*- coding:utf-8-unix; -*-
 
-//! error.rs
+//! error.rs.
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
 //  @copyright The MIT License (MIT) / Apache License Version 2.0
 //  @since 2016/11/26
-//  @date 2026/08/11
+//  @date 2026/10/04
 
 // ////////////////////////////////////////////////////////////////////////////
 // use  =======================================================================
 use core::error::Error as CoreError;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// enum Error
+/// enum Error.
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum Error {
-    /// Elicit
+    /// Elicit.
     Elicit(elicit::Error),
 
-    /// Eventor
+    /// Eventor.
     Eventor(String),
 
-    /// Downcast
+    /// Downcast.
     Downcast(String),
 
-    /// `HashConflict`
+    /// `HashConflict`.
     HashConflict {
-        /// already
+        /// already.
         already: String,
-        /// new
+        /// new.
         new: String,
     },
 }
@@ -62,56 +62,27 @@ impl CoreError for Error {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// type Result
+/// type Result.
 pub type Result<T> = core::result::Result<T, Error>;
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-#[cfg(test)]
-mod tests {
-    // use  ===================================================================
-    use super::Error;
-    // ========================================================================
-    #[test]
-    #[inline]
-    const fn send() {
-        const fn assert_send<T>()
-        where
-            T: Send,
-        {
-        }
-        assert_send::<Error>();
-    }
-    // ------------------------------------------------------------------------
-    #[test]
-    #[inline]
-    const fn sync() {
-        const fn assert_sync<T>()
-        where
-            T: Sync,
-        {
-        }
-        assert_sync::<Error>();
-    }
-}
-// ////////////////////////////////////////////////////////////////////////////
-// ============================================================================
-/// enum `SyncError`
+/// enum `SyncError`.
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum SyncError<'a> {
-    /// Eventor
+    /// Eventor.
     Eventor(Error),
 
     #[cfg(not(any(feature = "parking_lot",)))]
-    /// `EventDataBoxRead`
+    /// `EventDataBoxRead`.
     EventDataBoxRead(crate::EventDataBoxReadError<'a>),
 
     #[cfg(not(any(feature = "parking_lot",)))]
-    /// `EventDataBoxWrite`
+    /// `EventDataBoxWrite`.
     EventDataBoxWrite(crate::EventDataBoxWriteError<'a>),
 
     #[cfg(feature = "parking_lot")]
-    /// Phantom
+    /// Phantom.
     Phantom(core::marker::PhantomData<dyn FnOnce() -> &'a Self>),
 }
 // ============================================================================
@@ -171,5 +142,34 @@ impl CoreError for SyncError<'_> {
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// type `SyncResult`
+/// type `SyncResult`.
 pub type SyncResult<'a, T> = core::result::Result<T, SyncError<'a>>;
+// ////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+#[cfg(test)]
+mod tests {
+    // use  ===================================================================
+    use super::*;
+    // ========================================================================
+    #[test]
+    #[inline]
+    const fn send() {
+        const fn assert_send<T>()
+        where
+            T: Send,
+        {
+        }
+        assert_send::<Error>();
+    }
+    // ------------------------------------------------------------------------
+    #[test]
+    #[inline]
+    const fn sync() {
+        const fn assert_sync<T>()
+        where
+            T: Sync,
+        {
+        }
+        assert_sync::<Error>();
+    }
+}

@@ -1,6 +1,6 @@
 // -*- coding:utf-8-unix; -*-
 
-//! `event_listener.rs`
+//! `event_listener.rs`.
 
 //  Copyright 2016 hanepjiv
 //  @author hanepjiv <hanepjiv@gmail.com>
@@ -17,21 +17,21 @@ use elicit::aelicit_define;
 use super::{event::Event, eventor::Eventor};
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// enum `RetOnEvent`
+/// enum `RetOnEvent`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[non_exhaustive]
 pub enum RetOnEvent {
-    /// Next
+    /// Next.
     Next,
-    /// Complete
+    /// Complete.
     Complete,
 }
 // ////////////////////////////////////////////////////////////////////////////
 // ============================================================================
-/// trait `EventListener`
+/// trait `EventListener`.
 #[aelicit_define(event_listener_aelicit)]
 pub trait EventListener: Debug + Sync + Send {
-    /// `on_event`
+    /// `on_event`.
     fn on_event(&self, event: &Event, eventor: &Eventor) -> RetOnEvent;
 }
 // ============================================================================
